@@ -1,11 +1,11 @@
 #include "project.h"
 
-Project::Project() {}
-
-Project::~Project()
+Project::Project()
 {
-    delete editor_canvas;
+    tileset_selected_tile= -1;
 }
+
+Project::~Project() {}
 
 int Project::SaveTo(QString fname)
 {
