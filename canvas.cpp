@@ -1,0 +1,203 @@
+#include "canvas.h"
+#include <stdio.h>
+#include <QMenu>
+#include <QMouseEvent>
+
+extern Tileset tileset;
+extern int tileset_selected_tile;
+
+#define CANVASX_TO_COLUMN(x)    (x/TILE_W/scaling)
+#define CANVASY_TO_ROW(y)       (y/TILE_H/scaling)
+
+Canvas::Canvas(QWidget* parent, int width, int height)
+{
+    size= QSize(width, height);
+    setParent(parent);
+    setScene(&scene);
+    setStyleSheet("background-color: white;"
+                         "border: "+QString::number(CANVAS_BORDER_W)+"px solid #666;");
+    setMouseTracking(true);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
+    tiles.clear();
+    for (int i=0; i<width*height; i++)
+        tiles+= Tile(0);
+
+    Redraw();
+    show();
+}
+
+void Canvas::Clear(int bgtile)
+{
+    for (int i=0; i<size.width()*size.height(); i++)
+        tiles[i].tileset_offset= bgtile;
+    Redraw();
+}
+
+void Canvas::PlotUnscaled(QPoint pos, Tile tile)
+{
+    Plot((pos.y()/TILE_H)/scaling, (pos.x()/TILE_W)/scaling, tile);
+}
+
+void Canvas::Plot(int row, int column, Tile tile)
+{
+    if (row<0 || row>=size.height())
+        return;
+    if (column<0 || column>=size.width())
+        return;
+    tiles[column+row*size.width()]= tile;
+}
+
+Canvas::~Canvas()
+{
+    close();
+}
+
+QSize Canvas::Size()
+{
+    return size;
+}
+
+void Canvas::ZoomIn()
+{
+    if (scaling >= CANVAS_MAX_SCALING)
+        return;
+    scaling++;
+    Redraw();
+}
+
+void Canvas::ZoomOut()
+{
+    if (scaling <= 1)
+        return;
+    scaling--;
+    Redraw();
+}
+
+void Canvas::Redraw()
+{
+    scene.clear();
+    UpdateScaling();
+    for (int iy=0; iy<size.height(); iy++)
+    {
+        for (int ix=0; ix<size.width(); ix++)
+        {
+            RedrawTile(iy, ix);
+        }
+    }
+}
+
+void Canvas::RedrawTile(int row, int column)
+{
+    if (row<0 || row>=size.height())
+        return;
+    if (column<0 || column>=size.width())
+        return;
+
+    QBrush bru;
+    bru.setColor(QColor::fromRgb(255,0,0));
+    bru.setStyle(Qt::DiagCrossPattern);
+    QPen pen;
+    pen.setColor(QColor::fromRgb(128,128,128));
+    pen.setWidth(1);
+    pen.setStyle(Qt::SolidLine);
+    Tile* ttile= &tiles[column+row*size.width()];
+
+    if (ttile->tileset_offset >= tileset.tiles.count())
+    {
+        //Tile is outside the bounds of the tileset
+        scene.addRect(column*TILE_W*scaling, row*TILE_H*scaling, TILE_W*scaling, TILE_H*scaling, pen, bru);
+    }
+    else
+    {
+        QPixmap pix= QPixmap::fromImage(tileset.tiles[ttile->tileset_offset]);
+        QGraphicsPixmapItem* item= new QGraphicsPixmapItem(pix);
+        item->setX(column*TILE_W*scaling);
+        item->setY(row*TILE_H*scaling);
+        item->setScale(scaling);
+        scene.addItem(item);
+    }
+}
+
+void Canvas::UpdateScaling()
+{
+    setMinimumSize(size.width()*TILE_W*scaling+(CANVAS_BORDER_W*2), size.height()*TILE_H*scaling+(CANVAS_BORDER_W*2));
+    setMaximumSize(size.width()*TILE_W*scaling+(CANVAS_BORDER_W*2), size.height()*TILE_H*scaling+(CANVAS_BORDER_W*2));
+    scene.setSceneRect(QRect(0,0,size.width()*TILE_W*scaling,size.height()*TILE_H*scaling));
+    // foreach (QGraphicsItem* item, scene.items())
+    // {
+    //     item->setScale(scaling);
+    // }
+}
+
+void Canvas::OpenContextMenu(QPoint screen_pos, QPoint canvas_pos)
+{
+    int tilex= (canvas_pos.x()/TILE_W)/scaling;
+    int tiley= (canvas_pos.y()/TILE_H)/scaling;
+    int tilen= tilex+tiley*size.width();
+
+    QMenu* menu= new QMenu();
+    menu->addAction("Clear tile with background");
+    QMenu* menu_palette= menu->addMenu("Change palette index");
+    for (int i=0; i<PALETTE_H; i++)
+        menu_palette->addAction(""+QString::number(i));
+    menu_palette->setEnabled(tileset.is4bpp);
+    menu->addAction("Flip tile horizontally");
+    menu->addAction("Flip tile vertically");
+    menu->addSeparator();
+    QString stat_lbl= "pos: ["+QString::number(tilex)+","+ QString::number(tiley)+"]"
+                                                                                          " flip: ["+((tiles[tilen].hflip)?"H":" ")+((tiles[tilen].vflip)?"V":" ")+"]";
+    menu->addAction(stat_lbl)->setEnabled(false);
+    menu->setWindowModality(Qt::ApplicationModal);
+    menu->setGeometry(QRect(screen_pos,QSize(180,160)));
+    menu->show();
+}
+
+void Canvas::mousePressEvent(QMouseEvent *event)
+{
+    //event->accept();
+    mouse_down_button= event->button();
+    if (mouse_down_button != Qt::RightButton)
+        mouseMoveEvent(event);
+    mouse_has_moved= false;
+}
+
+void Canvas::mouseMoveEvent(QMouseEvent *event)
+{
+    event->accept();
+    Tile ttile= Tile();
+    ttile.tileset_offset= tileset_selected_tile;
+
+    int tilex= CANVASX_TO_COLUMN(event->pos().x());
+    int tiley= CANVASY_TO_ROW(event->pos().y());
+
+    switch (mouse_down_button)
+    {
+    case Qt::LeftButton:
+        if (tileset_selected_tile < 0)
+            return;
+        Plot(tiley, tilex, ttile);
+        RedrawTile(tiley, tilex);
+        break;
+    case Qt::RightButton:
+        ttile.tileset_offset= 0;
+        Plot(tiley, tilex, ttile);
+        RedrawTile(tiley, tilex);
+        break;
+    default:
+        break;
+    }
+    mouse_has_moved= true;
+}
+
+void Canvas::mouseReleaseEvent(QMouseEvent *event)
+{
+    event->accept();
+
+    if (!mouse_has_moved && mouse_down_button == Qt::RightButton)
+        OpenContextMenu(event->globalPos(), event->pos());
+
+    mouse_down_button= Qt::NoButton;
+    mouse_has_moved= false;
+}

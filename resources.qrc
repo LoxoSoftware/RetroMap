@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/predefined_tiles">
+        <file alias="test_tile1">res/test_tile1.bmp</file>
+        <file alias="test_tileset">res/test_tileset1.bmp</file>
+    </qresource>
+</RCC>
