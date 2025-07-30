@@ -18,7 +18,7 @@ set(PROJECT_SOURCES
         canvas.h canvas.cpp
         resources.qrc
         tile.h tile.cpp
-        mapman.h mapman.cpp
+        project.h project.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

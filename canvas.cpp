@@ -1,10 +1,9 @@
 #include "canvas.h"
-#include <stdio.h>
+#include "project.h"
 #include <QMenu>
 #include <QMouseEvent>
 
-extern Tileset tileset;
-extern int tileset_selected_tile;
+extern Project project;
 
 #define CANVASX_TO_COLUMN(x)    (x/TILE_W/scaling)
 #define CANVASY_TO_ROW(y)       (y/TILE_H/scaling)
@@ -104,14 +103,14 @@ void Canvas::RedrawTile(int row, int column)
     pen.setStyle(Qt::SolidLine);
     Tile* ttile= &tiles[column+row*size.width()];
 
-    if (ttile->tileset_offset >= tileset.tiles.count())
+    if (ttile->tileset_offset >= project.tileset.tiles.count())
     {
         //Tile is outside the bounds of the tileset
         scene.addRect(column*TILE_W*scaling, row*TILE_H*scaling, TILE_W*scaling, TILE_H*scaling, pen, bru);
     }
     else
     {
-        QPixmap pix= QPixmap::fromImage(tileset.tiles[ttile->tileset_offset]);
+        QPixmap pix= QPixmap::fromImage(project.tileset.tiles[ttile->tileset_offset]);
         QGraphicsPixmapItem* item= new QGraphicsPixmapItem(pix);
         item->setX(column*TILE_W*scaling);
         item->setY(row*TILE_H*scaling);
@@ -142,15 +141,15 @@ void Canvas::OpenContextMenu(QPoint screen_pos, QPoint canvas_pos)
     QMenu* menu_palette= menu->addMenu("Change palette index");
     for (int i=0; i<PALETTE_H; i++)
         menu_palette->addAction(""+QString::number(i));
-    menu_palette->setEnabled(tileset.is4bpp);
+    menu_palette->setEnabled(project.tileset.is4bpp);
     menu->addAction("Flip tile horizontally");
     menu->addAction("Flip tile vertically");
     menu->addSeparator();
     QString stat_lbl= "pos: ["+QString::number(tilex)+","+ QString::number(tiley)+"]"
-                                                                                          " flip: ["+((tiles[tilen].hflip)?"H":" ")+((tiles[tilen].vflip)?"V":" ")+"]";
+                    " flip: ["+((tiles[tilen].hflip)?"H":" ")+((tiles[tilen].vflip)?"V":" ")+"]";
     menu->addAction(stat_lbl)->setEnabled(false);
     menu->setWindowModality(Qt::ApplicationModal);
-    menu->setGeometry(QRect(screen_pos,QSize(180,160)));
+    menu->setGeometry(QRect(screen_pos,QSize(180,140)));
     menu->show();
 }
 
@@ -167,7 +166,7 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
     Tile ttile= Tile();
-    ttile.tileset_offset= tileset_selected_tile;
+    ttile.tileset_offset= project.tileset_selected_tile;
 
     int tilex= CANVASX_TO_COLUMN(event->pos().x());
     int tiley= CANVASY_TO_ROW(event->pos().y());
@@ -175,7 +174,7 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
     switch (mouse_down_button)
     {
     case Qt::LeftButton:
-        if (tileset_selected_tile < 0)
+        if (project.tileset_selected_tile < 0)
             return;
         Plot(tiley, tilex, ttile);
         RedrawTile(tiley, tilex);
