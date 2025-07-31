@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    project.canvas_container= ui->winCanvasArea;
     CheckCanvasPresent();
     ui->action16_color_mode->setChecked(project.tileset.is4bpp);
 
@@ -33,7 +34,7 @@ void MainWindow::on_actionQuit_triggered()
 
 void MainWindow::on_actionNew_triggered()
 {
-    project.editor_canvas= new Canvas(ui->winCanvasArea, 32, 32);
+    project.CreateNew(32, 32);
 
     CheckCanvasPresent();
 
@@ -42,8 +43,6 @@ void MainWindow::on_actionNew_triggered()
         printf("Error creating canvas!\n");
         exit(1);
     }
-
-    project.editor_canvas->Clear(0);
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event)

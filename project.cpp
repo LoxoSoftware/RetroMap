@@ -7,6 +7,12 @@ Project::Project()
 
 Project::~Project() {}
 
+int Project::CreateNew(int width_tiles, int height_tiles)
+{
+    editor_canvas= new Canvas(canvas_container, 32, 32);
+    return 0;
+}
+
 int Project::SaveTo(QString fname)
 {
     return 0;
