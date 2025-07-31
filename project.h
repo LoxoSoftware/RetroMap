@@ -17,10 +17,11 @@ public:
     int LoadFrom(QString fname);
 
     //Private members are for sigmas
-    QWidget* canvas_container= nullptr;
-    Canvas* editor_canvas= nullptr;
-    Tileset tileset;
-    int tileset_selected_tile= -1;
+    QString     project_fpath= "";
+    QWidget*    canvas_container= nullptr;
+    Canvas*     editor_canvas= nullptr;
+    Tileset     tileset;
+    int         tileset_selected_tile= -1;
 };
 
 #endif // PROJECT_H
