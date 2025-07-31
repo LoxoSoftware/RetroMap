@@ -31,6 +31,10 @@ private slots:
 
     void on_action16_color_mode_changed();
 
+    void on_actionSave_triggered();
+
+    void on_actionSave_as_triggered();
+
 private:
     Ui::MainWindow *ui;
     void resizeEvent(QResizeEvent *event);

@@ -146,6 +146,30 @@ void MainWindow::on_actionSave_triggered()
     if (!project.editor_canvas)
         return;
 
-    project.SaveTo("testfile");
+    if (project.project_fpath == "")
+    {
+        on_actionSave_as_triggered();
+        return;
+    }
+    else
+    {
+        project.SaveTo(project.project_fpath);
+    }
+}
+
+
+void MainWindow::on_actionSave_as_triggered()
+{
+    if (!project.editor_canvas)
+        return;
+
+    QString ofname;
+    ofname= QFileDialog::getSaveFileName(this, "Save project as...", "", "Mapped project file (*.mpd)");
+
+    if (ofname == "")
+        return;
+
+    project.SaveTo(ofname);
+    project.project_fpath= ofname;
 }
 

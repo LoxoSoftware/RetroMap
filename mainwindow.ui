@@ -44,7 +44,7 @@
          <x>0</x>
          <y>0</y>
          <width>566</width>
-         <height>546</height>
+         <height>532</height>
         </rect>
        </property>
       </widget>
@@ -58,7 +58,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>20</height>
+     <height>28</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -68,6 +68,7 @@
     <addaction name="actionNew"/>
     <addaction name="actionLoad"/>
     <addaction name="actionSave"/>
+    <addaction name="actionSave_as"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -170,7 +171,7 @@
    </property>
    <property name="minimumSize">
     <size>
-     <width>200</width>
+     <width>216</width>
      <height>181</height>
     </size>
    </property>
@@ -835,6 +836,14 @@
    </property>
    <property name="text">
     <string>16 color mode</string>
+   </property>
+  </action>
+  <action name="actionSave_as">
+   <property name="icon">
+    <iconset theme="document-save-as"/>
+   </property>
+   <property name="text">
+    <string>Save as...</string>
    </property>
   </action>
  </widget>
