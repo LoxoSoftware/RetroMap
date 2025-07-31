@@ -5,6 +5,7 @@
 #include <QJsonDocument>
 #include <QFile>
 #include <QImage>
+#include <QFileDialog>
 
 Project::Project()
 {
@@ -15,6 +16,9 @@ Project::~Project() {}
 
 int Project::CreateNew(int width_tiles, int height_tiles)
 {
+    if (editor_canvas)
+        delete editor_canvas;
+
     editor_canvas= new Canvas(canvas_container, 32, 32);
     return 0;
 }
@@ -25,12 +29,12 @@ int Project::SaveTo(QString fname)
         return 1;
     if (!tileset.image)
     {
-        QMessageBox::critical(nullptr, "Cannot save project", "No tileset image is loaded");
+        QMessageBox::critical(canvas_container, "Cannot save project", "No tileset image is loaded");
         return 2;
     }
     if (!QFile::exists(tileset.image_fpath))
     {
-        QMessageBox::critical(nullptr, "Cannot save project", "Tileset image file is invalid");
+        QMessageBox::critical(canvas_container, "Cannot save project", "Tileset image file is invalid");
         return 3;
     }
 
@@ -56,10 +60,16 @@ int Project::SaveTo(QString fname)
 
     QImage oimage= QImage(*tileset.image);
     oimage.setColorTable(tileset.palette);
-    oimage.save(tileset.image_fpath);
+    //tileset.image->toPixelFormat(QImage::Format_Indexed8);
+    //oimage.save(tileset.image_fpath, "bmp");
 
     QFile ofile= QFile(fname);
     ofile.open(QIODevice::WriteOnly);
+    if (!ofile.isOpen())
+    {
+        QMessageBox::critical(canvas_container, "Cannot save project", "Cannot open output file for writing");
+        return 4;
+    }
     ofile.write(jdoc.toJson());
 
     return 0;
@@ -67,5 +77,42 @@ int Project::SaveTo(QString fname)
 
 int Project::LoadFrom(QString fname)
 {
+    QFile ifile= QFile(fname);
+    ifile.open(QIODevice::ReadOnly);
+    if (!ifile.isOpen())
+    {
+        QMessageBox::critical(canvas_container, "Cannot save project", "Cannot open input file for reading");
+        return 1;
+    }
+    QByteArray ifile_data= ifile.readAll();
+
+    QJsonDocument jdoc= QJsonDocument::fromJson(ifile_data);
+    QJsonArray jtilemap= jdoc["tilemap_tiles"].toArray();
+
+    CreateNew(jdoc["tilemap_columns"].toString().toInt(), jdoc["tilemap_rows"].toString().toInt());
+
+    if (!QFile::exists(jdoc["tileset_source"].toString()))
+        tileset.FromImage(QFileDialog::getOpenFileName(canvas_container, "Please locate missing tileset image", "", "Supported image files (*.bmp"));
+    else
+        tileset.FromImage(jdoc["tileset_source"].toString());
+
+    tileset.is4bpp= (jdoc["tileset_bpp"].toString() == "4"? true:false);
+
+    for (int iy=0; iy<editor_canvas->Size().height(); iy++)
+    {
+        for (int ix=0; ix<editor_canvas->Size().width(); ix++)
+        {
+            Tile ttile;
+            unsigned int tdata= jtilemap[ix+iy*editor_canvas->Size().width()].toInt();
+            ttile.tileset_offset=   (tdata)%0x0400;
+            ttile.vflip=            (tdata/0x0800)%2;
+            ttile.hflip=            (tdata/0x1000)%2;
+            ttile.palette_index=    (tdata/0x2000)%16;
+            editor_canvas->Plot(iy, ix, ttile);
+        }
+    }
+
+    editor_canvas->Redraw();
+
     return 0;
 }

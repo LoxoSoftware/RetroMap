@@ -129,7 +129,6 @@ void MainWindow::on_tblTiles_currentCellChanged(int currentRow, int currentColum
     project.tileset_selected_tile= currentColumn+currentRow*ui->tblTiles->columnCount();
 }
 
-
 void MainWindow::on_action16_color_mode_changed()
 {
     project.tileset.is4bpp= ui->action16_color_mode->isChecked();
@@ -171,5 +170,22 @@ void MainWindow::on_actionSave_as_triggered()
 
     project.SaveTo(ofname);
     project.project_fpath= ofname;
+}
+
+
+void MainWindow::on_actionLoad_triggered()
+{
+    QString ifname;
+    ifname= QFileDialog::getOpenFileName(this, "Open project", "", "Mapped project file (*.mpd)");
+
+    if (ifname == "")
+        return;
+
+    project.LoadFrom(ifname);
+    project.project_fpath= ifname;
+
+    CheckCanvasPresent();
+    UpdateTilesetTable();
+    UpdatePaletteTable();
 }
 
