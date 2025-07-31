@@ -19,9 +19,7 @@ Canvas::Canvas(QWidget* parent, int width, int height)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    tiles.clear();
-    for (int i=0; i<width*height; i++)
-        tiles+= Tile(0);
+    Clear(0);
 
     Redraw();
     show();
@@ -29,8 +27,9 @@ Canvas::Canvas(QWidget* parent, int width, int height)
 
 void Canvas::Clear(int bgtile)
 {
+    tiles.clear();
     for (int i=0; i<size.width()*size.height(); i++)
-        tiles[i].tileset_offset= bgtile;
+        tiles+= Tile(bgtile);
     Redraw();
 }
 
@@ -181,6 +180,9 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
         break;
     case Qt::RightButton:
         ttile.tileset_offset= 0;
+        ttile.hflip= false;
+        ttile.vflip= false;
+        ttile.palette_index= 0;
         Plot(tiley, tilex, ttile);
         RedrawTile(tiley, tilex);
         break;
