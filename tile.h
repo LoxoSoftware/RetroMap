@@ -29,8 +29,8 @@ class Tileset
 public:
     QImage*         image;
     QString         image_fpath;
-    QList<QImage>   tiles;
-    QRgb            palette[PALETTE_H][PALETTE_W];
+    QVector<QImage> tiles;
+    QVector<QRgb>   palette;
     bool            is4bpp= true;
 
     bool            FromImage();

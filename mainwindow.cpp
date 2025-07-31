@@ -89,7 +89,7 @@ void MainWindow::UpdatePaletteTable()
         {
             QTableWidgetItem* item= new QTableWidgetItem();
             QBrush bru_bg;
-            bru_bg.setColor(project.tileset.palette[iy][ix]);
+            bru_bg.setColor(project.tileset.palette[ix+iy*PALETTE_W]);
             bru_bg.setStyle(Qt::SolidPattern);
             item->setBackground(bru_bg);
             ui->tblPalette->setItem(iy, ix, item);
@@ -138,5 +138,14 @@ void MainWindow::on_action16_color_mode_changed()
         ui->dckPalette->setWindowTitle("Palettes (4bpp)");
     else
         ui->dckPalette->setWindowTitle("Palette (8bpp)");
+}
+
+
+void MainWindow::on_actionSave_triggered()
+{
+    if (!project.editor_canvas)
+        return;
+
+    project.SaveTo("testfile");
 }
 

@@ -49,7 +49,7 @@ bool Tileset::FromImage()
     {
         for (int ipx=0; ipx<PALETTE_W; ipx++)
         {
-            palette[ipy][ipx]= image->colorTable()[ipx+PALETTE_W*ipy];
+            palette+= image->colorTable()[ipx+PALETTE_W*ipy];
         }
     }
 
