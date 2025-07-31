@@ -64,5 +64,7 @@ bool Tileset::FromImage(QString fname)
         printf("Cannot create QPixmap from image file!\n");
         return false;
     }
+    image_fpath= fname;
+
     return FromImage();
 }
