@@ -6,6 +6,9 @@ Tile::Tile() {}
 Tile::Tile(int tileset_offset)
 {
     this->tileset_offset= tileset_offset;
+    this->hflip= false;
+    this->vflip= false;
+    this->palette_index= 0;
 }
 
 ///// Tileset operations /////
