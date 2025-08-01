@@ -2,6 +2,7 @@
 #include "project.h"
 #include <QMenu>
 #include <QMouseEvent>
+#include <QAction>
 
 extern Project project;
 
@@ -145,8 +146,13 @@ void Canvas::OpenContextMenu(QPoint screen_pos, QPoint canvas_pos)
     menu->addAction("Flip tile vertically");
     menu->addSeparator();
     QString stat_lbl= "pos: ["+QString::number(tilex)+","+ QString::number(tiley)+"]"
-                    " flip: ["+((tiles[tilen].hflip)?"H":" ")+((tiles[tilen].vflip)?"V":" ")+"]";
+                    " flip: ["+((tiles[tilen].hflip)?"H ":"- ")+((tiles[tilen].vflip)?"V":"-")+"]";
     menu->addAction(stat_lbl)->setEnabled(false);
+
+    connect(menu->actions()[0], &QAction::triggered, this, &Canvas::onMenuClearWithBgTile_triggered);
+    connect(menu->actions()[2], &QAction::triggered, this, &Canvas::onMenuHFlip_triggered);
+    connect(menu->actions()[3], &QAction::triggered, this, &Canvas::onMenuVFlip_triggered);
+
     menu->setWindowModality(Qt::ApplicationModal);
     menu->setGeometry(QRect(screen_pos,QSize(180,140)));
     menu->show();
@@ -159,6 +165,7 @@ void Canvas::mousePressEvent(QMouseEvent *event)
     if (mouse_down_button != Qt::RightButton)
         mouseMoveEvent(event);
     mouse_has_moved= false;
+    mouse_last_pos= event->pos();
 }
 
 void Canvas::mouseMoveEvent(QMouseEvent *event)
@@ -201,4 +208,30 @@ void Canvas::mouseReleaseEvent(QMouseEvent *event)
 
     mouse_down_button= Qt::NoButton;
     mouse_has_moved= false;
+}
+
+void Canvas::onMenuClearWithBgTile_triggered()
+{
+    Tile ttile;
+    ttile.tileset_offset= 0;
+    ttile.hflip= false;
+    ttile.vflip= false;
+    ttile.palette_index= 0;
+    PlotUnscaled(mouse_last_pos, ttile);
+}
+
+void Canvas::onMenuHFlip_triggered()
+{
+    int xt= CANVASX_TO_COLUMN(mouse_last_pos.x());
+    int yt= CANVASY_TO_ROW(mouse_last_pos.y());
+    Tile* tile= &tiles[xt+yt*size.width()];
+    tile->hflip = !tile->hflip;
+}
+
+void Canvas::onMenuVFlip_triggered()
+{
+    int xt= CANVASX_TO_COLUMN(mouse_last_pos.x());
+    int yt= CANVASY_TO_ROW(mouse_last_pos.y());
+    Tile* tile= &tiles[xt+yt*size.width()];
+    tile->vflip = !tile->vflip;
 }

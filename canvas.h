@@ -40,6 +40,11 @@ protected:
     void mouseMoveEvent(QMouseEvent *event);
     void mouseReleaseEvent(QMouseEvent *event);
 
+private slots:
+    void onMenuClearWithBgTile_triggered();
+    void onMenuHFlip_triggered();
+    void onMenuVFlip_triggered();
+
 private:
     Ui::Canvas* ui;
     QSize size;
@@ -49,6 +54,7 @@ private:
     int scaling= 2;
     Qt::MouseButton mouse_down_button= Qt::NoButton;
     bool mouse_has_moved= false;
+    QPoint mouse_last_pos;
 
     void UpdateScaling();
     void OpenContextMenu(QPoint screen_pos, QPoint canvas_pos);
