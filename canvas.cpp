@@ -138,20 +138,23 @@ void Canvas::OpenContextMenu(QPoint screen_pos, QPoint canvas_pos)
 
     QMenu* menu= new QMenu();
     menu->addAction("Clear tile with background");
+    connect(menu->actions().last(), &QAction::triggered, this, &Canvas::onMenuClearWithBgTile_triggered);
     QMenu* menu_palette= menu->addMenu("Change palette index");
     for (int i=0; i<PALETTE_H; i++)
         menu_palette->addAction(""+QString::number(i));
     menu_palette->setEnabled(project.tileset.is4bpp);
     menu->addAction("Flip tile horizontally");
+    menu->actions().last()->setCheckable(true);
+    menu->actions().last()->setChecked(tiles[tilen].hflip);
+    connect(menu->actions().last(), &QAction::triggered, this, &Canvas::onMenuHFlip_triggered);
     menu->addAction("Flip tile vertically");
+    menu->actions().last()->setCheckable(true);
+    menu->actions().last()->setChecked(tiles[tilen].vflip);
+    connect(menu->actions().last(), &QAction::triggered, this, &Canvas::onMenuVFlip_triggered);
     menu->addSeparator();
     QString stat_lbl= "pos: ["+QString::number(tilex)+","+ QString::number(tiley)+"]"
                     " flip: ["+((tiles[tilen].hflip)?"H ":"- ")+((tiles[tilen].vflip)?"V":"-")+"]";
     menu->addAction(stat_lbl)->setEnabled(false);
-
-    connect(menu->actions()[0], &QAction::triggered, this, &Canvas::onMenuClearWithBgTile_triggered);
-    connect(menu->actions()[2], &QAction::triggered, this, &Canvas::onMenuHFlip_triggered);
-    connect(menu->actions()[3], &QAction::triggered, this, &Canvas::onMenuVFlip_triggered);
 
     menu->setWindowModality(Qt::ApplicationModal);
     menu->setGeometry(QRect(screen_pos,QSize(180,140)));
@@ -217,7 +220,10 @@ void Canvas::onMenuClearWithBgTile_triggered()
     ttile.hflip= false;
     ttile.vflip= false;
     ttile.palette_index= 0;
-    PlotUnscaled(mouse_last_pos, ttile);
+    int xt= CANVASX_TO_COLUMN(mouse_last_pos.x());
+    int yt= CANVASY_TO_ROW(mouse_last_pos.y());
+    Plot(yt, xt, ttile);
+    RedrawTile(yt, xt);
 }
 
 void Canvas::onMenuHFlip_triggered()
