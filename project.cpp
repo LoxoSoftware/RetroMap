@@ -92,7 +92,7 @@ int Project::LoadFrom(QString fname)
     CreateNew(jdoc["tilemap_columns"].toString().toInt(), jdoc["tilemap_rows"].toString().toInt());
 
     if (!QFile::exists(jdoc["tileset_source"].toString()))
-        tileset.FromImage(QFileDialog::getOpenFileName(canvas_container, "Please locate missing tileset image", "", "Supported image files (*.bmp"));
+        tileset.FromImage(QFileDialog::getOpenFileName(canvas_container, "Please locate missing tileset image", "", "Supported image formats (*.bmp)"));
     else
         tileset.FromImage(jdoc["tileset_source"].toString());
 
