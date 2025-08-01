@@ -111,6 +111,9 @@ void Canvas::RedrawTile(int row, int column)
     else
     {
         QPixmap pix= QPixmap::fromImage(project.tileset.tiles[ttile->tileset_offset]);
+        QTransform trans= QTransform();
+        trans= trans.scale((ttile->hflip?-1:1), (ttile->vflip?-1:1));
+        pix= pix.transformed(trans);
         QGraphicsPixmapItem* item= new QGraphicsPixmapItem(pix);
         item->setX(column*TILE_W*scaling);
         item->setY(row*TILE_H*scaling);
@@ -232,6 +235,7 @@ void Canvas::onMenuHFlip_triggered()
     int yt= CANVASY_TO_ROW(mouse_last_pos.y());
     Tile* tile= &tiles[xt+yt*size.width()];
     tile->hflip = !tile->hflip;
+    RedrawTile(yt, xt);
 }
 
 void Canvas::onMenuVFlip_triggered()
@@ -240,4 +244,5 @@ void Canvas::onMenuVFlip_triggered()
     int yt= CANVASY_TO_ROW(mouse_last_pos.y());
     Tile* tile= &tiles[xt+yt*size.width()];
     tile->vflip = !tile->vflip;
+    RedrawTile(yt, xt);
 }
