@@ -105,8 +105,8 @@ int Project::LoadFrom(QString fname)
             Tile ttile;
             unsigned int tdata= jtilemap[ix+iy*editor_canvas->Size().width()].toInt();
             ttile.tileset_offset=   (tdata)%0x0400;
-            ttile.vflip=            (tdata/0x0800)%2;
-            ttile.hflip=            (tdata/0x1000)%2;
+            ttile.hflip=            (tdata/0x0800)%2;
+            ttile.vflip=            (tdata/0x1000)%2;
             ttile.palette_index=    (tdata/0x2000)%16;
             editor_canvas->Plot(iy, ix, ttile);
         }
