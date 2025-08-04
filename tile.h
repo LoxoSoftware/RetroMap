@@ -31,7 +31,7 @@ public:
     QString         image_fpath;
     QVector<QImage> tiles;
     QVector<QRgb>   palette;
-    bool            is4bpp= true;
+    bool            is4bpp= false;
 
     bool            FromImage();
     bool            FromImage(QString fname);
