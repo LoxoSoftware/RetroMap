@@ -23,7 +23,7 @@ int Project::CreateNew(int width_tiles, int height_tiles)
     return 0;
 }
 
-int Project::SaveTo(QString fname)
+int Project::SaveToFile(QString fname)
 {
     if (!editor_canvas)
         return 1;
@@ -75,7 +75,7 @@ int Project::SaveTo(QString fname)
     return 0;
 }
 
-int Project::LoadFrom(QString fname)
+int Project::LoadFromFile(QString fname)
 {
     QFile ifile= QFile(fname);
     ifile.open(QIODevice::ReadOnly);

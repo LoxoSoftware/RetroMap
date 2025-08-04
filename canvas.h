@@ -33,6 +33,8 @@ public:
     void Redraw();
     void RedrawTile(int row, int column);
 
+    QImage GetImage();
+
     QList<Tile> tiles;
 
 protected:

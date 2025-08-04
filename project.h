@@ -13,8 +13,9 @@ public:
     ~Project();
 
     int CreateNew(int width_tiles, int height_tiles);
-    int SaveTo(QString fname);
-    int LoadFrom(QString fname);
+    int SaveToFile(QString fname);
+    int LoadFromFile(QString fname);
+    int ExportToSourceFile(QString fname);
 
     //Private members are for sigmas
     QString     project_fpath= "";

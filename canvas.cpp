@@ -246,3 +246,39 @@ void Canvas::onMenuVFlip_triggered()
     tile->vflip = !tile->vflip;
     RedrawTile(yt, xt);
 }
+
+QImage Canvas::GetImage()
+{
+    QImage timg= QImage(size.width()*TILE_W, size.height()*TILE_H, QImage::Format_Indexed8);
+    timg.fill(0);
+    timg.setColorTable(project.tileset.palette);
+
+    //Manual rendering of tiles onto a QImage
+    for (int iyt=0; iyt<size.height(); iyt++)
+        for (int ixt=0; ixt<size.width(); ixt++)
+        {
+            for (int iy=0; iy<TILE_H; iy++)
+            {
+                unsigned char* timg_scanline= timg.scanLine(iy+iyt*TILE_H);
+                int tm_ti= ixt+iyt*size.width();
+                unsigned char* tile_scanline;
+
+                if (!tiles[tm_ti].vflip)
+                    tile_scanline= project.tileset.tiles[tiles[tm_ti].tileset_offset].scanLine(iy);
+                else
+                    tile_scanline= project.tileset.tiles[tiles[tm_ti].tileset_offset].scanLine(TILE_H-iy-1);
+
+                for (int ix=0; ix<TILE_W; ix++)
+                {
+                    unsigned char pixel= tile_scanline[ix];
+
+                    if (!tiles[tm_ti].hflip)
+                        timg_scanline[ix+ixt*TILE_W]= pixel;
+                    else
+                        timg_scanline[TILE_W-(ix+1)+ixt*TILE_W]= pixel;
+                }
+            }
+        }
+
+    return timg;
+}
