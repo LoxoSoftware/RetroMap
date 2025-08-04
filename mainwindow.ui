@@ -43,8 +43,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>566</width>
-         <height>532</height>
+         <width>556</width>
+         <height>533</height>
         </rect>
        </property>
       </widget>
@@ -58,7 +58,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>28</height>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -90,10 +90,20 @@
     <property name="title">
      <string>Tileset</string>
     </property>
+    <addaction name="actionImport_tileset_from_image"/>
+   </widget>
+   <widget class="QMenu" name="menuTilemap">
+    <property name="title">
+     <string>Tilemap</string>
+    </property>
     <addaction name="action16_color_mode"/>
+    <addaction name="separator"/>
+    <addaction name="actionExport_as_source_file"/>
+    <addaction name="actionExport_as_indexed_bitmap"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuTileset"/>
+   <addaction name="menuTilemap"/>
    <addaction name="menuView"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -125,7 +135,7 @@
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>82</width>
+       <width>84</width>
        <height>91</height>
       </rect>
      </property>
@@ -172,7 +182,7 @@
    <property name="minimumSize">
     <size>
      <width>216</width>
-     <height>181</height>
+     <height>185</height>
     </size>
    </property>
    <property name="features">
@@ -186,21 +196,7 @@
    </attribute>
    <widget class="QWidget" name="dockWidgetContents_2">
     <layout class="QGridLayout" name="gridLayout_3">
-     <item row="1" column="0">
-      <widget class="QPushButton" name="btnImportTilesetImage">
-       <property name="text">
-        <string>Import</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QPushButton" name="btnGenerateTileset">
-       <property name="text">
-        <string>Generate</string>
-       </property>
-      </widget>
-     </item>
-     <item row="0" column="0" colspan="2">
+     <item row="0" column="1">
       <widget class="QTableWidget" name="tblTiles">
        <property name="font">
         <font>
@@ -844,6 +840,39 @@
    </property>
    <property name="text">
     <string>Save as...</string>
+   </property>
+  </action>
+  <action name="actionImport_tileset_from_image">
+   <property name="icon">
+    <iconset theme="go-bottom"/>
+   </property>
+   <property name="text">
+    <string>Import from image</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+I</string>
+   </property>
+  </action>
+  <action name="actionExport_as_source_file">
+   <property name="icon">
+    <iconset theme="go-top"/>
+   </property>
+   <property name="text">
+    <string>Export as source file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="actionExport_as_indexed_bitmap">
+   <property name="icon">
+    <iconset theme="go-top"/>
+   </property>
+   <property name="text">
+    <string>Export as indexed bitmap</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+E</string>
    </property>
   </action>
  </widget>

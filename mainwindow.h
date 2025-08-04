@@ -25,12 +25,14 @@ private slots:
     void on_actionNew_triggered();
     void on_actionZoom_in_triggered();
     void on_actionZoom_out_triggered();
-    void on_btnImportTilesetImage_clicked();
     void on_tblTiles_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
     void on_action16_color_mode_changed();
     void on_actionSave_triggered();
     void on_actionSave_as_triggered();
     void on_actionLoad_triggered();
+    void on_actionImport_tileset_from_image_triggered();
+
+    void on_actionExport_as_indexed_bitmap_triggered();
 
 private:
     Ui::MainWindow *ui;

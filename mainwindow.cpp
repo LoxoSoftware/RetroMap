@@ -60,6 +60,7 @@ void MainWindow::CheckCanvasPresent()
     ui->dckTiles->setVisible((bool)project.editor_canvas);
     ui->dckToolbox->setVisible((bool)project.editor_canvas);
     ui->menuTileset->setEnabled((bool)project.editor_canvas);
+    ui->menuTilemap->setEnabled((bool)project.editor_canvas);
     ui->menuView->setEnabled((bool)project.editor_canvas);
 }
 
@@ -111,19 +112,6 @@ void MainWindow::on_actionZoom_out_triggered()
     project.editor_canvas->ZoomOut();
 }
 
-void MainWindow::on_btnImportTilesetImage_clicked()
-{
-    if (!project.editor_canvas)
-        return;
-    QString ifile_name= QFileDialog::getOpenFileName(this, "Import tileset from image", "", "Supported image formats (*.bmp)");
-    project.tileset.FromImage(ifile_name);
-    ui->tblTiles->setRowCount(0);
-    UpdateTilesetTable();
-    UpdatePaletteTable();
-    project.editor_canvas->Redraw();
-}
-
-
 void MainWindow::on_tblTiles_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
 {
     project.tileset_selected_tile= currentColumn+currentRow*ui->tblTiles->columnCount();
@@ -152,7 +140,7 @@ void MainWindow::on_actionSave_triggered()
     }
     else
     {
-        project.SaveTo(project.project_fpath);
+        project.SaveToFile(project.project_fpath);
     }
 }
 
@@ -168,7 +156,7 @@ void MainWindow::on_actionSave_as_triggered()
     if (ofname == "")
         return;
 
-    project.SaveTo(ofname);
+    project.SaveToFile(ofname);
     project.project_fpath= ofname;
 }
 
@@ -181,11 +169,37 @@ void MainWindow::on_actionLoad_triggered()
     if (ifname == "")
         return;
 
-    project.LoadFrom(ifname);
+    project.LoadFromFile(ifname);
     project.project_fpath= ifname;
 
     CheckCanvasPresent();
     UpdateTilesetTable();
     UpdatePaletteTable();
+}
+
+
+void MainWindow::on_actionImport_tileset_from_image_triggered()
+{
+    if (!project.editor_canvas)
+        return;
+    QString ifile_name= QFileDialog::getOpenFileName(this, "Import tileset from image", "", "Supported image formats (*.bmp)");
+    if (ifile_name == "")
+        return;
+    project.tileset.FromImage(ifile_name);
+    ui->tblTiles->setRowCount(0);
+    UpdateTilesetTable();
+    UpdatePaletteTable();
+    project.editor_canvas->Redraw();
+}
+
+
+void MainWindow::on_actionExport_as_indexed_bitmap_triggered()
+{
+    if (!project.editor_canvas)
+        return;
+    QString ofile_name= QFileDialog::getSaveFileName(this, "Export map as bitmap", "", "Indexed bitmap (*.bmp)");
+    if (ofile_name == "")
+        return;
+    project.editor_canvas->GetImage().save(ofile_name, "bmp");
 }
 
