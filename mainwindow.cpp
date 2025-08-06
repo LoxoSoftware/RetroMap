@@ -187,6 +187,7 @@ void MainWindow::on_actionImport_tileset_from_image_triggered()
         return;
     project.tileset.FromImage(ifile_name);
     ui->tblTiles->setRowCount(0);
+    project.tileset.Optimize(Tileset::OptimizeDefault);
     UpdateTilesetTable();
     UpdatePaletteTable();
     project.editor_canvas->Redraw();
@@ -201,5 +202,13 @@ void MainWindow::on_actionExport_as_indexed_bitmap_triggered()
     if (ofile_name == "")
         return;
     project.editor_canvas->GetImage().save(ofile_name, "bmp");
+}
+
+
+void MainWindow::on_actionOptimize_tileset_triggered()
+{
+    project.tileset.Optimize(Tileset::OptimizeWithFlip);
+    UpdateTilesetTable();
+    project.editor_canvas->Redraw();
 }
 

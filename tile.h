@@ -33,8 +33,18 @@ public:
     QVector<QRgb>   palette;
     bool            is4bpp= false;
 
+    enum optimize_flags_t {
+        OptimizeDefault = 0,
+        OptimizeWithFlip = 1,
+        OptimizeWithPalette = 2,
+    };
+
     bool            FromImage();
     bool            FromImage(QString fname);
+    void            Optimize(Tileset::optimize_flags_t optiflags=Tileset::OptimizeDefault);
+
+protected:
+    unsigned long   img_hash(QImage* srcimg);
 };
 
 #endif // TILE_HPP
