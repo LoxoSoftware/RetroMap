@@ -42,9 +42,6 @@ public:
     bool            FromImage();
     bool            FromImage(QString fname);
     void            Optimize(Tileset::optimize_flags_t optiflags=Tileset::OptimizeDefault);
-
-protected:
-    unsigned long   img_hash(QImage* srcimg);
 };
 
 #endif // TILE_HPP
