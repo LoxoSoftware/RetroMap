@@ -31,8 +31,8 @@ private slots:
     void on_actionSave_as_triggered();
     void on_actionLoad_triggered();
     void on_actionImport_tileset_from_image_triggered();
-
     void on_actionExport_as_indexed_bitmap_triggered();
+    void on_actionOptimize_tileset_triggered();
 
 private:
     Ui::MainWindow *ui;

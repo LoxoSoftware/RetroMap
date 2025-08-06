@@ -43,8 +43,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>556</width>
-         <height>533</height>
+         <width>566</width>
+         <height>546</height>
         </rect>
        </property>
       </widget>
@@ -58,7 +58,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>23</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -91,6 +91,7 @@
      <string>Tileset</string>
     </property>
     <addaction name="actionImport_tileset_from_image"/>
+    <addaction name="actionOptimize_tileset"/>
    </widget>
    <widget class="QMenu" name="menuTilemap">
     <property name="title">
@@ -873,6 +874,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+E</string>
+   </property>
+  </action>
+  <action name="actionOptimize_tileset">
+   <property name="text">
+    <string>Optimize</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+O</string>
    </property>
   </action>
  </widget>
