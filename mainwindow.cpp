@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 #include "project.h"
 #include <QFileDialog>
+#include <QMessageBox>
 #include <math.h>
 
 Project project;
@@ -208,6 +209,13 @@ void MainWindow::on_actionExport_as_indexed_bitmap_triggered()
 
 void MainWindow::on_actionOptimize_tileset_triggered()
 {
+    if (!project.tileset.image || !project.tileset.tiles.count())
+    {
+        ui->action16_color_mode->setChecked(false);
+        project.tileset.is4bpp= false;
+        QMessageBox::critical(this, "Optimize tileset", "Please import a tileset first!");
+        return;
+    }
     project.tileset.Optimize(Tileset::OptimizeWithFlip);
     UpdateTilesetTable();
     project.editor_canvas->Redraw();
@@ -216,6 +224,13 @@ void MainWindow::on_actionOptimize_tileset_triggered()
 
 void MainWindow::on_action16_color_mode_triggered()
 {
+    if (!project.tileset.image || !project.tileset.tiles.count())
+    {
+        ui->action16_color_mode->setChecked(false);
+        project.tileset.is4bpp= false;
+        QMessageBox::critical(this, "Change color mode", "Please import a tileset first!");
+        return;
+    }
     project.tileset.is4bpp= ui->action16_color_mode->isChecked();
     project.editor_canvas->Redraw();
     UpdatePaletteTable();
