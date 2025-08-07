@@ -161,29 +161,31 @@ void Canvas::OpenContextMenu(QPoint screen_pos, QPoint canvas_pos)
     int tiley= (canvas_pos.y()/TILE_H)/scaling;
     int tilen= tilex+tiley*size.width();
 
-    QMenu* menu= new QMenu();
-    menu->addAction("Clear tile with background");
-    connect(menu->actions().last(), &QAction::triggered, this, &Canvas::onMenuClearWithBgTile_triggered);
-    QMenu* menu_palette= menu->addMenu("Change palette index");
-    for (int i=0; i<PALETTE_H; i++)
-        menu_palette->addAction(""+QString::number(i));
-    menu_palette->setEnabled(project.tileset.is4bpp);
-    menu->addAction("Flip tile horizontally");
-    menu->actions().last()->setCheckable(true);
-    menu->actions().last()->setChecked(tiles[tilen].hflip);
-    connect(menu->actions().last(), &QAction::triggered, this, &Canvas::onMenuHFlip_triggered);
-    menu->addAction("Flip tile vertically");
-    menu->actions().last()->setCheckable(true);
-    menu->actions().last()->setChecked(tiles[tilen].vflip);
-    connect(menu->actions().last(), &QAction::triggered, this, &Canvas::onMenuVFlip_triggered);
-    menu->addSeparator();
-    QString stat_lbl= "pos: ["+QString::number(tilex)+","+ QString::number(tiley)+"]"
-                    " flip: ["+((tiles[tilen].hflip)?"H ":"- ")+((tiles[tilen].vflip)?"V":"-")+"]";
-    menu->addAction(stat_lbl)->setEnabled(false);
+    if (context_menu)
+        delete context_menu;
 
-    menu->setWindowModality(Qt::ApplicationModal);
-    menu->setGeometry(QRect(screen_pos,QSize(180,140)));
-    menu->show();
+    context_menu= new QMenu();
+    context_menu->addAction("Clear tile with background");
+    connect(context_menu->actions().last(), &QAction::triggered, this, &Canvas::onMenuClearWithBgTile_triggered);
+    context_menu_palette_sel= context_menu->addMenu("Palette index: "+QString::number(tiles[tilen].palette_index)+" (change)");
+    for (int i=0; i<PALETTE_H; i++)
+    {
+        context_menu_palette_sel->addAction(""+QString::number(i));
+    }
+    connect(context_menu_palette_sel, &QMenu::triggered, this, &Canvas::onMenuChangePal_triggered);
+    context_menu_palette_sel->setEnabled(project.tileset.is4bpp);
+    context_menu->addAction("Flip tile horizontally");
+    context_menu->actions().last()->setCheckable(true);
+    context_menu->actions().last()->setChecked(tiles[tilen].hflip);
+    connect(context_menu->actions().last(), &QAction::triggered, this, &Canvas::onMenuHFlip_triggered);
+    context_menu->addAction("Flip tile vertically");
+    context_menu->actions().last()->setCheckable(true);
+    context_menu->actions().last()->setChecked(tiles[tilen].vflip);
+    connect(context_menu->actions().last(), &QAction::triggered, this, &Canvas::onMenuVFlip_triggered);
+
+    context_menu->setWindowModality(Qt::ApplicationModal);
+    context_menu->setGeometry(QRect(screen_pos,QSize(190,110)));
+    context_menu->show();
 }
 
 void Canvas::mousePressEvent(QMouseEvent *event)
@@ -269,6 +271,15 @@ void Canvas::onMenuVFlip_triggered()
     int yt= CANVASY_TO_ROW(mouse_last_pos.y());
     Tile* tile= &tiles[xt+yt*size.width()];
     tile->vflip = !tile->vflip;
+    RedrawTile(yt, xt);
+}
+
+void Canvas::onMenuChangePal_triggered(QAction* selected_action)
+{
+    int xt= CANVASX_TO_COLUMN(mouse_last_pos.x());
+    int yt= CANVASY_TO_ROW(mouse_last_pos.y());
+    Tile* tile= &tiles[xt+yt*size.width()];
+    tile->palette_index= std::strtol(selected_action->text().toLocal8Bit(), NULL, 10);
     RedrawTile(yt, xt);
 }
 

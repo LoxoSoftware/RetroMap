@@ -5,6 +5,7 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
+#include <QMenu>
 #include "tile.h"
 
 #define CANVAS_MAX_SCALING      10
@@ -46,6 +47,7 @@ private slots:
     void onMenuClearWithBgTile_triggered();
     void onMenuHFlip_triggered();
     void onMenuVFlip_triggered();
+    void onMenuChangePal_triggered(QAction*);
 
 private:
     Ui::Canvas* ui;
@@ -53,6 +55,8 @@ private:
     QGraphicsScene scene;
     QBrush brush;
     QPen pen;
+    QMenu* context_menu= nullptr;
+    QMenu* context_menu_palette_sel= nullptr;
     int scaling= 2;
     Qt::MouseButton mouse_down_button= Qt::NoButton;
     bool mouse_has_moved= false;
