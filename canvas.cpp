@@ -110,10 +110,32 @@ void Canvas::RedrawTile(int row, int column)
     }
     else
     {
-        QPixmap pix= QPixmap::fromImage(project.tileset.tiles[ttile->tileset_offset]);
+        QPixmap pix;
         QTransform trans= QTransform();
+
+        if (project.tileset.is4bpp)
+        {
+            //Clamp 256 color indexes to 16 colors of one of 16 palettes
+            QImage pix_tf= project.tileset.tiles[ttile->tileset_offset];
+
+            for (int iy=0; iy<pix_tf.height(); iy++)
+            {
+                unsigned char* slptr= pix_tf.scanLine(iy);
+
+                for (int ix=0; ix<pix_tf.width(); ix++)
+                {
+                    slptr[ix]= tiles[column+row*size.width()].palette_index*PALETTE_W+(slptr[ix]%PALETTE_W);
+                }
+            }
+
+            pix= QPixmap::fromImage(pix_tf);
+        }
+        else
+            pix= QPixmap::fromImage(project.tileset.tiles[ttile->tileset_offset]);
+
         trans= trans.scale((ttile->hflip?-1:1), (ttile->vflip?-1:1));
         pix= pix.transformed(trans);
+
         QGraphicsPixmapItem* item= new QGraphicsPixmapItem(pix);
         item->setX(column*TILE_W*scaling);
         item->setY(row*TILE_H*scaling);
@@ -179,6 +201,9 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
     event->accept();
     Tile ttile= Tile();
     ttile.tileset_offset= project.tileset_selected_tile;
+    ttile.hflip= false;
+    ttile.vflip= false;
+    ttile.palette_index= 0;
 
     int tilex= CANVASX_TO_COLUMN(event->pos().x());
     int tiley= CANVASY_TO_ROW(event->pos().y());

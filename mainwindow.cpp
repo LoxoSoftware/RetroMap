@@ -96,6 +96,7 @@ void MainWindow::UpdatePaletteTable()
             ui->tblPalette->setItem(iy, ix, item);
         }
     }
+    ui->action16_color_mode->setChecked(project.tileset.is4bpp);
 }
 
 void MainWindow::on_actionZoom_in_triggered()
@@ -210,5 +211,14 @@ void MainWindow::on_actionOptimize_tileset_triggered()
     project.tileset.Optimize(Tileset::OptimizeWithFlip);
     UpdateTilesetTable();
     project.editor_canvas->Redraw();
+}
+
+
+void MainWindow::on_action16_color_mode_triggered()
+{
+    project.tileset.is4bpp= ui->action16_color_mode->isChecked();
+    project.editor_canvas->Redraw();
+    UpdatePaletteTable();
+    UpdateTilesetTable();
 }
 

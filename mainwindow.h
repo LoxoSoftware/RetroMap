@@ -34,6 +34,8 @@ private slots:
     void on_actionExport_as_indexed_bitmap_triggered();
     void on_actionOptimize_tileset_triggered();
 
+    void on_action16_color_mode_triggered();
+
 private:
     Ui::MainWindow *ui;
     void resizeEvent(QResizeEvent *event);
