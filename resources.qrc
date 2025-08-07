@@ -1,3 +1,11 @@
 <RCC>
-    <qresource prefix="/predefined_tiles"/>
+    <qresource prefix="/tool_icons">
+        <file alias="flip_pen">res/tool-flip_pen.png</file>
+        <file alias="tile_select">res/tool-tile_select.png</file>
+        <file alias="palette_pen">res/tool-palette_pen.png</file>
+        <file alias="pen">res/tool-pen.png</file>
+        <file alias="toolsize_3">res/toolsize-3.png</file>
+        <file alias="toolsize_2">res/toolsize-2.png</file>
+        <file alias="toolsize_1">res/toolsize-1.png</file>
+    </qresource>
 </RCC>
