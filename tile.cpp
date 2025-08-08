@@ -62,7 +62,7 @@ bool Tileset::FromImage()
 bool Tileset::FromImage(QString fname)
 {
     image= new QImage(fname);
-    if (!image)
+    if (!image || image->format() != QImage::Format_Indexed8)
     {
         printf("Cannot create QPixmap from image file!\n");
         return false;
@@ -74,9 +74,7 @@ bool Tileset::FromImage(QString fname)
 
 void Tileset::Optimize(Tileset::optimize_flags_t optiflags)
 {
-    QVector<unsigned long> hashes;
     QVector<QImage> new_tileset;
-    hashes.clear();
     new_tileset.clear();
 
     for (int it=0; it<tiles.count(); it++)
@@ -87,7 +85,7 @@ void Tileset::Optimize(Tileset::optimize_flags_t optiflags)
         if (tstile.format() != QImage::Format_Indexed8)
             exit(12);
 
-        int ind_found= ind_found= new_tileset.indexOf(tstile);
+        int ind_found= new_tileset.indexOf(tstile);
         bool vflipped= false, hflipped= false;
 
         //Flip the tiles for all possible combinations and calculate the hash for each one
@@ -143,4 +141,36 @@ void Tileset::Optimize(Tileset::optimize_flags_t optiflags)
     }
 
     tiles= new_tileset;
+    RebuildTilesetImage(16);
+}
+
+void Tileset::RebuildTilesetImage(int columns)
+{
+    if (!tiles.count())
+        return;
+
+    QImage timg= QImage(QSize(columns*TILE_W,tiles.count()/columns*TILE_H+TILE_H), QImage::Format_Indexed8);
+    timg.setColorTable(palette);
+    timg.fill(240);
+
+    for (int it=0; it<tiles.count(); it++)
+    {
+        QImage* ttile= &tiles[it];
+        int final_tx= (it*TILE_W)%(columns*TILE_W);
+        int final_ty= (it*TILE_W)/(columns*TILE_W)*TILE_H;
+
+        for (int ity=0; ity<TILE_H; ity++)
+        {
+            unsigned char* slptr= ttile->scanLine(ity);
+
+            for (int itx=0; itx<TILE_W; itx++)
+            {
+                timg.setPixel(final_tx+itx, final_ty+ity, slptr[itx]);
+            }
+        }
+    }
+
+    // if (image)
+    //     delete image;
+    image= new QImage(timg);
 }

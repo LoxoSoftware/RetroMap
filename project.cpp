@@ -58,10 +58,8 @@ int Project::SaveToFile(QString fname)
 
     QJsonDocument jdoc= QJsonDocument(jobj);
 
-    QImage oimage= QImage(*tileset.image);
-    oimage.setColorTable(tileset.palette);
-    //tileset.image->toPixelFormat(QImage::Format_Indexed8);
-    //oimage.save(tileset.image_fpath, "bmp");
+    tileset.image->setColorTable(tileset.palette);
+    tileset.image->save(tileset.image_fpath, "bmp");
 
     QFile ofile= QFile(fname);
     ofile.open(QIODevice::WriteOnly);
