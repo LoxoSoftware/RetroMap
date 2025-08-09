@@ -131,24 +131,24 @@
     <number>1</number>
    </attribute>
    <widget class="QWidget" name="dockWidgetContents">
-    <widget class="QPushButton" name="tlbFlipPen">
+    <widget class="QPushButton" name="tlbHFlipPen">
      <property name="geometry">
       <rect>
-       <x>10</x>
-       <y>70</y>
+       <x>60</x>
+       <y>100</y>
        <width>41</width>
        <height>41</height>
       </rect>
      </property>
      <property name="toolTip">
-      <string>Flip pen</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Horizontal flip mode&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On left click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's horizontal flip status to TRUE&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On right click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's horizontal flip status to FALSE&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="text">
       <string/>
      </property>
      <property name="icon">
       <iconset resource="resources.qrc">
-       <normaloff>:/tool_icons/flip_pen</normaloff>:/tool_icons/flip_pen</iconset>
+       <normaloff>:/tool_icons/hflip_pen</normaloff>:/tool_icons/hflip_pen</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -163,14 +163,14 @@
     <widget class="QPushButton" name="tlbPalettePen">
      <property name="geometry">
       <rect>
-       <x>60</x>
-       <y>70</y>
+       <x>10</x>
+       <y>100</y>
        <width>41</width>
        <height>41</height>
       </rect>
      </property>
      <property name="toolTip">
-      <string>Palette pen</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Palette mode (4bpp only)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On left click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's palette index to the selected one&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On right click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's palette index to 0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="text">
       <string/>
@@ -188,18 +188,21 @@
      <property name="checkable">
       <bool>true</bool>
      </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QPushButton" name="tlbPen">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>20</y>
+       <y>50</y>
        <width>41</width>
        <height>41</height>
       </rect>
      </property>
      <property name="toolTip">
-      <string>Pen</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Offset mode&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On left click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; paints with the selected tile&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On right click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; paints with the background tile (#0)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="text">
       <string/>
@@ -221,24 +224,24 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QPushButton" name="tlbTileSelect">
+    <widget class="QPushButton" name="tlbVFlipPen">
      <property name="geometry">
       <rect>
        <x>60</x>
-       <y>20</y>
+       <y>50</y>
        <width>41</width>
        <height>41</height>
       </rect>
      </property>
      <property name="toolTip">
-      <string>Selection tool</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Vertical flip mode&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On left click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's vertical flip status to TRUE&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On right click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's vertical flip status to FALSE&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="text">
       <string/>
      </property>
      <property name="icon">
       <iconset resource="resources.qrc">
-       <normaloff>:/tool_icons/tile_select</normaloff>:/tool_icons/tile_select</iconset>
+       <normaloff>:/tool_icons/vflip_pen</normaloff>:/tool_icons/vflip_pen</iconset>
      </property>
      <property name="iconSize">
       <size>
@@ -250,37 +253,11 @@
       <bool>true</bool>
      </property>
     </widget>
-    <widget class="QLabel" name="label">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>200</y>
-       <width>91</width>
-       <height>18</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Selected palette</string>
-     </property>
-    </widget>
-    <widget class="QSpinBox" name="spbPenPalette">
-     <property name="geometry">
-      <rect>
-       <x>30</x>
-       <y>230</y>
-       <width>51</width>
-       <height>24</height>
-      </rect>
-     </property>
-     <property name="maximum">
-      <number>15</number>
-     </property>
-    </widget>
     <widget class="QLabel" name="label_2">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>130</y>
+       <y>160</y>
        <width>91</width>
        <height>18</height>
       </rect>
@@ -293,7 +270,7 @@
      <property name="geometry">
       <rect>
        <x>20</x>
-       <y>160</y>
+       <y>190</y>
        <width>21</width>
        <height>24</height>
       </rect>
@@ -316,7 +293,7 @@
      <property name="geometry">
       <rect>
        <x>50</x>
-       <y>160</y>
+       <y>190</y>
        <width>21</width>
        <height>24</height>
       </rect>
@@ -336,7 +313,7 @@
      <property name="geometry">
       <rect>
        <x>80</x>
-       <y>160</y>
+       <y>190</y>
        <width>21</width>
        <height>24</height>
       </rect>
@@ -350,6 +327,19 @@
      </property>
      <property name="checkable">
       <bool>true</bool>
+     </property>
+    </widget>
+    <widget class="QLabel" name="label_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>20</y>
+       <width>91</width>
+       <height>18</height>
+      </rect>
+     </property>
+     <property name="text">
+      <string>Pen modes</string>
      </property>
     </widget>
    </widget>

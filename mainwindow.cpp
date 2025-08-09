@@ -23,6 +23,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->tblPalette->setCurrentCell(0,0);
     UpdatePaletteTable();
+
+    UpdateToolStatus();
 }
 
 MainWindow::~MainWindow()
@@ -127,6 +129,29 @@ void MainWindow::UpdatePaletteTable()
     }
 
     ui->action16_color_mode->setChecked(project.tileset.is4bpp);
+}
+
+void MainWindow::UpdateToolStatus()
+{
+    int new_status= 0;
+
+    if (ui->tlbPen->isChecked())
+        new_status += tool_OffsetPen;
+    if (ui->tlbVFlipPen->isChecked())
+        new_status += tool_VFlipPen;
+    if (ui->tlbHFlipPen->isChecked())
+        new_status += tool_HFlipPen;
+    if (ui->tlbPalettePen->isChecked())
+        new_status += tool_PalettePen;
+
+    if (new_status == tool_NoTool)
+    {
+        ui->tlbPen->setChecked(true);
+        ui->tlbPalettePen->setChecked(true);
+        return UpdateToolStatus();
+    }
+
+    project.selected_tools= new_status;
 }
 
 void MainWindow::on_actionZoom_in_triggered()
@@ -271,5 +296,25 @@ void MainWindow::on_tblPalette_cellClicked(int row, int column)
     project.paltable_current_column= column;
     project.paltable_current_row= row;
     UpdatePaletteTable();
+}
+
+void MainWindow::on_tlbPen_clicked(bool checked)
+{
+    UpdateToolStatus();
+}
+
+void MainWindow::on_tlbVFlipPen_clicked(bool checked)
+{
+    UpdateToolStatus();
+}
+
+void MainWindow::on_tlbHFlipPen_clicked(bool checked)
+{
+    UpdateToolStatus();
+}
+
+void MainWindow::on_tlbPalettePen_clicked(bool checked)
+{
+    UpdateToolStatus();
 }
 

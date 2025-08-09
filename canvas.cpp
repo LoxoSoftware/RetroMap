@@ -1,5 +1,6 @@
 #include "canvas.h"
 #include "project.h"
+#include "mainwindow.h"
 #include <QMenu>
 #include <QMouseEvent>
 #include <QAction>
@@ -201,28 +202,44 @@ void Canvas::mousePressEvent(QMouseEvent *event)
 void Canvas::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
-    Tile ttile= Tile();
-    ttile.tileset_offset= project.tileset_selected_tile;
-    ttile.hflip= false;
-    ttile.vflip= false;
-    ttile.palette_index= 0;
 
     int tilex= CANVASX_TO_COLUMN(event->pos().x());
     int tiley= CANVASY_TO_ROW(event->pos().y());
 
+    if (tilex < 0 || tilex >= size.width())
+        return;
+    if (tiley < 0 || tiley >= size.height())
+        return;
+
+    Tile ttile= tiles[tilex+tiley*size.width()];
+
     switch (mouse_down_button)
     {
     case Qt::LeftButton:
-        if (project.tileset_selected_tile < 0)
-            return;
+        if (project.selected_tools & MainWindow::tool_OffsetPen
+            && project.tileset_selected_tile >= 0)
+            ttile.tileset_offset= project.tileset_selected_tile;
+        if (project.selected_tools & MainWindow::tool_HFlipPen)
+            ttile.hflip= true;
+        if (project.selected_tools & MainWindow::tool_VFlipPen)
+            ttile.vflip= true;
+        if (project.selected_tools & MainWindow::tool_PalettePen)
+            ttile.palette_index= project.paltable_current_row;
+
         Plot(tiley, tilex, ttile);
         RedrawTile(tiley, tilex);
         break;
     case Qt::RightButton:
-        ttile.tileset_offset= 0;
-        ttile.hflip= false;
-        ttile.vflip= false;
-        ttile.palette_index= 0;
+        if (project.selected_tools & MainWindow::tool_OffsetPen
+            && project.tileset_selected_tile >= 0)
+            ttile.tileset_offset= 0;
+        if (project.selected_tools & MainWindow::tool_HFlipPen)
+            ttile.hflip= false;
+        if (project.selected_tools & MainWindow::tool_VFlipPen)
+            ttile.vflip= false;
+        if (project.selected_tools & MainWindow::tool_PalettePen)
+            ttile.palette_index= 0;
+
         Plot(tiley, tilex, ttile);
         RedrawTile(tiley, tilex);
         break;
