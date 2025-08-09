@@ -7,5 +7,7 @@
         <file alias="toolsize_3">res/toolsize-3.png</file>
         <file alias="toolsize_2">res/toolsize-2.png</file>
         <file alias="toolsize_1">res/toolsize-1.png</file>
+        <file alias="hflip_pen">res/tool-hflip_pen.png</file>
+        <file alias="vflip_pen">res/tool-vflip_pen.png</file>
     </qresource>
 </RCC>
