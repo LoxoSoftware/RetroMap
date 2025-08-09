@@ -324,6 +324,8 @@ QImage Canvas::GetImage()
                 for (int ix=0; ix<TILE_W; ix++)
                 {
                     unsigned char pixel= tile_scanline[ix];
+                    if (project.tileset.is4bpp)
+                        pixel= tiles[tm_ti].palette_index*PALETTE_W+pixel%PALETTE_W;
 
                     if (!tiles[tm_ti].hflip)
                         timg_scanline[ix+ixt*TILE_W]= pixel;
