@@ -20,6 +20,9 @@ MainWindow::MainWindow(QWidget *parent)
         ui->dckPalette->setWindowTitle("Palettes (4bpp)");
     else
         ui->dckPalette->setWindowTitle("Palette (8bpp)");
+
+    ui->tblPalette->setCurrentCell(0,0);
+    UpdatePaletteTable();
 }
 
 MainWindow::~MainWindow()
@@ -91,12 +94,38 @@ void MainWindow::UpdatePaletteTable()
         {
             QTableWidgetItem* item= new QTableWidgetItem();
             QBrush bru_bg;
-            bru_bg.setColor(project.tileset.palette[ix+iy*PALETTE_W]);
-            bru_bg.setStyle(Qt::SolidPattern);
+            if (ix+iy*PALETTE_W < project.tileset.palette.count())
+                bru_bg.setColor(project.tileset.palette[ix+iy*PALETTE_W]);
+            else
+            {
+                int lumarand= rand()%32;
+                bru_bg.setColor(QColor::fromRgb(lumarand*8, lumarand*8, lumarand*8));
+            }
+            if (project.tileset.is4bpp)
+            {
+                if (project.paltable_current_row == iy && project.paltable_current_column == ix)
+                    bru_bg.setStyle(Qt::Dense3Pattern);
+                else if (project.paltable_current_row == iy)
+                    bru_bg.setStyle(Qt::Dense1Pattern);
+                else
+                    bru_bg.setStyle(Qt::SolidPattern);
+            }
+            else
+            {
+                if (project.paltable_current_row == iy && project.paltable_current_column == ix)
+                    bru_bg.setStyle(Qt::Dense3Pattern);
+                else
+                    bru_bg.setStyle(Qt::SolidPattern);
+            }
             item->setBackground(bru_bg);
+            if (project.tileset.is4bpp)
+                item->setToolTip("Pal #"+QString::number(iy)+": "+QString::number(ix));
+            else
+                item->setToolTip("Index: "+QString::number(ix+iy*PALETTE_W));
             ui->tblPalette->setItem(iy, ix, item);
         }
     }
+
     ui->action16_color_mode->setChecked(project.tileset.is4bpp);
 }
 
@@ -235,5 +264,12 @@ void MainWindow::on_action16_color_mode_triggered()
     project.editor_canvas->Redraw();
     UpdatePaletteTable();
     UpdateTilesetTable();
+}
+
+void MainWindow::on_tblPalette_cellClicked(int row, int column)
+{
+    project.paltable_current_column= column;
+    project.paltable_current_row= row;
+    UpdatePaletteTable();
 }
 
