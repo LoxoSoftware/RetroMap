@@ -47,6 +47,9 @@ private slots:
     void on_tlbVFlipPen_clicked(bool checked);
     void on_tlbPalettePen_clicked(bool checked);
     void on_tlbHFlipPen_clicked(bool checked);
+    void on_btnSize1_clicked(bool checked);
+    void on_btnSize2_clicked(bool checked);
+    void on_btnSize3_clicked(bool checked);
 
 private:
     Ui::MainWindow *ui;

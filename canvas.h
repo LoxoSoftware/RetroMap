@@ -64,6 +64,7 @@ private:
 
     void UpdateScaling();
     void OpenContextMenu(QPoint screen_pos, QPoint canvas_pos);
+    void ManagedPlot(int tilex, int tiley);
 };
 
 #endif // CANVAS_H

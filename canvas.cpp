@@ -203,14 +203,40 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
 
-    int tilex= CANVASX_TO_COLUMN(event->pos().x());
-    int tiley= CANVASY_TO_ROW(event->pos().y());
+    for (int iy=-floor((float)project.pen_size/2); iy<ceil((float)project.pen_size/2); iy++)
+    {
+        for (int ix=-floor((float)project.pen_size/2); ix<ceil((float)project.pen_size/2); ix++)
+        {
+            int tilex= CANVASX_TO_COLUMN(event->pos().x())+ix;
+            int tiley= CANVASY_TO_ROW(event->pos().y())+iy;
 
-    if (tilex < 0 || tilex >= size.width())
-        return;
-    if (tiley < 0 || tiley >= size.height())
-        return;
+            if (tilex < 0 || tilex >= size.width())
+                continue;
+            if (tiley < 0 || tiley >= size.height())
+                continue;
 
+            ManagedPlot(tilex, tiley);
+        }
+    }
+
+
+
+    mouse_has_moved= true;
+}
+
+void Canvas::mouseReleaseEvent(QMouseEvent *event)
+{
+    event->accept();
+
+    if (!mouse_has_moved && mouse_down_button == Qt::RightButton)
+        OpenContextMenu(event->globalPos(), event->pos());
+
+    mouse_down_button= Qt::NoButton;
+    mouse_has_moved= false;
+}
+
+void Canvas::ManagedPlot(int tilex, int tiley)
+{
     Tile ttile= tiles[tilex+tiley*size.width()];
 
     switch (mouse_down_button)
@@ -246,18 +272,6 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
     default:
         break;
     }
-    mouse_has_moved= true;
-}
-
-void Canvas::mouseReleaseEvent(QMouseEvent *event)
-{
-    event->accept();
-
-    if (!mouse_has_moved && mouse_down_button == Qt::RightButton)
-        OpenContextMenu(event->globalPos(), event->pos());
-
-    mouse_down_button= Qt::NoButton;
-    mouse_has_moved= false;
 }
 
 void Canvas::onMenuClearWithBgTile_triggered()

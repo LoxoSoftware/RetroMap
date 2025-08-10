@@ -26,6 +26,7 @@ public:
     int         paltable_current_row= 0;
     int         paltable_current_column= 0;
     int         selected_tools;
+    int         pen_size= 1;
 };
 
 #endif // PROJECT_H

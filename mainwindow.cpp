@@ -318,3 +318,26 @@ void MainWindow::on_tlbPalettePen_clicked(bool checked)
     UpdateToolStatus();
 }
 
+void MainWindow::on_btnSize1_clicked(bool checked)
+{
+    ui->btnSize1->setChecked(true);
+    ui->btnSize2->setChecked(false);
+    ui->btnSize3->setChecked(false);
+    project.pen_size= 1;
+}
+
+void MainWindow::on_btnSize2_clicked(bool checked)
+{
+    ui->btnSize1->setChecked(false);
+    ui->btnSize2->setChecked(true);
+    ui->btnSize3->setChecked(false);
+    project.pen_size= 2;
+}
+
+void MainWindow::on_btnSize3_clicked(bool checked)
+{
+    ui->btnSize1->setChecked(false);
+    ui->btnSize2->setChecked(false);
+    ui->btnSize3->setChecked(true);
+    project.pen_size= 3;
+}
