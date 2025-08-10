@@ -43,8 +43,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>554</width>
-         <height>546</height>
+         <width>550</width>
+         <height>520</height>
         </rect>
        </property>
       </widget>
@@ -58,7 +58,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>20</height>
+     <height>36</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -269,9 +269,9 @@
     <widget class="QPushButton" name="btnSize1">
      <property name="geometry">
       <rect>
-       <x>20</x>
+       <x>10</x>
        <y>190</y>
-       <width>21</width>
+       <width>31</width>
        <height>24</height>
       </rect>
      </property>
@@ -292,9 +292,9 @@
     <widget class="QPushButton" name="btnSize2">
      <property name="geometry">
       <rect>
-       <x>50</x>
+       <x>40</x>
        <y>190</y>
-       <width>21</width>
+       <width>31</width>
        <height>24</height>
       </rect>
      </property>
@@ -312,9 +312,9 @@
     <widget class="QPushButton" name="btnSize3">
      <property name="geometry">
       <rect>
-       <x>80</x>
+       <x>70</x>
        <y>190</y>
-       <width>21</width>
+       <width>31</width>
        <height>24</height>
       </rect>
      </property>
