@@ -4,6 +4,7 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QAction>
+#include <math.h>
 
 extern Project project;
 
