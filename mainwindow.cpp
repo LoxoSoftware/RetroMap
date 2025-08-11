@@ -144,12 +144,12 @@ void MainWindow::UpdateToolStatus()
     if (ui->tlbPalettePen->isChecked())
         new_status += tool_PalettePen;
 
-    if (new_status == tool_NoTool)
-    {
-        ui->tlbPen->setChecked(true);
-        ui->tlbPalettePen->setChecked(true);
-        return UpdateToolStatus();
-    }
+    // if (new_status == tool_NoTool)
+    // {
+    //     ui->tlbPen->setChecked(true);
+    //     ui->tlbPalettePen->setChecked(true);
+    //     return UpdateToolStatus();
+    // }
 
     project.selected_tools= new_status;
 }

@@ -43,8 +43,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>550</width>
-         <height>520</height>
+         <width>554</width>
+         <height>546</height>
         </rect>
        </property>
       </widget>
@@ -58,7 +58,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>36</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -141,7 +141,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Horizontal flip mode&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On left click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's horizontal flip status to TRUE&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On right click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's horizontal flip status to FALSE&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Horizontal flip mode&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On left click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's horizontal flip status to FALSE&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On right click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's horizontal flip status to TRUE&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="text">
       <string/>
@@ -159,6 +159,9 @@
      <property name="checkable">
       <bool>true</bool>
      </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
     </widget>
     <widget class="QPushButton" name="tlbPalettePen">
      <property name="geometry">
@@ -170,7 +173,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Palette mode (4bpp only)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On left click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's palette index to the selected one&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On right click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's palette index to 0&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Palette mode (4bpp only)&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On left click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's palette index to the selected one&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On right click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's palette index to its default&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="text">
       <string/>
@@ -234,7 +237,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Vertical flip mode&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On left click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's vertical flip status to TRUE&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On right click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's vertical flip status to FALSE&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:700;&quot;&gt;Vertical flip mode&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On left click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's vertical flip status to FALSE&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-style:italic; text-decoration: underline;&quot;&gt;On right click&lt;/span&gt;&lt;span style=&quot; font-style:italic;&quot;&gt; changes the tile's vertical flip status to TRUE&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
      <property name="text">
       <string/>
@@ -250,6 +253,9 @@
       </size>
      </property>
      <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
       <bool>true</bool>
      </property>
     </widget>

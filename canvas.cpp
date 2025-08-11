@@ -219,9 +219,6 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
             ManagedPlot(tilex, tiley);
         }
     }
-
-
-
     mouse_has_moved= true;
 }
 
@@ -247,9 +244,9 @@ void Canvas::ManagedPlot(int tilex, int tiley)
             && project.tileset_selected_tile >= 0)
             ttile.tileset_offset= project.tileset_selected_tile;
         if (project.selected_tools & MainWindow::tool_HFlipPen)
-            ttile.hflip= true;
+            ttile.hflip= false;
         if (project.selected_tools & MainWindow::tool_VFlipPen)
-            ttile.vflip= true;
+            ttile.vflip= false;
         if (project.selected_tools & MainWindow::tool_PalettePen)
             ttile.palette_index= project.paltable_current_row;
 
@@ -261,11 +258,11 @@ void Canvas::ManagedPlot(int tilex, int tiley)
             && project.tileset_selected_tile >= 0)
             ttile.tileset_offset= 0;
         if (project.selected_tools & MainWindow::tool_HFlipPen)
-            ttile.hflip= false;
+            ttile.hflip= true;
         if (project.selected_tools & MainWindow::tool_VFlipPen)
-            ttile.vflip= false;
+            ttile.vflip= true;
         if (project.selected_tools & MainWindow::tool_PalettePen)
-            ttile.palette_index= 0;
+            ttile.palette_index= project.tileset.tiles[ttile.tileset_offset].pixelIndex(0,0)/PALETTE_W;
 
         Plot(tiley, tilex, ttile);
         RedrawTile(tiley, tilex);
