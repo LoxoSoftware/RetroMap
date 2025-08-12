@@ -24,8 +24,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->tblPalette->setCurrentCell(0,0);
     UpdatePaletteTable();
-
     UpdateToolStatus();
+
+    project.CreateNew(32, 32);
+    CheckCanvasPresent();
 }
 
 MainWindow::~MainWindow()
