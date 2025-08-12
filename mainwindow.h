@@ -51,6 +51,8 @@ private slots:
     void on_btnSize2_clicked(bool checked);
     void on_btnSize3_clicked(bool checked);
 
+    void on_actionMapChange_Size_triggered();
+
 private:
     Ui::MainWindow *ui;
     void resizeEvent(QResizeEvent *event);

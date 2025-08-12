@@ -21,10 +21,11 @@ class Canvas : public QGraphicsView
 {
     Q_OBJECT
 public:
-    Canvas(QWidget* parent, int width, int height);
+    Canvas(QWidget* parent, int width, int height); //In tiles
     ~Canvas();
 
     void Clear(int bgtile);
+    void Resize(int width, int height); //In tiles
     void PlotUnscaled(QPoint pos, Tile tile);
     void Plot(int row, int column, Tile tile);
 

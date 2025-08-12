@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "project.h"
+#include "mapsizeselector.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <math.h>
@@ -341,3 +342,11 @@ void MainWindow::on_btnSize3_clicked(bool checked)
     ui->btnSize3->setChecked(true);
     project.pen_size= 3;
 }
+
+void MainWindow::on_actionMapChange_Size_triggered()
+{
+    MapSizeSelector* resizeui= new MapSizeSelector();
+    resizeui->setWindowModality(Qt::ApplicationModal);
+    resizeui->show();
+}
+

@@ -36,6 +36,37 @@ void Canvas::Clear(int bgtile)
     Redraw();
 }
 
+void Canvas::Resize(int width, int height)
+{
+    QList<Tile> new_tiles;
+
+    //Try to adapt the old tile list into a new size
+    for (int iy=0; iy<height; iy++)
+    {
+        for (int ix=0; ix<width; ix++)
+        {
+            if (iy >= size.height() || ix >= size.width())
+            {
+                Tile ttile;
+                ttile.tileset_offset= 1;
+                ttile.hflip= 0;
+                ttile.vflip= 0;
+                ttile.palette_index= 0;
+                new_tiles+= ttile;
+                continue;
+            }
+            else
+                new_tiles+= tiles[ix+iy*size.width()];
+        }
+    }
+
+    size= QSize(width, height);
+    tiles= new_tiles;
+
+    //UpdateScaling();
+    Redraw();
+}
+
 void Canvas::PlotUnscaled(QPoint pos, Tile tile)
 {
     Plot((pos.y()/TILE_H)/scaling, (pos.x()/TILE_W)/scaling, tile);
