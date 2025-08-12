@@ -9,6 +9,12 @@ MapSizeSelector::MapSizeSelector(QWidget *parent)
     , ui(new Ui::MapSizeSelector)
 {
     ui->setupUi(this);
+
+    if (project.editor_canvas)
+    {
+        ui->spbWidth->setValue(project.editor_canvas->Size().width()*TILE_W);
+        ui->spbHeight->setValue(project.editor_canvas->Size().height()*TILE_H);
+    }
 }
 
 MapSizeSelector::~MapSizeSelector()
