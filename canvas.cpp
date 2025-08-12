@@ -4,6 +4,7 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QAction>
+#include <QScrollBar>
 #include <math.h>
 
 extern Project project;
@@ -226,8 +227,10 @@ void Canvas::mousePressEvent(QMouseEvent *event)
 {
     //event->accept();
     mouse_down_button= event->button();
+
     if (mouse_down_button != Qt::RightButton)
         mouseMoveEvent(event);
+
     mouse_has_moved= false;
     mouse_last_pos= event->pos();
 }
@@ -380,4 +383,22 @@ QImage Canvas::GetImage()
         }
 
     return timg;
+}
+
+void Canvas::wheelEvent(QWheelEvent *event)
+{
+    event->accept();
+
+    if (event->modifiers() == Qt::ControlModifier)
+    {
+        if (event->angleDelta().y() > 16)
+            ZoomIn();
+        if (event->angleDelta().y() < -16)
+            ZoomOut();
+    }
+    else
+    {
+        //vv Trust me bro vv
+        ((QScrollArea*)parent())->scroll(event->pixelDelta().x(), event->pixelDelta().y());
+    }
 }
