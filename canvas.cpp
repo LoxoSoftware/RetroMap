@@ -48,7 +48,7 @@ void Canvas::Resize(int width, int height)
             if (iy >= size.height() || ix >= size.width())
             {
                 Tile ttile;
-                ttile.tileset_offset= 1;
+                ttile.tileset_offset= 0;
                 ttile.hflip= 0;
                 ttile.vflip= 0;
                 ttile.palette_index= 0;

@@ -76,13 +76,18 @@ void MainWindow::CheckCanvasPresent()
 void MainWindow::UpdateTilesetTable()
 {
     ui->tblTiles->clear();
-    ui->tblTiles->setRowCount(ceil(project.tileset.tiles.count()/ui->tblTiles->columnCount()));
-    for (int iy=0; iy<project.tileset.tiles.count()/ui->tblTiles->columnCount(); iy++)
+    ui->tblTiles->setRowCount(ceil((float)project.tileset.tiles.count()/(float)ui->tblTiles->columnCount()));
+    for (int iy=0; iy<ui->tblTiles->rowCount(); iy++)
     {
         for (int ix=0; ix<ui->tblTiles->columnCount(); ix++)
         {
+            int tindex= ix+iy*ui->tblTiles->columnCount();
+
+            if (tindex >= project.tileset.tiles.count())
+                break;
+
             QPixmap pix;
-            pix.convertFromImage(project.tileset.tiles[ix+iy*ui->tblTiles->columnCount()]);
+            pix.convertFromImage(project.tileset.tiles[tindex]);
             QIcon icon= QIcon(pix.scaled(ui->tblTiles->columnWidth(0),ui->tblTiles->rowHeight(0)));
             QTableWidgetItem* item= new QTableWidgetItem(icon, "");
             ui->tblTiles->setItem(iy, ix, item);
