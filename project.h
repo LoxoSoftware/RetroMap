@@ -18,15 +18,15 @@ public:
     int ExportToSourceFile(QString fname);
 
     //Private members are for sigmas
-    QString     project_fpath= "";
-    QWidget*    canvas_container= nullptr;
-    Canvas*     editor_canvas= nullptr;
-    Tileset     tileset;
-    int         tileset_selected_tile= -1;
-    int         paltable_current_row= 0;
-    int         paltable_current_column= 0;
-    int         selected_tools;
-    int         pen_size= 1;
+    QString         project_fpath= "";
+    QScrollArea*    canvas_container= nullptr;
+    Canvas*         editor_canvas= nullptr;
+    Tileset         tileset;
+    int             tileset_selected_tile= -1;
+    int             paltable_current_row= 0;
+    int             paltable_current_column= 0;
+    int             selected_tools;
+    int             pen_size= 1;
 };
 
 #endif // PROJECT_H

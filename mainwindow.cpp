@@ -54,15 +54,6 @@ void MainWindow::on_actionNew_triggered()
     }
 }
 
-void MainWindow::resizeEvent(QResizeEvent *event)
-{
-    //ui->winCanvasArea_content->setMinimumSize(ui->winCanvasArea->size());
-    if (!project.editor_canvas)
-        return;
-    ui->winCanvasArea_content->setMinimumSize(project.editor_canvas->Size());
-    ui->winCanvasArea_content->setMaximumSize(project.editor_canvas->Size());
-}
-
 void MainWindow::CheckCanvasPresent()
 {
     ui->dckPalette->setVisible((bool)project.editor_canvas);

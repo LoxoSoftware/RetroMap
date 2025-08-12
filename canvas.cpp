@@ -11,11 +11,12 @@ extern Project project;
 #define CANVASX_TO_COLUMN(x)    (x/TILE_W/scaling)
 #define CANVASY_TO_ROW(y)       (y/TILE_H/scaling)
 
-Canvas::Canvas(QWidget* parent, int width, int height)
+Canvas::Canvas(QScrollArea* parent, int width, int height)
 {
     size= QSize(width, height);
-    setParent(parent);
     setScene(&scene);
+    setParent(parent);
+    parent->setWidget(this);
     setStyleSheet("background-color: white;"
                          "border: "+QString::number(CANVAS_BORDER_W)+"px solid #666;");
     setMouseTracking(true);
@@ -33,7 +34,7 @@ void Canvas::Clear(int bgtile)
     tiles.clear();
     for (int i=0; i<size.width()*size.height(); i++)
         tiles+= Tile(bgtile);
-    Redraw();
+    //Redraw();
 }
 
 void Canvas::Resize(int width, int height)

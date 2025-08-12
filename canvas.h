@@ -21,7 +21,7 @@ class Canvas : public QGraphicsView
 {
     Q_OBJECT
 public:
-    Canvas(QWidget* parent, int width, int height); //In tiles
+    Canvas(QScrollArea* parent, int width, int height); //In tiles
     ~Canvas();
 
     void Clear(int bgtile);
