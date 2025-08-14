@@ -50,8 +50,9 @@ private slots:
     void on_btnSize1_clicked(bool checked);
     void on_btnSize2_clicked(bool checked);
     void on_btnSize3_clicked(bool checked);
-
     void on_actionMapChange_Size_triggered();
+    void on_actionUndo_triggered();
+    void on_actionRedo_triggered();
 
 private:
     Ui::MainWindow *ui;

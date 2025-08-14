@@ -62,6 +62,7 @@ void MainWindow::CheckCanvasPresent()
     ui->menuTileset->setEnabled((bool)project.editor_canvas);
     ui->menuTilemap->setEnabled((bool)project.editor_canvas);
     ui->menuView->setEnabled((bool)project.editor_canvas);
+    ui->menuEdit->setEnabled((bool)project.editor_canvas);
 }
 
 void MainWindow::UpdateTilesetTable()
@@ -346,5 +347,15 @@ void MainWindow::on_actionMapChange_Size_triggered()
     MapSizeSelector* resizeui= new MapSizeSelector();
     resizeui->setWindowModality(Qt::ApplicationModal);
     resizeui->show();
+}
+
+void MainWindow::on_actionUndo_triggered()
+{
+    project.editor_canvas->Undo();
+}
+
+void MainWindow::on_actionRedo_triggered()
+{
+    project.editor_canvas->Redo();
 }
 

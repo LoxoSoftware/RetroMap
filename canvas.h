@@ -28,6 +28,9 @@ public:
     void Resize(int width, int height); //In tiles
     void PlotUnscaled(QPoint pos, Tile tile);
     void Plot(int row, int column, Tile tile);
+    void UpdateHistory();
+    void Undo();
+    void Redo();
 
     QSize Size();   //In tiles
     void ZoomIn();
@@ -38,6 +41,7 @@ public:
     QImage GetImage();
 
     QList<Tile> tiles;
+    QList<QList<Tile>> tiles_history;
 
 protected:
     void mousePressEvent(QMouseEvent *event);
@@ -63,6 +67,7 @@ private:
     Qt::MouseButton mouse_down_button= Qt::NoButton;
     bool mouse_has_moved= false;
     QPoint mouse_last_pos;
+    int history_current_index= -1;
 
     void UpdateScaling();
     void OpenContextMenu(QPoint screen_pos, QPoint canvas_pos);

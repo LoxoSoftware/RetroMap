@@ -20,6 +20,7 @@ int Project::CreateNew(int width_tiles, int height_tiles)
         delete editor_canvas;
 
     editor_canvas= new Canvas(canvas_container, width_tiles, height_tiles);
+    editor_canvas->UpdateHistory();
     return 0;
 }
 
@@ -111,6 +112,7 @@ int Project::LoadFromFile(QString fname)
     }
 
     editor_canvas->Redraw();
+    editor_canvas->UpdateHistory();
 
     return 0;
 }

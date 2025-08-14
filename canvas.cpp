@@ -5,12 +5,15 @@
 #include <QMouseEvent>
 #include <QAction>
 #include <QScrollBar>
+#include <QMessageBox>
 #include <math.h>
 
 extern Project project;
 
 #define CANVASX_TO_COLUMN(x)    (x/TILE_W/scaling)
 #define CANVASY_TO_ROW(y)       (y/TILE_H/scaling)
+
+#define CANVAS_HISTORY_MAX      32
 
 Canvas::Canvas(QScrollArea* parent, int width, int height)
 {
@@ -263,6 +266,8 @@ void Canvas::mouseReleaseEvent(QMouseEvent *event)
 
     if (!mouse_has_moved && mouse_down_button == Qt::RightButton)
         OpenContextMenu(event->globalPos(), event->pos());
+    else if (mouse_down_button == Qt::RightButton || mouse_down_button == Qt::LeftButton)
+        UpdateHistory();
 
     mouse_down_button= Qt::NoButton;
     mouse_has_moved= false;
@@ -318,6 +323,7 @@ void Canvas::onMenuClearWithBgTile_triggered()
     int yt= CANVASY_TO_ROW(mouse_last_pos.y());
     Plot(yt, xt, ttile);
     RedrawTile(yt, xt);
+    UpdateHistory();
 }
 
 void Canvas::onMenuHFlip_triggered()
@@ -327,6 +333,7 @@ void Canvas::onMenuHFlip_triggered()
     Tile* tile= &tiles[xt+yt*size.width()];
     tile->hflip = !tile->hflip;
     RedrawTile(yt, xt);
+    UpdateHistory();
 }
 
 void Canvas::onMenuVFlip_triggered()
@@ -345,6 +352,7 @@ void Canvas::onMenuChangePal_triggered(QAction* selected_action)
     Tile* tile= &tiles[xt+yt*size.width()];
     tile->palette_index= std::strtol(selected_action->text().toLocal8Bit(), NULL, 10);
     RedrawTile(yt, xt);
+    UpdateHistory();
 }
 
 QImage Canvas::GetImage()
@@ -401,4 +409,57 @@ void Canvas::wheelEvent(QWheelEvent *event)
         //vv Trust me bro vv
         ((QScrollArea*)parent())->scroll(event->pixelDelta().x(), event->pixelDelta().y());
     }
+}
+
+void Canvas::UpdateHistory()
+{
+    if (history_current_index >= CANVAS_HISTORY_MAX)
+    {
+        history_current_index--;
+        tiles_history.removeFirst();
+    }
+
+    //Remove all future snapshots
+    if (history_current_index < tiles_history.count()-1 && tiles_history.count() >= 0)
+    {
+        //QMessageBox::information(this, "UPDATE", "Remove last "+QString::number(tiles_history.count()-history_current_index-1));
+        for (int i=0; i<tiles_history.count()-history_current_index; i++)
+            tiles_history.removeLast();
+    }
+
+    tiles_history+= tiles;
+    history_current_index++;
+
+    //QMessageBox::information(this, "UPDATE", "UPDATE: "+QString::number(history_current_index));
+}
+
+void Canvas::Undo()
+{
+    if (tiles_history.isEmpty())
+        return;
+    if (history_current_index <= 1)
+    {
+        history_current_index= 1;
+        return;
+    }
+    history_current_index--;
+    //QMessageBox::information(this, "UNDO", "UNDO: "+QString::number(history_current_index));
+    tiles= tiles_history[history_current_index];
+    Redraw();
+}
+
+void Canvas::Redo()
+{
+    if (tiles_history.isEmpty() || history_current_index < 0)
+        return;
+    if (history_current_index >= tiles_history.count()-1)
+    {
+        history_current_index= tiles_history.count()-1;
+        //QMessageBox::information(this, "REDO", "Last, "+QString::number(history_current_index));
+        return;
+    }
+    history_current_index++;
+    //QMessageBox::information(this, "REDO", "REDO: "+QString::number(history_current_index));
+    tiles= tiles_history[history_current_index];
+    Redraw();
 }
