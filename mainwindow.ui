@@ -76,15 +76,8 @@
     <property name="title">
      <string>View</string>
     </property>
-    <widget class="QMenu" name="menuView_tiles_using_palette">
-     <property name="title">
-      <string>View tiles using palette #</string>
-     </property>
-     <addaction name="actionPalAll"/>
-    </widget>
     <addaction name="actionZoom_in"/>
     <addaction name="actionZoom_out"/>
-    <addaction name="menuView_tiles_using_palette"/>
    </widget>
    <widget class="QMenu" name="menuTileset">
     <property name="title">
