@@ -68,6 +68,10 @@ void Canvas::Resize(int width, int height)
     size= QSize(width, height);
     tiles= new_tiles;
 
+    tiles_history.clear();
+    history_current_index= 0;
+    UpdateHistory();
+
     //UpdateScaling();
     Redraw();
 }
@@ -423,7 +427,7 @@ void Canvas::UpdateHistory()
     if (history_current_index < tiles_history.count()-1 && tiles_history.count() >= 0)
     {
         //QMessageBox::information(this, "UPDATE", "Remove last "+QString::number(tiles_history.count()-history_current_index-1));
-        for (int i=0; i<tiles_history.count()-history_current_index; i++)
+        for (int i=0; i<=tiles_history.count()-history_current_index; i++)
             tiles_history.removeLast();
     }
 
@@ -437,9 +441,9 @@ void Canvas::Undo()
 {
     if (tiles_history.isEmpty())
         return;
-    if (history_current_index <= 1)
+    if (history_current_index <= 0)
     {
-        history_current_index= 1;
+        history_current_index= 0;
         return;
     }
     history_current_index--;
