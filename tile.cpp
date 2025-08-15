@@ -174,3 +174,11 @@ void Tileset::RebuildTilesetImage(int columns)
     //     delete image;
     image= new QImage(timg);
 }
+
+void Tileset::UpdatePalettes()
+{
+    for (int it=0; it<tiles.count(); it++)
+    {
+        tiles[it].setColorTable(palette);
+    }
+}

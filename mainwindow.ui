@@ -79,6 +79,7 @@
     <addaction name="actionRedraw_canvas"/>
     <addaction name="actionZoom_in"/>
     <addaction name="actionZoom_out"/>
+    <addaction name="actionAuto_canvas_update"/>
    </widget>
    <widget class="QMenu" name="menuTileset">
     <property name="title">
@@ -1128,6 +1129,17 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionAuto_canvas_update">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Auto canvas update (slow!)</string>
    </property>
   </action>
   <zorder>dckPalette</zorder>

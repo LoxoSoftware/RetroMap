@@ -4,6 +4,7 @@
 #include "mapsizeselector.h"
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QRgb>
 #include <math.h>
 
 Project project;
@@ -183,12 +184,11 @@ void MainWindow::UpdateColorStatus(bool force)
         + QString::number(ui->spbBlueChannel->value()*8) + ");");
 
     int paltable_index= project.paltable_current_column+project.paltable_current_row*PALETTE_W;
-    if (paltable_index < project.tileset.palette.count())
+    if (paltable_index < project.tileset.palette.count() && !force)
     {
         project.tileset.palette[paltable_index]= QColor(ui->spbRedChannel->value()*8,
             ui->spbGreenChannel->value()*8, ui->spbBlueChannel->value()*8).rgb();
-        if (!force)
-            UpdatePaletteTable();
+        UpdatePaletteTable();
     }
 }
 
@@ -328,6 +328,19 @@ void MainWindow::on_tblPalette_cellClicked(int row, int column)
     project.paltable_current_column= column;
     project.paltable_current_row= row;
     UpdatePaletteTable();
+    int palind= column+row*PALETTE_W;
+    if (palind >= project.tileset.palette.count())
+        return;
+    ui->sliRedChannel->blockSignals(true);
+    ui->sliGreenChannel->blockSignals(true);
+    ui->sliBlueChannel->blockSignals(true);
+    ui->sliRedChannel->setValue(qRed(project.tileset.palette[palind])/8);
+    ui->sliGreenChannel->setValue(qGreen(project.tileset.palette[palind])/8);
+    ui->sliBlueChannel->setValue(qBlue(project.tileset.palette[palind])/8);
+    UpdateColorStatus(true);
+    ui->sliRedChannel->blockSignals(false);
+    ui->sliGreenChannel->blockSignals(false);
+    ui->sliBlueChannel->blockSignals(false);
 }
 
 void MainWindow::on_tlbPen_clicked(bool checked)
@@ -394,10 +407,14 @@ void MainWindow::on_actionRedo_triggered()
 void MainWindow::on_colorChanged()
 {
     UpdateColorStatus(false);
+    project.tileset.UpdatePalettes();
+    if (ui->actionAuto_canvas_update->isChecked())
+        project.editor_canvas->Redraw();
 }
 
 void MainWindow::on_actionRedraw_canvas_triggered()
 {
+    project.tileset.UpdatePalettes();
     project.editor_canvas->Redraw();
 }
 

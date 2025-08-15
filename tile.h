@@ -41,6 +41,7 @@ public:
 
     bool            FromImage();
     bool            FromImage(QString fname);
+    void            UpdatePalettes();
     void            Optimize(Tileset::optimize_flags_t optiflags=Tileset::OptimizeDefault);
     void            RebuildTilesetImage(int columns);
 };
