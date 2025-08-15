@@ -19,13 +19,15 @@
   <property name="windowTitle">
    <string notr="true">RetroMap (in-dev)</string>
   </property>
+  <property name="styleSheet">
+   <string notr="true">QMainWindow QScrollArea {
+  background-image: url(:/ui/bgtile);
+}</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
      <widget class="QScrollArea" name="winCanvasArea">
-      <property name="styleSheet">
-       <string notr="true">background-color:#999</string>
-      </property>
       <property name="frameShape">
        <enum>QFrame::Shape::Panel</enum>
       </property>

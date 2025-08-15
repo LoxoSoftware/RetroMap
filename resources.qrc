@@ -10,4 +10,7 @@
         <file alias="hflip_pen">res/tool-hflip_pen.png</file>
         <file alias="vflip_pen">res/tool-vflip_pen.png</file>
     </qresource>
+    <qresource prefix="/ui">
+        <file alias="bgtile">res/clipbg.png</file>
+    </qresource>
 </RCC>
