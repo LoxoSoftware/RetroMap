@@ -395,3 +395,9 @@ void MainWindow::on_colorChanged()
 {
     UpdateColorStatus(false);
 }
+
+void MainWindow::on_actionRedraw_canvas_triggered()
+{
+    project.editor_canvas->Redraw();
+}
+
