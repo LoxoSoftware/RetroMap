@@ -25,9 +25,17 @@ MainWindow::MainWindow(QWidget *parent)
     ui->tblPalette->setCurrentCell(0,0);
     UpdatePaletteTable();
     UpdateToolStatus();
+    UpdateColorStatus();
 
     project.CreateNew(32, 32);
     CheckCanvasPresent();
+
+    connect(ui->sliRedChannel, &QSlider::valueChanged, this, &MainWindow::on_colorChanged);
+    connect(ui->sliBlueChannel, &QSlider::valueChanged, this, &MainWindow::on_colorChanged);
+    connect(ui->sliGreenChannel, &QSlider::valueChanged, this, &MainWindow::on_colorChanged);
+    connect(ui->spbRedChannel, &QSpinBox::valueChanged, this, &MainWindow::on_colorChanged);
+    connect(ui->spbBlueChannel, &QSpinBox::valueChanged, this, &MainWindow::on_colorChanged);
+    connect(ui->spbGreenChannel, &QSpinBox::valueChanged, this, &MainWindow::on_colorChanged);
 }
 
 MainWindow::~MainWindow()
@@ -39,7 +47,6 @@ void MainWindow::on_actionQuit_triggered()
 {
     this->close();
 }
-
 
 void MainWindow::on_actionNew_triggered()
 {
@@ -154,6 +161,37 @@ void MainWindow::UpdateToolStatus()
     project.selected_tools= new_status;
 }
 
+void MainWindow::UpdateColorStatus(bool force)
+{
+    if (ui->sliRedChannel->hasFocus() || force)
+        ui->spbRedChannel->setValue(ui->sliRedChannel->value());
+    if (ui->sliGreenChannel->hasFocus() || force)
+        ui->spbGreenChannel->setValue(ui->sliGreenChannel->value());
+    if (ui->sliBlueChannel->hasFocus() || force)
+        ui->spbBlueChannel->setValue(ui->sliBlueChannel->value());
+
+    if (ui->spbRedChannel->hasFocus() && !force)
+        ui->sliRedChannel->setValue(ui->spbRedChannel->value());
+    if (ui->spbGreenChannel->hasFocus() && !force)
+        ui->sliGreenChannel->setValue(ui->spbGreenChannel->value());
+    if (ui->spbBlueChannel->hasFocus() && !force)
+        ui->sliBlueChannel->setValue(ui->spbBlueChannel->value());
+
+    ui->widPrimaryColor->setStyleSheet("border: 1px solid black; background-color: rgb("
+        + QString::number(ui->spbRedChannel->value()*8) + ","
+        + QString::number(ui->spbGreenChannel->value()*8) + ","
+        + QString::number(ui->spbBlueChannel->value()*8) + ");");
+
+    int paltable_index= project.paltable_current_column+project.paltable_current_row*PALETTE_W;
+    if (paltable_index < project.tileset.palette.count())
+    {
+        project.tileset.palette[paltable_index]= QColor(ui->spbRedChannel->value()*8,
+            ui->spbGreenChannel->value()*8, ui->spbBlueChannel->value()*8).rgb();
+        if (!force)
+            UpdatePaletteTable();
+    }
+}
+
 void MainWindow::on_actionZoom_in_triggered()
 {
     if (!project.editor_canvas)
@@ -200,7 +238,6 @@ void MainWindow::on_actionSave_triggered()
     }
 }
 
-
 void MainWindow::on_actionSave_as_triggered()
 {
     if (!project.editor_canvas)
@@ -215,7 +252,6 @@ void MainWindow::on_actionSave_as_triggered()
     project.SaveToFile(ofname);
     project.project_fpath= ofname;
 }
-
 
 void MainWindow::on_actionLoad_triggered()
 {
@@ -233,7 +269,6 @@ void MainWindow::on_actionLoad_triggered()
     UpdatePaletteTable();
 }
 
-
 void MainWindow::on_actionImport_tileset_from_image_triggered()
 {
     if (!project.editor_canvas)
@@ -249,7 +284,6 @@ void MainWindow::on_actionImport_tileset_from_image_triggered()
     project.editor_canvas->Redraw();
 }
 
-
 void MainWindow::on_actionExport_as_indexed_bitmap_triggered()
 {
     if (!project.editor_canvas)
@@ -259,7 +293,6 @@ void MainWindow::on_actionExport_as_indexed_bitmap_triggered()
         return;
     project.editor_canvas->GetImage().save(ofile_name, "bmp");
 }
-
 
 void MainWindow::on_actionOptimize_tileset_triggered()
 {
@@ -274,7 +307,6 @@ void MainWindow::on_actionOptimize_tileset_triggered()
     UpdateTilesetTable();
     project.editor_canvas->Redraw();
 }
-
 
 void MainWindow::on_action16_color_mode_triggered()
 {
@@ -359,3 +391,7 @@ void MainWindow::on_actionRedo_triggered()
     project.editor_canvas->Redo();
 }
 
+void MainWindow::on_colorChanged()
+{
+    UpdateColorStatus(false);
+}

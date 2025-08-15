@@ -20,6 +20,7 @@ public:
     void UpdateTilesetTable();
     void UpdatePaletteTable();
     void UpdateToolStatus();
+    void UpdateColorStatus(bool force=true);
 
     static const int tool_NoTool = 0;
     static const int tool_OffsetPen = 1;
@@ -42,7 +43,6 @@ private slots:
     void on_actionOptimize_tileset_triggered();
     void on_action16_color_mode_triggered();
     void on_tblPalette_cellClicked(int row, int column);
-
     void on_tlbPen_clicked(bool checked);
     void on_tlbVFlipPen_clicked(bool checked);
     void on_tlbPalettePen_clicked(bool checked);
@@ -53,6 +53,7 @@ private slots:
     void on_actionMapChange_Size_triggered();
     void on_actionUndo_triggered();
     void on_actionRedo_triggered();
+    void on_colorChanged();
 
 private:
     Ui::MainWindow *ui;

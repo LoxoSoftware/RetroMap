@@ -940,6 +940,19 @@
       </property>
      </widget>
     </widget>
+    <widget class="QWidget" name="widPrimaryColor" native="true">
+     <property name="geometry">
+      <rect>
+       <x>200</x>
+       <y>50</y>
+       <width>21</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="autoFillBackground">
+      <bool>true</bool>
+     </property>
+    </widget>
    </widget>
   </widget>
   <action name="actionQuit">
@@ -1105,6 +1118,7 @@
     <string>Ctrl+Shift+Z</string>
    </property>
   </action>
+  <zorder>dckPalette</zorder>
  </widget>
  <resources>
   <include location="resources.qrc"/>
