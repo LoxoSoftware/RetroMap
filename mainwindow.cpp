@@ -34,9 +34,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->sliRedChannel, &QSlider::valueChanged, this, &MainWindow::on_colorChanged);
     connect(ui->sliBlueChannel, &QSlider::valueChanged, this, &MainWindow::on_colorChanged);
     connect(ui->sliGreenChannel, &QSlider::valueChanged, this, &MainWindow::on_colorChanged);
-    connect(ui->spbRedChannel, &QSpinBox::valueChanged, this, &MainWindow::on_colorChanged);
-    connect(ui->spbBlueChannel, &QSpinBox::valueChanged, this, &MainWindow::on_colorChanged);
-    connect(ui->spbGreenChannel, &QSpinBox::valueChanged, this, &MainWindow::on_colorChanged);
+    connect(ui->spbRedChannel, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::on_colorChanged);
+    connect(ui->spbBlueChannel, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::on_colorChanged);
+    connect(ui->spbGreenChannel, QOverload<int>::of(&QSpinBox::valueChanged), this, &MainWindow::on_colorChanged);
 }
 
 MainWindow::~MainWindow()
