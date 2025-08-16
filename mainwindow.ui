@@ -45,8 +45,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>541</width>
-         <height>520</height>
+         <width>545</width>
+         <height>546</height>
         </rect>
        </property>
       </widget>
@@ -60,7 +60,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>36</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -998,22 +998,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+-</string>
-   </property>
-  </action>
-  <action name="action4bpp_color">
-   <property name="text">
-    <string>4bpp color</string>
-   </property>
-  </action>
-  <action name="actionPalAll">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>All (default)</string>
    </property>
   </action>
   <action name="actionLoad">
