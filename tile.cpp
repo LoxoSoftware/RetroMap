@@ -59,15 +59,36 @@ bool Tileset::FromImage()
     return true;
 }
 
-bool Tileset::FromImage(QString fname)
+bool Tileset::FromImage(QString fname, bool load_new)
 {
     image= new QImage(fname);
     if (!image || image->format() != QImage::Format_Indexed8)
     {
-        printf("Cannot create QPixmap from image file!\n");
+        QMessageBox::critical(project.canvas_container, "Error! - Import tileset from image", "Image is invalid!");
         return false;
     }
-    image_fpath= fname;
+
+    if (load_new)
+    {
+        QMessageBox::StandardButton dial_result= QMessageBox::question(project.canvas_container, "Question - Import tileset from image",
+                              "It is reccomended that you create a copy of the image for the project.\r\nDo you wish to create a copy now?\r\nChoosing \"no\" will overwrite the original file");
+        if (dial_result == QMessageBox::Yes)
+        {
+            srand(time(NULL));
+            QString suffix= "-rm"+QString::number(rand()%0x10000, 16)+".bmp"; //Sadly we don't know the name of the project so random numbers will have to do
+
+            if (fname.lastIndexOf('.') > 0)
+                image_fpath= fname.chopped(fname.size()-fname.lastIndexOf('.'))+suffix;
+            else
+                image_fpath= fname+suffix;
+
+            image->save(image_fpath, "bmp");
+        }
+        else
+            image_fpath= fname;
+    }
+    else
+        image_fpath= fname;
 
     return FromImage();
 }

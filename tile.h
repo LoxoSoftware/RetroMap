@@ -40,7 +40,7 @@ public:
     };
 
     bool            FromImage();
-    bool            FromImage(QString fname);
+    bool            FromImage(QString fname, bool load_new=false);
     void            UpdatePalettes();
     void            Optimize(Tileset::optimize_flags_t optiflags=Tileset::OptimizeDefault);
     void            RebuildTilesetImage(int columns);

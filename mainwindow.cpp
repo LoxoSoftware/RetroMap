@@ -276,7 +276,7 @@ void MainWindow::on_actionImport_tileset_from_image_triggered()
     QString ifile_name= QFileDialog::getOpenFileName(this, "Import tileset from image", "", "Supported image formats (*.bmp)");
     if (ifile_name == "")
         return;
-    project.tileset.FromImage(ifile_name);
+    project.tileset.FromImage(ifile_name, true);
     ui->tblTiles->setRowCount(0);
     project.tileset.Optimize(Tileset::OptimizeDefault);
     UpdateTilesetTable();
