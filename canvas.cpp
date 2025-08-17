@@ -10,8 +10,9 @@
 
 extern Project project;
 
-#define CANVASX_TO_COLUMN(x)    (x/TILE_W/scaling)
-#define CANVASY_TO_ROW(y)       (y/TILE_H/scaling)
+#define CANVASX_TO_COLUMN(x)    (((x-TILEPAD*((x/TILE_W)/scaling))/TILE_W)/scaling)
+#define CANVASY_TO_ROW(y)       (((y-TILEPAD*((y/TILE_H)/scaling))/TILE_H)/scaling)
+#define TILEPAD                 (draw_tilegrid? 1:0)  //You can change these values to manage how thick the grid is, even if it's off
 
 #define CANVAS_HISTORY_MAX      32
 
@@ -74,11 +75,6 @@ void Canvas::Resize(int width, int height)
 
     //UpdateScaling();
     Redraw();
-}
-
-void Canvas::PlotUnscaled(QPoint pos, Tile tile)
-{
-    Plot((pos.y()/TILE_H)/scaling, (pos.x()/TILE_W)/scaling, tile);
 }
 
 void Canvas::Plot(int row, int column, Tile tile)
@@ -147,8 +143,9 @@ void Canvas::RedrawTile(int row, int column)
 
     if (ttile->tileset_offset >= project.tileset.tiles.count())
     {
-        //Tile is outside the bounds of the tileset
-        scene.addRect(column*TILE_W*scaling, row*TILE_H*scaling, TILE_W*scaling, TILE_H*scaling, pen, bru);
+        //Tile index is outside the bounds of the tileset
+        scene.addRect(column*TILE_W*scaling+TILEPAD*column, row*TILE_H*scaling+TILEPAD*row,
+                      TILE_W*scaling+TILEPAD, TILE_H*scaling+TILEPAD, pen, bru);
     }
     else
     {
@@ -179,8 +176,8 @@ void Canvas::RedrawTile(int row, int column)
         pix= pix.transformed(trans);
 
         QGraphicsPixmapItem* item= new QGraphicsPixmapItem(pix);
-        item->setX(column*TILE_W*scaling);
-        item->setY(row*TILE_H*scaling);
+        item->setX(column*TILE_W*scaling+TILEPAD*column);
+        item->setY(row*TILE_H*scaling+TILEPAD*row);
         item->setScale(scaling);
         scene.addItem(item);
     }
@@ -188,19 +185,16 @@ void Canvas::RedrawTile(int row, int column)
 
 void Canvas::UpdateScaling()
 {
-    setMinimumSize(size.width()*TILE_W*scaling+(CANVAS_BORDER_W*2), size.height()*TILE_H*scaling+(CANVAS_BORDER_W*2));
-    setMaximumSize(size.width()*TILE_W*scaling+(CANVAS_BORDER_W*2), size.height()*TILE_H*scaling+(CANVAS_BORDER_W*2));
-    scene.setSceneRect(QRect(0,0,size.width()*TILE_W*scaling,size.height()*TILE_H*scaling));
-    // foreach (QGraphicsItem* item, scene.items())
-    // {
-    //     item->setScale(scaling);
-    // }
+    setMinimumSize(size.width()*TILE_W*scaling+(CANVAS_BORDER_W*2)+TILEPAD*size.width(),
+                   size.height()*TILE_H*scaling+(CANVAS_BORDER_W*2)+TILEPAD*size.height());
+    setMaximumSize(this->minimumSize());
+    scene.setSceneRect(QRect(0,0,size.width()*(TILE_W+TILEPAD)*scaling,size.height()*(TILE_H+TILEPAD)*scaling));
 }
 
 void Canvas::OpenContextMenu(QPoint screen_pos, QPoint canvas_pos)
 {
-    int tilex= (canvas_pos.x()/TILE_W)/scaling;
-    int tiley= (canvas_pos.y()/TILE_H)/scaling;
+    int tilex= CANVASX_TO_COLUMN(canvas_pos.x());
+    int tiley= CANVASY_TO_ROW(canvas_pos.y());
     int tilen= tilex+tiley*size.width();
 
     if (context_menu)
@@ -426,15 +420,12 @@ void Canvas::UpdateHistory()
     //Remove all future snapshots
     if (history_current_index < tiles_history.count()-1 && tiles_history.count() >= 0)
     {
-        //QMessageBox::information(this, "UPDATE", "Remove last "+QString::number(tiles_history.count()-history_current_index-1));
         for (int i=0; i<=tiles_history.count()-history_current_index; i++)
             tiles_history.removeLast();
     }
 
     tiles_history+= tiles;
     history_current_index++;
-
-    //QMessageBox::information(this, "UPDATE", "UPDATE: "+QString::number(history_current_index));
 }
 
 void Canvas::Undo()
@@ -447,7 +438,6 @@ void Canvas::Undo()
         return;
     }
     history_current_index--;
-    //QMessageBox::information(this, "UNDO", "UNDO: "+QString::number(history_current_index));
     tiles= tiles_history[history_current_index];
     Redraw();
 }
@@ -459,11 +449,9 @@ void Canvas::Redo()
     if (history_current_index >= tiles_history.count()-1)
     {
         history_current_index= tiles_history.count()-1;
-        //QMessageBox::information(this, "REDO", "Last, "+QString::number(history_current_index));
         return;
     }
     history_current_index++;
-    //QMessageBox::information(this, "REDO", "REDO: "+QString::number(history_current_index));
     tiles= tiles_history[history_current_index];
     Redraw();
 }

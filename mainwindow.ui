@@ -78,9 +78,10 @@
     <property name="title">
      <string>View</string>
     </property>
-    <addaction name="actionRedraw_canvas"/>
+    <addaction name="actionShow_tile_grid"/>
     <addaction name="actionZoom_in"/>
     <addaction name="actionZoom_out"/>
+    <addaction name="actionRedraw_canvas"/>
     <addaction name="actionAuto_canvas_update"/>
    </widget>
    <widget class="QMenu" name="menuTileset">
@@ -1114,7 +1115,7 @@
     <string>Redraw canvas</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+R</string>
+    <string>F5</string>
    </property>
   </action>
   <action name="actionAuto_canvas_update">
@@ -1126,6 +1127,20 @@
    </property>
    <property name="text">
     <string>Auto canvas update (slow!)</string>
+   </property>
+  </action>
+  <action name="actionShow_tile_grid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show tile grid</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+G</string>
    </property>
   </action>
   <zorder>dckPalette</zorder>

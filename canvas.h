@@ -26,7 +26,6 @@ public:
 
     void Clear(int bgtile);
     void Resize(int width, int height); //In tiles
-    void PlotUnscaled(QPoint pos, Tile tile);
     void Plot(int row, int column, Tile tile);
     void UpdateHistory();
     void Undo();
@@ -42,6 +41,8 @@ public:
 
     QList<Tile> tiles;
     QList<QList<Tile>> tiles_history;
+
+    bool draw_tilegrid= true;
 
 protected:
     void mousePressEvent(QMouseEvent *event);

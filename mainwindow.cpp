@@ -15,7 +15,6 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     project.canvas_container= ui->winCanvasArea;
-    CheckCanvasPresent();
     ui->action16_color_mode->setChecked(project.tileset.is4bpp);
 
     if (project.tileset.is4bpp)
@@ -29,6 +28,8 @@ MainWindow::MainWindow(QWidget *parent)
     UpdateColorStatus();
 
     project.CreateNew(32, 32);
+    if (project.editor_canvas)
+        project.editor_canvas->draw_tilegrid= ui->actionShow_tile_grid->isChecked();
     CheckCanvasPresent();
 
     connect(ui->sliRedChannel, &QSlider::valueChanged, this, &MainWindow::on_colorChanged);
@@ -418,3 +419,8 @@ void MainWindow::on_actionRedraw_canvas_triggered()
     project.editor_canvas->Redraw();
 }
 
+void MainWindow::on_actionShow_tile_grid_triggered(bool checked)
+{
+    project.editor_canvas->draw_tilegrid= checked;
+    project.editor_canvas->Redraw();
+}
