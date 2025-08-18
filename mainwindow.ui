@@ -45,8 +45,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>545</width>
-         <height>546</height>
+         <width>541</width>
+         <height>520</height>
         </rect>
        </property>
       </widget>
@@ -60,7 +60,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>20</height>
+     <height>36</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -83,6 +83,7 @@
     <addaction name="actionZoom_out"/>
     <addaction name="actionRedraw_canvas"/>
     <addaction name="actionAuto_canvas_update"/>
+    <addaction name="actionTilePicker_selected_pal"/>
    </widget>
    <widget class="QMenu" name="menuTileset">
     <property name="title">
@@ -1141,6 +1142,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+G</string>
+   </property>
+  </action>
+  <action name="actionTilePicker_selected_pal">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Preview tiles with sel. palette in picker</string>
    </property>
   </action>
   <zorder>dckPalette</zorder>

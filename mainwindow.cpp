@@ -31,6 +31,7 @@ MainWindow::MainWindow(QWidget *parent)
     if (project.editor_canvas)
         project.editor_canvas->draw_tilegrid= ui->actionShow_tile_grid->isChecked();
     CheckCanvasPresent();
+    on_action16_color_mode_changed();
 
     connect(ui->sliRedChannel, &QSlider::valueChanged, this, &MainWindow::on_colorChanged);
     connect(ui->sliBlueChannel, &QSlider::valueChanged, this, &MainWindow::on_colorChanged);
@@ -88,7 +89,23 @@ void MainWindow::UpdateTilesetTable()
                 break;
 
             QPixmap pix;
-            pix.convertFromImage(project.tileset.tiles[tindex]);
+            if (ui->actionTilePicker_selected_pal->isChecked())
+            {
+                QImage timg= project.tileset.tiles[tindex];
+                //Alter image pixels to clamp it to a 16 bit palette
+                for (int iiy=0; iiy<timg.height(); iiy++)
+                {
+                    unsigned char* slptr= timg.scanLine(iiy);
+
+                    for (int iix=0; iix<timg.width(); iix++)
+                    {
+                        slptr[iix]= slptr[iix]%PALETTE_W+project.paltable_current_row*PALETTE_W;
+                    }
+                }
+                pix.convertFromImage(timg);
+            }
+            else
+                pix.convertFromImage(project.tileset.tiles[tindex]);
             QIcon icon= QIcon(pix.scaled(ui->tblTiles->columnWidth(0),ui->tblTiles->rowHeight(0)));
             QTableWidgetItem* item= new QTableWidgetItem(icon, "");
             ui->tblTiles->setItem(iy, ix, item);
@@ -220,6 +237,8 @@ void MainWindow::on_action16_color_mode_changed()
         ui->dckPalette->setWindowTitle("Palettes (4bpp)");
     else
         ui->dckPalette->setWindowTitle("Palette (8bpp)");
+
+    ui->actionTilePicker_selected_pal->setEnabled(project.tileset.is4bpp);
 }
 
 
@@ -428,3 +447,9 @@ void MainWindow::on_actionShow_tile_grid_triggered(bool checked)
     project.editor_canvas->draw_tilegrid= checked;
     project.editor_canvas->Redraw();
 }
+
+void MainWindow::on_actionTilePicker_selected_pal_triggered(bool checked)
+{
+    UpdateTilesetTable();
+}
+

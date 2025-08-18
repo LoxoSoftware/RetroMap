@@ -56,6 +56,7 @@ private slots:
     void on_colorChanged();
     void on_actionRedraw_canvas_triggered();
     void on_actionShow_tile_grid_triggered(bool checked);
+    void on_actionTilePicker_selected_pal_triggered(bool checked);
 
 private:
     Ui::MainWindow *ui;
