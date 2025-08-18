@@ -410,13 +410,17 @@ void MainWindow::on_colorChanged()
     UpdateColorStatus(false);
     project.tileset.UpdatePalettes();
     if (ui->actionAuto_canvas_update->isChecked())
+    {
         project.editor_canvas->Redraw();
+        UpdateTilesetTable();
+    }
 }
 
 void MainWindow::on_actionRedraw_canvas_triggered()
 {
     project.tileset.UpdatePalettes();
     project.editor_canvas->Redraw();
+    UpdateTilesetTable();
 }
 
 void MainWindow::on_actionShow_tile_grid_triggered(bool checked)
