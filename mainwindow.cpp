@@ -406,7 +406,7 @@ void MainWindow::on_btnSize2_clicked(bool checked)
     ui->btnSize1->setChecked(false);
     ui->btnSize2->setChecked(true);
     ui->btnSize3->setChecked(false);
-    project.pen_size= 2;
+    project.pen_size= 3;
 }
 
 void MainWindow::on_btnSize3_clicked(bool checked)
@@ -414,7 +414,7 @@ void MainWindow::on_btnSize3_clicked(bool checked)
     ui->btnSize1->setChecked(false);
     ui->btnSize2->setChecked(false);
     ui->btnSize3->setChecked(true);
-    project.pen_size= 3;
+    project.pen_size= 5;
 }
 
 void MainWindow::on_actionMapChange_Size_triggered()
