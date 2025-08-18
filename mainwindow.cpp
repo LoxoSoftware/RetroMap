@@ -77,6 +77,9 @@ void MainWindow::CheckCanvasPresent()
 
 void MainWindow::UpdateTilesetTable()
 {
+    int selx= project.tileset_selected_tile%ui->tblTiles->columnCount();
+    int sely= project.tileset_selected_tile/ui->tblTiles->columnCount();
+
     ui->tblTiles->clear();
     ui->tblTiles->setRowCount(ceil((float)project.tileset.tiles.count()/(float)ui->tblTiles->columnCount()));
     for (int iy=0; iy<ui->tblTiles->rowCount(); iy++)
@@ -110,6 +113,13 @@ void MainWindow::UpdateTilesetTable()
             QTableWidgetItem* item= new QTableWidgetItem(icon, "");
             ui->tblTiles->setItem(iy, ix, item);
         }
+    }
+
+    if (project.tileset_selected_tile < project.tileset.tiles.count())
+    {
+        //Restore selection
+        //ui->tblTiles->setRangeSelected(QTableWidgetSelectionRange(sely,selx,sely,selx),true);
+        ui->tblTiles->setCurrentCell(sely, selx);
     }
 }
 
