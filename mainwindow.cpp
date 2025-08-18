@@ -92,7 +92,7 @@ void MainWindow::UpdateTilesetTable()
                 break;
 
             QPixmap pix;
-            if (ui->actionTilePicker_selected_pal->isChecked())
+            if (ui->actionTilePicker_selected_pal->isChecked() && project.tileset.is4bpp)
             {
                 QImage timg= project.tileset.tiles[tindex];
                 //Alter image pixels to clamp it to a 16 bit palette
@@ -212,10 +212,13 @@ void MainWindow::UpdateColorStatus(bool force)
         + QString::number(ui->spbBlueChannel->value()*8) + ");");
 
     int paltable_index= project.paltable_current_column+project.paltable_current_row*PALETTE_W;
+    QRgb new_col= QColor(ui->spbRedChannel->value()*8,
+                            ui->spbGreenChannel->value()*8, ui->spbBlueChannel->value()*8).rgb();
+
     if (paltable_index < project.tileset.palette.count() && !force)
     {
-        project.tileset.palette[paltable_index]= QColor(ui->spbRedChannel->value()*8,
-            ui->spbGreenChannel->value()*8, ui->spbBlueChannel->value()*8).rgb();
+        project.tileset.palette[paltable_index]= new_col;
+        if (block_pal_updates) return;
         UpdatePaletteTable();
     }
 }
@@ -361,16 +364,14 @@ void MainWindow::on_tblPalette_cellClicked(int row, int column)
     int palind= column+row*PALETTE_W;
     if (palind >= project.tileset.palette.count())
         return;
-    ui->sliRedChannel->blockSignals(true);
-    ui->sliGreenChannel->blockSignals(true);
-    ui->sliBlueChannel->blockSignals(true);
+    block_pal_updates= true;
     ui->sliRedChannel->setValue(qRed(project.tileset.palette[palind])/8);
     ui->sliGreenChannel->setValue(qGreen(project.tileset.palette[palind])/8);
     ui->sliBlueChannel->setValue(qBlue(project.tileset.palette[palind])/8);
     UpdateColorStatus(true);
-    ui->sliRedChannel->blockSignals(false);
-    ui->sliGreenChannel->blockSignals(false);
-    ui->sliBlueChannel->blockSignals(false);
+    block_pal_updates= false;
+    if (ui->actionTilePicker_selected_pal && project.tileset.is4bpp)
+        UpdateTilesetTable();
 }
 
 void MainWindow::on_tlbPen_clicked(bool checked)
@@ -436,6 +437,7 @@ void MainWindow::on_actionRedo_triggered()
 
 void MainWindow::on_colorChanged()
 {
+    if (block_pal_updates) return;
     UpdateColorStatus(false);
     project.tileset.UpdatePalettes();
     if (ui->actionAuto_canvas_update->isChecked())

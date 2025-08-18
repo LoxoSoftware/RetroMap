@@ -60,5 +60,6 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    bool block_pal_updates= false;
 };
 #endif // MAINWINDOW_H
