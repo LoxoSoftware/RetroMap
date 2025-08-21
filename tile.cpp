@@ -49,11 +49,14 @@ bool Tileset::FromImage()
     }
     //Populate the palette array with the one embedded in the image
     palette.clear();
-    for (int ipy=0; ipy<PALETTE_H; ipy++)
+    for (int ic=0; ic<PALETTE_W*PALETTE_H; ic++)
     {
-        for (int ipx=0; ipx<PALETTE_W; ipx++)
+        if (ic < image->colorCount())
+            palette+= image->colorTable()[ic];
+        else
         {
-            palette+= image->colorTable()[ipx+PALETTE_W*ipy];
+            int randval= rand()%256;
+            palette+= QColor::fromRgb(randval, randval, randval).rgb();
         }
     }
 
