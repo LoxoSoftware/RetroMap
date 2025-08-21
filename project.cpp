@@ -33,6 +33,7 @@ int Project::SaveToFile(QString fname)
         QMessageBox::critical(canvas_container, "Cannot save project", "No tileset image is loaded");
         return 2;
     }
+    if (tileset.image_fpath != "//clone//")
     if (!QFile::exists(tileset.image_fpath))
     {
         QMessageBox::critical(canvas_container, "Cannot save project", "Tileset image file is invalid");
@@ -51,6 +52,27 @@ int Project::SaveToFile(QString fname)
                     ((ttile.palette_index%16)*0x2000);
     }
 
+
+    if (tileset.image_fpath == "//clone//")
+    {
+        srand(time(NULL));
+        QString suffix= "-tiles_"+QString::number(rand()%0x10000, 16)+".bmp";
+
+        if (fname.lastIndexOf('.') > 0)
+            tileset.image_fpath= fname.chopped(fname.size()-fname.lastIndexOf('.'))+suffix;
+        else
+            tileset.image_fpath= fname+suffix;
+    }
+
+    tileset.image->setColorTable(tileset.palette);
+    tileset.image->save(tileset.image_fpath, "BMP");
+
+    // QFile ofimg= QFile(tileset.image_fpath);
+    // QIODevice
+    // ofimg.open(QIODeviceBase::WriteOnly);
+    // tileset.image->save(ofimg.);
+    // ofimg.close();
+
     jobj.insert("tileset_source",tileset.image_fpath);
     jobj.insert("tileset_bpp", (tileset.is4bpp?"4":"8"));
     jobj.insert("tilemap_rows", QString::number(editor_canvas->Size().height()));
@@ -58,9 +80,6 @@ int Project::SaveToFile(QString fname)
     jobj.insert("tilemap_tiles", QJsonValue(jtilemap));
 
     QJsonDocument jdoc= QJsonDocument(jobj);
-
-    tileset.image->setColorTable(tileset.palette);
-    tileset.image->save(tileset.image_fpath, "bmp");
 
     QFile ofile= QFile(fname);
     ofile.open(QIODevice::WriteOnly);
@@ -70,6 +89,7 @@ int Project::SaveToFile(QString fname)
         return 4;
     }
     ofile.write(jdoc.toJson());
+    ofile.close();
 
     return 0;
 }
