@@ -283,7 +283,6 @@ void MainWindow::on_actionSave_as_triggered()
         return;
 
     project.SaveToFile(ofname);
-    project.project_fpath= ofname;
 }
 
 void MainWindow::on_actionLoad_triggered()
@@ -295,7 +294,6 @@ void MainWindow::on_actionLoad_triggered()
         return;
 
     project.LoadFromFile(ifname);
-    project.project_fpath= ifname;
 
     CheckCanvasPresent();
     UpdateTilesetTable();

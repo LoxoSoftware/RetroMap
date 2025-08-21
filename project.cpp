@@ -21,6 +21,8 @@ int Project::CreateNew(int width_tiles, int height_tiles)
 
     editor_canvas= new Canvas(canvas_container, width_tiles, height_tiles);
     editor_canvas->UpdateHistory();
+
+    project_fpath= "";
     return 0;
 }
 
@@ -67,12 +69,6 @@ int Project::SaveToFile(QString fname)
     tileset.image->setColorTable(tileset.palette);
     tileset.image->save(tileset.image_fpath, "BMP");
 
-    // QFile ofimg= QFile(tileset.image_fpath);
-    // QIODevice
-    // ofimg.open(QIODeviceBase::WriteOnly);
-    // tileset.image->save(ofimg.);
-    // ofimg.close();
-
     jobj.insert("tileset_source",tileset.image_fpath);
     jobj.insert("tileset_bpp", (tileset.is4bpp?"4":"8"));
     jobj.insert("tilemap_rows", QString::number(editor_canvas->Size().height()));
@@ -90,6 +86,8 @@ int Project::SaveToFile(QString fname)
     }
     ofile.write(jdoc.toJson());
     ofile.close();
+
+    project_fpath= fname;
 
     return 0;
 }
@@ -134,5 +132,6 @@ int Project::LoadFromFile(QString fname)
     editor_canvas->Redraw();
     editor_canvas->UpdateHistory();
 
+    project_fpath= fname;
     return 0;
 }
