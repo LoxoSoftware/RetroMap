@@ -17,7 +17,6 @@ public:
     int LoadFromFile(QString fname);
     int ExportToSourceFile(QString fname);
 
-    //Private members are for sigmas
     QString         project_fpath= "";
     QScrollArea*    canvas_container= nullptr;
     Canvas*         editor_canvas= nullptr;
@@ -27,6 +26,10 @@ public:
     int             paltable_current_column= 0;
     int             selected_tools;
     int             pen_size= 1;
+
+private:
+    QVector<QString>    TiledataToString(int it, QString format);
+    uint16_t            TruncPal(uint32_t n32);
 };
 
 #endif // PROJECT_H

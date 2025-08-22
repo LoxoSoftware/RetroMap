@@ -57,6 +57,7 @@ private slots:
     void on_actionRedraw_canvas_triggered();
     void on_actionShow_tile_grid_triggered(bool checked);
     void on_actionTilePicker_selected_pal_triggered(bool checked);
+    void on_actionExport_as_source_file_triggered();
 
 private:
     Ui::MainWindow *ui;

@@ -135,3 +135,166 @@ int Project::LoadFromFile(QString fname)
     project_fpath= fname;
     return 0;
 }
+
+int Project::ExportToSourceFile(QString fname)
+{
+    //Get file type from file extension
+    if (fname.lastIndexOf('.') < 0 || fname.lastIndexOf('.') < fname.lastIndexOf('/'))
+    {
+        QMessageBox::critical(canvas_container, "Error - Export to source file", "Output file must have an extension");
+        return 1;
+    }
+    QString ofmt= fname.last(fname.size()-fname.lastIndexOf('.')-1);
+    QString oname;
+    if (fname.lastIndexOf('/') >= 0)
+        oname= fname.sliced(fname.lastIndexOf('/')+1, fname.lastIndexOf('.')-fname.lastIndexOf('/')-1);
+    else
+        oname= fname.first(fname.size()-ofmt.size()-1);
+
+    oname.replace(" ", "_");
+    QString obuf= "";
+
+    if (ofmt == "s")
+    {
+        QFile ofile= QFile(fname);
+        ofile.open(QIODeviceBase::WriteOnly);
+
+        obuf+= "@{{BLOCK("+oname+")\n";
+        obuf+= "\n@================================================";
+        obuf+= "\n@      Exported by RetroMap by LoxoSoftware      ";
+        obuf+= "\n@    https://github.com/LoxoSoftware/RetroMap    ";
+        obuf+= "\n@================================================";
+        obuf+= "\n\n";
+        if (tileset.image)
+        {
+            obuf+= "\t.section .rodata\n\t.align 2\n\t.global "+oname+"Tiles\n";
+            obuf+= oname+"Tiles:\n";
+            for (int it=0; it<tileset.tiles.count(); it++)
+            {
+                foreach (QString tstr, TiledataToString(it, ofmt))
+                    obuf+= tstr;
+            }
+        }
+        if (editor_canvas)
+        {
+            if (editor_canvas->width() < 8)
+                return 3;
+
+            obuf+= "\n\t.section .rodata\n\t.align 2\n\t.global "+oname+"Map\n";
+            obuf+= oname+"Map:\n";
+            for (int it=0; it<editor_canvas->tiles.count(); it++)
+            {
+                Tile ttile= editor_canvas->tiles[it];
+                unsigned int tdata= (ttile.tileset_offset)%0x0400+
+                                    (ttile.hflip?0x0400:0)+
+                                    (ttile.vflip?0x0800:0)+
+                                    ((ttile.palette_index%16)*0x1000);
+                if (it%8 == 0) obuf+= "\t.hword 0x";
+                else           obuf+= ",0x";
+                obuf+= QString::number(tdata, 16);
+                if (it%8 == 7) obuf+= "\n";
+            }
+        }
+        if (tileset.palette.count())
+        {
+            obuf+= "\n\t.section .rodata\n\t.align 2\n\t.global "+oname+"Pal\n";
+            obuf+= oname+"Pal:\n";
+            for (int ip=0; ip<tileset.palette.count(); ip++)
+            {
+                QColor tcol= tileset.palette[ip];
+                unsigned int tdata=  tcol.red()/8+
+                                     (tcol.green()/8)*32+
+                                     (tcol.blue()/8)*1024;
+                if (ip%8 == 0) obuf+= "\t.hword 0x";
+                else           obuf+= ",0x";
+                obuf+= QString::number(tdata, 16);
+                if (ip%8 == 7) obuf+= "\n";
+            }
+        }
+        obuf+= "\n@}}BLOCK("+oname+")";
+
+        ofile.write(obuf.toLocal8Bit());
+        ofile.close();
+    }
+    else if (ofmt == "c")
+    {
+        QMessageBox::critical(canvas_container, "Error - Export to C source file", "Not implemented yet :(");
+        return 1;
+    }
+    else
+    {
+        QMessageBox::critical(canvas_container, "Error - Export to source file", "Invalid output file format \"."+ofmt+"\"");
+        return 1;
+    }
+
+    return 0;
+}
+
+QVector<QString> Project::TiledataToString(int it, QString format)
+{
+    QVector<QString> ostrv;
+    ostrv.clear();
+    QString tstr;
+
+    int imgposx= (it*TILE_W)%tileset.image->width();
+    int imgposy= ((it*TILE_W)/tileset.image->width())*TILE_H;
+
+    if (tileset.is4bpp)
+    {
+        //Assuming a tile is 32 bytes, so 2 rows of 8 16 bit words
+        for (int iti=0; iti<8; iti+=4)
+        {
+            tstr= "";
+            if (format == "s")
+                tstr+= "\t.hword ";
+            if (format == "c")
+                tstr+= "\t";
+            tstr+=
+                "0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+0)))[imgposx/4+0]),16)+
+                ",0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+0)))[imgposx/4+1]),16)+
+                ",0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+1)))[imgposx/4+0]),16)+
+                ",0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+1)))[imgposx/4+1]),16)+
+                ",0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+2)))[imgposx/4+0]),16)+
+                ",0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+2)))[imgposx/4+1]),16)+
+                ",0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+3)))[imgposx/4+0]),16)+
+                ",0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+3)))[imgposx/4+1]),16);
+            if (format == "c")
+                tstr+= ",";
+            tstr+= "\n";
+            ostrv+= tstr;
+        }
+    }
+    else
+    {
+        //Assuming a tile is 64 bytes, so 4 rows of 8 16 bit words
+        for (int iti=0; iti<8; iti+=2)
+        {
+            tstr= "";
+            if (format == "s")
+                tstr+= "\t.hword ";
+            if (format == "c")
+                tstr+= "\t";
+            tstr+=
+                "0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+0)))[imgposx/2+0],16)+
+                ",0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+0)))[imgposx/2+1],16)+
+                ",0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+0)))[imgposx/2+2],16)+
+                ",0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+0)))[imgposx/2+3],16)+
+                ",0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+1)))[imgposx/2+0],16)+
+                ",0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+1)))[imgposx/2+1],16)+
+                ",0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+1)))[imgposx/2+2],16)+
+                ",0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+1)))[imgposx/2+3],16);
+            if (format == "c")
+                tstr+= ",";
+            tstr+= "\n";
+            ostrv+= tstr;
+        }
+    }
+
+    return ostrv;
+}
+
+uint16_t Project::TruncPal(uint32_t n32)
+{
+    // 0xPCPCPCPC -> 0xCCCC (Palette, Color)
+    return ((n32&0x0F000000)>>12)|((n32&0x000F0000)>>8)|((n32&0x00000F00)>>4)|(n32&0x0000000F);
+}

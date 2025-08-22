@@ -463,3 +463,11 @@ void MainWindow::on_actionTilePicker_selected_pal_triggered(bool checked)
     UpdateTilesetTable();
 }
 
+void MainWindow::on_actionExport_as_source_file_triggered()
+{
+    QString ofile_name= QFileDialog::getSaveFileName(this, "Export map as source file", "", "GAS (*.s)\nC (*.c)");
+    if (ofile_name == "")
+        return;
+    project.ExportToSourceFile(ofile_name);
+}
+
