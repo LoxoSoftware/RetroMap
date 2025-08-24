@@ -16,6 +16,7 @@ set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp mainwindow.h mainwindow.ui
         mapsizeselector.h mapsizeselector.cpp mapsizeselector.ui
+        exportdialog.h exportdialog.cpp exportdialog.ui
         canvas.h canvas.cpp
         resources.qrc
         tile.h tile.cpp
@@ -26,7 +27,6 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(Mapped
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET Mapped APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
