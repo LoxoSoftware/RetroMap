@@ -136,7 +136,7 @@ int Project::LoadFromFile(QString fname)
     return 0;
 }
 
-int Project::ExportToSourceFile(QString fname)
+int Project::ExportToSourceFile(QString fname, int export_flags)
 {
     //Get file type from file extension
     if (fname.lastIndexOf('.') < 0 || fname.lastIndexOf('.') < fname.lastIndexOf('/'))
@@ -158,27 +158,29 @@ int Project::ExportToSourceFile(QString fname)
     {
         QFile ofile= QFile(fname);
         ofile.open(QIODeviceBase::WriteOnly);
+        if (!ofile.isOpen())
+            return 2;
 
         obuf+= "@{{BLOCK("+oname+")\n";
-        obuf+= "\n@================================================";
-        obuf+= "\n@      Exported by RetroMap by LoxoSoftware      ";
-        obuf+= "\n@    https://github.com/LoxoSoftware/RetroMap    ";
-        obuf+= "\n@================================================";
+        obuf+= "\n@====================================================================@";
+        obuf+= "\n@                Exported by RetroMap by LoxoSoftware                @";
+        obuf+= "\n@              https://github.com/LoxoSoftware/RetroMap              @";
+        obuf+= "\n@====================================================================@";
         obuf+= "\n\n";
-        if (tileset.image)
+        if (tileset.image && export_flags&Project::ExportGfx)
         {
             obuf+= "\t.section .rodata\n\t.align 2\n\t.global "+oname+"Tiles\n";
             obuf+= oname+"Tiles:\n";
             for (int it=0; it<tileset.tiles.count(); it++)
             {
-                foreach (QString tstr, TiledataToString(it, ofmt))
+                foreach (QString tstr, TiledataToString(it, ofmt, export_flags))
                     obuf+= tstr;
             }
         }
-        if (editor_canvas)
+        if (editor_canvas && export_flags&Project::ExportMap)
         {
             if (editor_canvas->width() < 8)
-                return 3;
+                return 5;
 
             obuf+= "\n\t.section .rodata\n\t.align 2\n\t.global "+oname+"Map\n";
             obuf+= oname+"Map:\n";
@@ -195,7 +197,7 @@ int Project::ExportToSourceFile(QString fname)
                 if (it%8 == 7) obuf+= "\n";
             }
         }
-        if (tileset.palette.count())
+        if (tileset.palette.count() && export_flags&Project::ExportPal)
         {
             obuf+= "\n\t.section .rodata\n\t.align 2\n\t.global "+oname+"Pal\n";
             obuf+= oname+"Pal:\n";
@@ -219,18 +221,18 @@ int Project::ExportToSourceFile(QString fname)
     else if (ofmt == "c")
     {
         QMessageBox::critical(canvas_container, "Error - Export to C source file", "Not implemented yet :(");
-        return 1;
+        return 3;
     }
     else
     {
         QMessageBox::critical(canvas_container, "Error - Export to source file", "Invalid output file format \"."+ofmt+"\"");
-        return 1;
+        return 4;
     }
 
     return 0;
 }
 
-QVector<QString> Project::TiledataToString(int it, QString format)
+QVector<QString> Project::TiledataToString(int it, QString format, int export_flags)
 {
     QVector<QString> ostrv;
     ostrv.clear();
@@ -239,8 +241,10 @@ QVector<QString> Project::TiledataToString(int it, QString format)
     int imgposx= (it*TILE_W)%tileset.image->width();
     int imgposy= ((it*TILE_W)/tileset.image->width())*TILE_H;
 
-    if (tileset.is4bpp)
+    switch ((export_flags>>Project::ExportFormat)&0b11)
     {
+    case Project::ExportGBA4bpp>>Project::ExportFormat:
+
         //Assuming a tile is 32 bytes, so 2 rows of 8 16 bit words
         for (int iti=0; iti<8; iti+=4)
         {
@@ -263,9 +267,10 @@ QVector<QString> Project::TiledataToString(int it, QString format)
             tstr+= "\n";
             ostrv+= tstr;
         }
-    }
-    else
-    {
+        break;
+
+    case Project::ExportGBA8bpp>>Project::ExportFormat:
+
         //Assuming a tile is 64 bytes, so 4 rows of 8 16 bit words
         for (int iti=0; iti<8; iti+=2)
         {
@@ -288,6 +293,11 @@ QVector<QString> Project::TiledataToString(int it, QString format)
             tstr+= "\n";
             ostrv+= tstr;
         }
+
+        break;
+
+    default:
+        break;
     }
 
     return ostrv;
