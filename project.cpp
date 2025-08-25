@@ -45,6 +45,8 @@ int Project::SaveToFile(QString fname)
     QJsonObject jobj= QJsonObject();
     QJsonArray jtilemap= QJsonArray();
 
+    jobj.insert("version","1");
+
     foreach (Tile ttile, editor_canvas->tiles)
     {
         //Save in GBA format
@@ -53,7 +55,6 @@ int Project::SaveToFile(QString fname)
                     (ttile.vflip?0x1000:0)+
                     ((ttile.palette_index%16)*0x2000);
     }
-
 
     if (tileset.image_fpath == "//clone//")
     {
