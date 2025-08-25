@@ -197,6 +197,12 @@ void Canvas::OpenContextMenu(QPoint screen_pos, QPoint canvas_pos)
     int tiley= CANVASY_TO_ROW(canvas_pos.y());
     int tilen= tilex+tiley*size.width();
 
+    if (tilen >= tiles.count())
+    {
+        QMessageBox::critical(this, "Error", "Cannot open menu, index out fo range.\r\tThis is a bug!");
+        return;
+    }
+
     if (context_menu)
         delete context_menu;
 
@@ -228,18 +234,23 @@ void Canvas::mousePressEvent(QMouseEvent *event)
 {
     //event->accept();
     mouse_down_button= event->button();
+    mouse_last_pos= event->pos();
+    mouse_last_global_pos= event->globalPosition();
+
+    if (mouse_down_button == Qt::MiddleButton)
+        this->setCursor(Qt::ClosedHandCursor);
 
     if (mouse_down_button != Qt::RightButton)
         mouseMoveEvent(event);
 
     mouse_has_moved= false;
-    mouse_last_pos= event->pos();
 }
 
 void Canvas::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
 
+    if (mouse_down_button == Qt::RightButton || mouse_down_button == Qt::LeftButton)
     for (int iy=-floor((float)project.pen_size/2); iy<ceil((float)project.pen_size/2); iy++)
     {
         for (int ix=-floor((float)project.pen_size/2); ix<ceil((float)project.pen_size/2); ix++)
@@ -247,14 +258,17 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
             int tilex= CANVASX_TO_COLUMN(event->pos().x())+ix;
             int tiley= CANVASY_TO_ROW(event->pos().y())+iy;
 
-            if (tilex < 0 || tilex >= size.width())
-                continue;
-            if (tiley < 0 || tiley >= size.height())
-                continue;
-
             ManagedPlot(tilex, tiley);
         }
     }
+
+    if (mouse_down_button == Qt::MiddleButton)
+    {
+        ((QScrollArea*)parent())->scroll(event->globalPosition().x()-mouse_last_global_pos.x(),
+                                         event->globalPosition().y()-mouse_last_global_pos.y());
+        mouse_last_global_pos= event->globalPosition();
+    }
+
     mouse_has_moved= true;
 }
 
@@ -262,8 +276,11 @@ void Canvas::mouseReleaseEvent(QMouseEvent *event)
 {
     event->accept();
 
+    if (mouse_down_button == Qt::MiddleButton)
+        this->setCursor(Qt::ArrowCursor);
+
     if (!mouse_has_moved && mouse_down_button == Qt::RightButton)
-        OpenContextMenu(event->globalPos(), event->pos());
+        OpenContextMenu(event->globalPosition().toPoint(), event->pos());
     else if (mouse_down_button == Qt::RightButton || mouse_down_button == Qt::LeftButton)
         UpdateHistory();
 
@@ -273,6 +290,11 @@ void Canvas::mouseReleaseEvent(QMouseEvent *event)
 
 void Canvas::ManagedPlot(int tilex, int tiley)
 {
+    if (tilex < 0 || tilex >= size.width())
+        return;
+    if (tiley < 0 || tiley >= size.height())
+        return;
+
     Tile ttile= tiles[tilex+tiley*size.width()];
 
     switch (mouse_down_button)
@@ -299,7 +321,8 @@ void Canvas::ManagedPlot(int tilex, int tiley)
             ttile.hflip= true;
         if (project.selected_tools & MainWindow::tool_VFlipPen)
             ttile.vflip= true;
-        if (project.selected_tools & MainWindow::tool_PalettePen)
+        if (project.selected_tools & MainWindow::tool_PalettePen
+            && project.tileset.palette.count() > 0)
             ttile.palette_index= project.tileset.tiles[ttile.tileset_offset].pixelIndex(0,0)/PALETTE_W;
 
         Plot(tiley, tilex, ttile);
@@ -404,7 +427,7 @@ void Canvas::wheelEvent(QWheelEvent *event)
     }
     else
     {
-        //vv Trust me bro vv
+        //This usually works with touchpads
         ((QScrollArea*)parent())->scroll(event->pixelDelta().x(), event->pixelDelta().y());
     }
 }

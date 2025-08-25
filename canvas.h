@@ -67,7 +67,8 @@ private:
     int scaling= 2;
     Qt::MouseButton mouse_down_button= Qt::NoButton;
     bool mouse_has_moved= false;
-    QPoint mouse_last_pos;
+    QPointF mouse_last_pos;
+    QPointF mouse_last_global_pos;
     int history_current_index= -1;
 
     void UpdateScaling();
