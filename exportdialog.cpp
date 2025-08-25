@@ -33,7 +33,14 @@ void ExportDialog::on_btnBrowseOFile_clicked()
 void ExportDialog::on_btnDialog_accepted()
 {
     if (ui->txtOFilePath->text() == "")
-        return;
+    {
+        on_btnBrowseOFile_clicked();
+        if (ui->txtOFilePath->text() == "")
+        {
+            QMessageBox::critical(this, "Error - export as source file", "No valid output file path given.\r\nExport canceled.");
+            return;
+        }
+    }
     int export_flags= 0;
     export_flags+= ui->chkExportGfx->isChecked()?Project::ExportGfx:0;
     export_flags+= ui->chkExportMap->isChecked()?Project::ExportMap:0;
