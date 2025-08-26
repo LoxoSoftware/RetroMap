@@ -45,8 +45,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>541</width>
-         <height>520</height>
+         <width>545</width>
+         <height>546</height>
         </rect>
        </property>
       </widget>
@@ -60,7 +60,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>36</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -109,11 +109,18 @@
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuTileset"/>
    <addaction name="menuTilemap"/>
    <addaction name="menuView"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dckToolbox">
@@ -1150,6 +1157,14 @@
    </property>
    <property name="text">
     <string>Preview tiles with sel. palette in picker</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="icon">
+    <iconset theme="help-about"/>
+   </property>
+   <property name="text">
+    <string>About RetroMap...</string>
    </property>
   </action>
   <zorder>dckPalette</zorder>

@@ -3,6 +3,7 @@
 #include "project.h"
 #include "mapsizeselector.h"
 #include "exportdialog.h"
+#include "aboutdialog.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QRgb>
@@ -468,5 +469,11 @@ void MainWindow::on_actionExport_as_source_file_triggered()
 {
     ExportDialog* odial= new ExportDialog(this);
     odial->open();
+}
+
+void MainWindow::on_actionAbout_triggered()
+{
+    AboutDialog* dialog= new AboutDialog(this);
+    dialog->open();
 }
 

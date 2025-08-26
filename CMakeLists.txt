@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(Mapped VERSION 0.1 LANGUAGES CXX)
+project(RetroMap VERSION 0.9.0 LANGUAGES CXX)
+configure_file(config.h.in app_config.h)
 
 set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
@@ -14,9 +15,11 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
+        app_config.h
         mainwindow.cpp mainwindow.h mainwindow.ui
         mapsizeselector.h mapsizeselector.cpp mapsizeselector.ui
         exportdialog.h exportdialog.cpp exportdialog.ui
+        aboutdialog.h aboutdialog.cpp aboutdialog.ui
         canvas.h canvas.cpp
         resources.qrc
         tile.h tile.cpp
