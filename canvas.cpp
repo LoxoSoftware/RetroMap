@@ -226,7 +226,7 @@ void Canvas::OpenContextMenu(QPoint screen_pos, QPoint canvas_pos)
     connect(context_menu->actions().last(), &QAction::triggered, this, &Canvas::onMenuVFlip_triggered);
 
     context_menu->setWindowModality(Qt::ApplicationModal);
-    context_menu->setGeometry(QRect(screen_pos,QSize(190,110)));
+    context_menu->setGeometry(QRect(screen_pos,context_menu->sizeHint()));
     context_menu->show();
 }
 
