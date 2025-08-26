@@ -153,10 +153,30 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
         oname= fname.first(fname.size()-ofmt.size()-1);
 
     oname.replace(" ", "_");
-    QString obuf= "";
+
+    float tiles_sz=0, map_sz=0, pal_sz=0;
+    int export_word_sz= sizeof(uint16_t);
+    switch ((export_flags>>Project::ExportFormat)&0b11)
+    {
+        //This may be redundant, but I'm keeping it in case I want to add more formats in the future
+        //NOTE: Assuming export_word_sz is 1 (byte) before normalization (that happens later)
+    case Project::ExportGBA4bpp>>Project::ExportFormat:
+        tiles_sz= tileset.tiles.count()/2;
+        map_sz= editor_canvas?(editor_canvas->tiles.count()*2):0;
+        break;
+    case Project::ExportGBA8bpp>>Project::ExportFormat:
+        tiles_sz= tileset.tiles.count();
+        map_sz= editor_canvas?(editor_canvas->tiles.count()*2):0;
+        break;
+    default:
+        break;
+    }
+    tiles_sz *= TILE_W*TILE_H;
+    pal_sz    = (tileset.palette.count()*2);
 
     if (ofmt == "s")
     {
+        QString obuf= "";
         QFile ofile= QFile(fname);
         ofile.open(QIODeviceBase::WriteOnly);
         if (!ofile.isOpen())
@@ -228,6 +248,45 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
     {
         QMessageBox::critical(canvas_container, "Error - Export to source file", "Invalid output file format \"."+ofmt+"\"");
         return 4;
+    }
+
+    if (export_flags&Project::ExportHFile)
+    {
+        QString obuf= "";
+        QFile ofile= QFile(fname.first(fname.size()-ofmt.size())+"h");
+        ofile.open(QIODeviceBase::WriteOnly);
+        if (!ofile.isOpen())
+            return 2;
+        obuf= "";
+
+        obuf+= "//{{BLOCK("+oname+")\n";
+        obuf+= "\n//====================================================================//";
+        obuf+= "\n//                Exported by RetroMap by LoxoSoftware                //";
+        obuf+= "\n//              https://github.com/LoxoSoftware/RetroMap              //";
+        obuf+= "\n//====================================================================//";
+        obuf+= "\n\n";
+        obuf+= "#ifndef __RES__"+oname.toUpper()+"\n";
+        obuf+= "#define __RES__"+oname.toUpper()+"\n\n";
+        if (tileset.image && export_flags&Project::ExportGfx)
+        {
+            obuf+= "#define "+oname+"TilesLen "+QString::number(ceil(tiles_sz))+"\n";
+            obuf+= "extern const unsigned short "+oname+"Tiles["+QString::number(ceil(tiles_sz)/export_word_sz)+"];\n\n";
+        }
+        if (editor_canvas && export_flags&Project::ExportMap)
+        {
+            obuf+= "#define "+oname+"MapLen "+QString::number(ceil(map_sz))+"\n";
+            obuf+= "extern const unsigned short "+oname+"Map["+QString::number(ceil(map_sz)/export_word_sz)+"];\n\n";
+        }
+        if (tileset.palette.count() && export_flags&Project::ExportPal)
+        {
+            obuf+= "#define "+oname+"PalLen "+QString::number(ceil(pal_sz))+"\n";
+            obuf+= "extern const unsigned short "+oname+"Pal["+QString::number(ceil(pal_sz)/export_word_sz)+"];\n\n";
+        }
+        obuf+= "#endif\n";
+        obuf+= "//}}BLOCK("+oname+")";
+
+        ofile.write(obuf.toLocal8Bit());
+        ofile.close();
     }
 
     return 0;
