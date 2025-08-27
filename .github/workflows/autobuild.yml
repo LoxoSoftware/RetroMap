@@ -27,6 +27,6 @@ jobs:
       with:
         name: Linux x86_64 executable
         path: build/RetroMap
-        if-no-files-found: fail
+        if-no-files-found: error
         compression-level: 0
         overwrite: true
