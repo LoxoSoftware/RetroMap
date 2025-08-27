@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  build:
+  build_linux-amd64:
     runs-on: ubuntu-latest
     steps:
     - name: Get CMake
@@ -23,7 +23,10 @@ jobs:
       run: cmake -S . -B build -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
     - name: cmake build
       run: cmake --build build --target all -- -j4
-    - uses: actions/download-artifact@v5
+    - uses: actions/upload-artifact@v4
       with:
-        name: Linux x86_64 build
+        name: Linux x86_64 executable
         path: build/RetroMap
+        if-no-files-found: fail
+        compression-level: 0
+        overwrite: true
