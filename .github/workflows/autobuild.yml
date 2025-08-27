@@ -10,7 +10,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
     - name: Get CMake
       uses: symbitic/install-cmake@master
     - name: Install Qt
@@ -19,13 +18,8 @@ jobs:
         version: '6.8.3'
         host: 'linux'
         target: 'desktop'
-    - name: get project
-      run: git clone https://github.com/LoxoSoftware/RetroMap.git; cd RetroMap; ls
-    - name: goto build dir
-      run: mkdir build; cd build
-    - name: cmake configure
-      run: cmake ..
-    - name: make
-      run: make
-    - name: exit build dir
-      run: cd ..
+    - uses: actions/checkout@v4
+    - name: cmake setup
+      run: cmake -S . -B build -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Debug
+    - name: cmake build
+      run: cmake --build build --target all
