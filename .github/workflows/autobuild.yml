@@ -19,8 +19,10 @@ jobs:
         version: '6.8.3'
         host: 'linux'
         target: 'desktop'
+    - name: get project
+      run: git clone https://github.com/LoxoSoftware/RetroMap.git; cd RetroMap; ls
     - name: goto build dir
-      run: mkdir build && cd build
+      run: mkdir build; cd build
     - name: cmake configure
       run: cmake ..
     - name: make
