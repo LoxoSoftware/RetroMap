@@ -27,17 +27,22 @@ public:
 class Tileset
 {
 public:
-    QImage*         image;
-    QString         image_fpath;
-    QVector<QImage> tiles;
-    QVector<QRgb>   palette;
-    bool            is4bpp= false;
-
     enum optimize_flags_t {
         OptimizeDefault = 0,
         OptimizeWithFlip = 1,
         OptimizeWithPalette = 2,
     };
+
+    enum tile_format_t {
+        GBA_8bpp = 1,
+        GBA_4bpp = 2,
+    };
+
+    QImage*         image;
+    QString         image_fpath;
+    QVector<QImage> tiles;
+    QVector<QRgb>   palette;
+    tile_format_t   format= GBA_8bpp;
 
     bool            FromImage();
     bool            FromImage(QString fname, bool load_new=false);

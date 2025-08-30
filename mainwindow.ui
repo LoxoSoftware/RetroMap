@@ -45,8 +45,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>545</width>
-         <height>546</height>
+         <width>541</width>
+         <height>520</height>
         </rect>
        </property>
       </widget>
@@ -60,7 +60,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>20</height>
+     <height>36</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -96,7 +96,14 @@
     <property name="title">
      <string>Tilemap</string>
     </property>
-    <addaction name="action16_color_mode"/>
+    <widget class="QMenu" name="menuFormat">
+     <property name="title">
+      <string>Format</string>
+     </property>
+     <addaction name="actionGBA_8bpp"/>
+     <addaction name="actionGBA_4bpp"/>
+    </widget>
+    <addaction name="menuFormat"/>
     <addaction name="actionMapChange_Size"/>
     <addaction name="separator"/>
     <addaction name="actionExport_as_source_file"/>
@@ -1165,6 +1172,22 @@
    </property>
    <property name="text">
     <string>About RetroMap...</string>
+   </property>
+  </action>
+  <action name="actionGBA_8bpp">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>GBA 8bpp</string>
+   </property>
+  </action>
+  <action name="actionGBA_4bpp">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>GBA 4bpp</string>
    </property>
   </action>
   <zorder>dckPalette</zorder>

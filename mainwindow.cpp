@@ -17,17 +17,18 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     project.canvas_container= ui->winCanvasArea;
-    ui->action16_color_mode->setChecked(project.tileset.is4bpp);
+    ui->action16_color_mode->setChecked(project.tileset.format == Tileset::GBA_4bpp);
 
-    if (project.tileset.is4bpp)
+    if (project.tileset.format == Tileset::GBA_4bpp)
         ui->dckPalette->setWindowTitle("Palettes (4bpp)");
-    else
+    if (project.tileset.format == Tileset::GBA_8bpp)
         ui->dckPalette->setWindowTitle("Palette (8bpp)");
 
     ui->tblPalette->setCurrentCell(0,0);
     UpdatePaletteTable();
     UpdateToolStatus();
     UpdateColorStatus();
+    ChangeTileFormat(Tileset::GBA_8bpp);
 
     project.CreateNew(32, 32);
     if (project.editor_canvas)
@@ -77,6 +78,34 @@ void MainWindow::CheckCanvasPresent()
     ui->menuEdit->setEnabled((bool)project.editor_canvas);
 }
 
+void MainWindow::ChangeTileFormat(Tileset::tile_format_t format)
+{
+    project.tileset.format= format;
+
+    ui->actionGBA_8bpp->setChecked(format==Tileset::GBA_8bpp);
+    ui->actionGBA_4bpp->setChecked(format==Tileset::GBA_4bpp);
+
+    switch (format)
+    {
+    case Tileset::GBA_4bpp:
+        ui->dckPalette->setWindowTitle("Palettes (4bpp)");
+        ui->actionTilePicker_selected_pal->setEnabled(true);
+        break;
+    case Tileset::GBA_8bpp:
+        ui->dckPalette->setWindowTitle("Palette (8bpp)");
+        ui->actionTilePicker_selected_pal->setEnabled(false);
+        break;
+    default:
+        ui->dckPalette->setWindowTitle("Palette (invalid tile format!)");
+        break;
+    }
+
+    if (project.editor_canvas)
+        project.editor_canvas->Redraw();
+    UpdatePaletteTable();
+    UpdateTilesetTable();
+}
+
 void MainWindow::UpdateTilesetTable()
 {
     int selx= project.tileset_selected_tile%ui->tblTiles->columnCount();
@@ -94,7 +123,7 @@ void MainWindow::UpdateTilesetTable()
                 break;
 
             QPixmap pix;
-            if (ui->actionTilePicker_selected_pal->isChecked() && project.tileset.is4bpp)
+            if (ui->actionTilePicker_selected_pal->isChecked() && project.tileset.format == Tileset::GBA_4bpp)
             {
                 QImage timg= project.tileset.tiles[tindex];
                 //Alter image pixels to clamp it to a 16 bit palette
@@ -141,7 +170,7 @@ void MainWindow::UpdatePaletteTable()
                 int lumarand= rand()%32;
                 bru_bg.setColor(QColor::fromRgb(lumarand*8, lumarand*8, lumarand*8));
             }
-            if (project.tileset.is4bpp)
+            if (project.tileset.format == Tileset::GBA_4bpp)
             {
                 if (project.paltable_current_row == iy && project.paltable_current_column == ix)
                     bru_bg.setStyle(Qt::Dense3Pattern);
@@ -158,7 +187,7 @@ void MainWindow::UpdatePaletteTable()
                     bru_bg.setStyle(Qt::SolidPattern);
             }
             item->setBackground(bru_bg);
-            if (project.tileset.is4bpp)
+            if (project.tileset.format == Tileset::GBA_4bpp)
                 item->setToolTip("Pal #"+QString::number(iy)+": "+QString::number(ix));
             else
                 item->setToolTip("Index: "+QString::number(ix+iy*PALETTE_W));
@@ -166,7 +195,7 @@ void MainWindow::UpdatePaletteTable()
         }
     }
 
-    ui->action16_color_mode->setChecked(project.tileset.is4bpp);
+    ui->action16_color_mode->setChecked(project.tileset.format == Tileset::GBA_4bpp);
 }
 
 void MainWindow::UpdateToolStatus()
@@ -246,16 +275,15 @@ void MainWindow::on_tblTiles_currentCellChanged(int currentRow, int currentColum
 
 void MainWindow::on_action16_color_mode_changed()
 {
-    project.tileset.is4bpp= ui->action16_color_mode->isChecked();
+    // project.tileset.format= ui->action16_color_mode->isChecked();
 
-    if (project.tileset.is4bpp)
-        ui->dckPalette->setWindowTitle("Palettes (4bpp)");
-    else
-        ui->dckPalette->setWindowTitle("Palette (8bpp)");
+    // if (project.tileset.is4bpp)
+    //     ui->dckPalette->setWindowTitle("Palettes (4bpp)");
+    // else
+    //     ui->dckPalette->setWindowTitle("Palette (8bpp)");
 
-    ui->actionTilePicker_selected_pal->setEnabled(project.tileset.is4bpp);
+    // ui->actionTilePicker_selected_pal->setEnabled(project.tileset.is4bpp);
 }
-
 
 void MainWindow::on_actionSave_triggered()
 {
@@ -332,28 +360,13 @@ void MainWindow::on_actionOptimize_tileset_triggered()
     if (!project.tileset.image || !project.tileset.tiles.count())
     {
         ui->action16_color_mode->setChecked(false);
-        project.tileset.is4bpp= false;
+        project.tileset.format= Tileset::GBA_8bpp;
         QMessageBox::critical(this, "Optimize tileset", "Please import a tileset first!");
         return;
     }
     project.tileset.Optimize(Tileset::OptimizeWithFlip);
     UpdateTilesetTable();
     project.editor_canvas->Redraw();
-}
-
-void MainWindow::on_action16_color_mode_triggered()
-{
-    if (!project.tileset.image || !project.tileset.tiles.count())
-    {
-        ui->action16_color_mode->setChecked(false);
-        project.tileset.is4bpp= false;
-        QMessageBox::critical(this, "Change color mode", "Please import a tileset first!");
-        return;
-    }
-    project.tileset.is4bpp= ui->action16_color_mode->isChecked();
-    project.editor_canvas->Redraw();
-    UpdatePaletteTable();
-    UpdateTilesetTable();
 }
 
 void MainWindow::on_tblPalette_cellClicked(int row, int column)
@@ -370,7 +383,7 @@ void MainWindow::on_tblPalette_cellClicked(int row, int column)
     ui->sliBlueChannel->setValue(qBlue(project.tileset.palette[palind])/8);
     UpdateColorStatus(true);
     block_pal_updates= false;
-    if (ui->actionTilePicker_selected_pal && project.tileset.is4bpp)
+    if (ui->actionTilePicker_selected_pal && project.tileset.format == Tileset::GBA_4bpp)
         UpdateTilesetTable();
 }
 
@@ -460,7 +473,7 @@ void MainWindow::on_actionShow_tile_grid_triggered(bool checked)
     project.editor_canvas->Redraw();
 }
 
-void MainWindow::on_actionTilePicker_selected_pal_triggered(bool checked)
+void MainWindow::on_actionTilePicker_selected_pal_triggered()
 {
     UpdateTilesetTable();
 }
@@ -475,5 +488,15 @@ void MainWindow::on_actionAbout_triggered()
 {
     AboutDialog* dialog= new AboutDialog(this);
     dialog->open();
+}
+
+void MainWindow::on_actionGBA_8bpp_triggered()
+{
+    ChangeTileFormat(Tileset::GBA_8bpp);
+}
+
+void MainWindow::on_actionGBA_4bpp_triggered()
+{
+    ChangeTileFormat(Tileset::GBA_4bpp);
 }
 

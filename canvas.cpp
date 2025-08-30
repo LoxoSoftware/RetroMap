@@ -152,7 +152,7 @@ void Canvas::RedrawTile(int row, int column)
         QPixmap pix;
         QTransform trans= QTransform();
 
-        if (project.tileset.is4bpp)
+        if (project.tileset.format == Tileset::GBA_4bpp)
         {
             //Clamp 256 color indexes to 16 colors of one of 16 palettes
             QImage pix_tf= project.tileset.tiles[ttile->tileset_offset];
@@ -215,7 +215,7 @@ void Canvas::OpenContextMenu(QPoint screen_pos, QPoint canvas_pos)
         context_menu_palette_sel->addAction(""+QString::number(i));
     }
     connect(context_menu_palette_sel, &QMenu::triggered, this, &Canvas::onMenuChangePal_triggered);
-    context_menu_palette_sel->setEnabled(project.tileset.is4bpp);
+    context_menu_palette_sel->setEnabled(project.tileset.format == Tileset::GBA_4bpp);
     context_menu->addAction("Flip tile horizontally");
     context_menu->actions().last()->setCheckable(true);
     context_menu->actions().last()->setChecked(tiles[tilen].hflip);
@@ -400,7 +400,7 @@ QImage Canvas::GetImage()
                 for (int ix=0; ix<TILE_W; ix++)
                 {
                     unsigned char pixel= tile_scanline[ix];
-                    if (project.tileset.is4bpp)
+                    if (project.tileset.format == Tileset::GBA_4bpp)
                         pixel= tiles[tm_ti].palette_index*PALETTE_W+pixel%PALETTE_W;
 
                     if (!tiles[tm_ti].hflip)

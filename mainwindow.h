@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "tile.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -28,6 +29,8 @@ public:
     static const int tool_HFlipPen = 4;
     static const int tool_PalettePen = 8;
 
+    void ChangeTileFormat(Tileset::tile_format_t format);
+
 private slots:
     void on_actionQuit_triggered();
     void on_actionNew_triggered();
@@ -41,7 +44,6 @@ private slots:
     void on_actionImport_tileset_from_image_triggered();
     void on_actionExport_as_indexed_bitmap_triggered();
     void on_actionOptimize_tileset_triggered();
-    void on_action16_color_mode_triggered();
     void on_tblPalette_cellClicked(int row, int column);
     void on_tlbPen_clicked(bool checked);
     void on_tlbVFlipPen_clicked(bool checked);
@@ -56,9 +58,11 @@ private slots:
     void on_colorChanged();
     void on_actionRedraw_canvas_triggered();
     void on_actionShow_tile_grid_triggered(bool checked);
-    void on_actionTilePicker_selected_pal_triggered(bool checked);
+    void on_actionTilePicker_selected_pal_triggered();
     void on_actionExport_as_source_file_triggered();
     void on_actionAbout_triggered();
+    void on_actionGBA_8bpp_triggered();
+    void on_actionGBA_4bpp_triggered();
 
 private:
     Ui::MainWindow *ui;

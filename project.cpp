@@ -71,7 +71,7 @@ int Project::SaveToFile(QString fname)
     tileset.image->save(tileset.image_fpath, "BMP");
 
     jobj.insert("tileset_source",tileset.image_fpath);
-    jobj.insert("tileset_bpp", (tileset.is4bpp?"4":"8"));
+    jobj.insert("tileset_bpp", ((tileset.format==Tileset::GBA_4bpp)?"4":"8"));
     jobj.insert("tilemap_rows", QString::number(editor_canvas->Size().height()));
     jobj.insert("tilemap_columns", QString::number(editor_canvas->Size().width()));
     jobj.insert("tilemap_tiles", QJsonValue(jtilemap));
@@ -114,7 +114,10 @@ int Project::LoadFromFile(QString fname)
     else
         tileset.FromImage(jdoc["tileset_source"].toString(), false);
 
-    tileset.is4bpp= (jdoc["tileset_bpp"].toString() == "4"? true:false);
+    if (jdoc["tileset_bpp"].toString() == "4")
+        tileset.format= Tileset::GBA_4bpp;
+    else
+        tileset.format= Tileset::GBA_8bpp;
 
     for (int iy=0; iy<editor_canvas->Size().height(); iy++)
     {
