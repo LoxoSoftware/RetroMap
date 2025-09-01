@@ -25,11 +25,6 @@ void TilePicker::on_currentCellChanged(int currentRow, int currentColumn, int pr
     project.tileset_selected_tile= currentColumn+currentRow*ui->tblTiles->columnCount();
 }
 
-void TilePicker::on_actionTilePicker_selected_pal_triggered()
-{
-    Update();
-}
-
 void TilePicker::Update()
 {
     if (ui->tblTiles->columnCount() <= 0)

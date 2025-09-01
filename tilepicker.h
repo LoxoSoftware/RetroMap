@@ -22,7 +22,6 @@ public:
 
 public slots:
     void on_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
-    void on_actionTilePicker_selected_pal_triggered();
 
 private slots:
     void on_tblTiles_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
