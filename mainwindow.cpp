@@ -258,6 +258,7 @@ void MainWindow::on_actionLoad_triggered()
         return;
 
     project.LoadFromFile(ifname);
+    ChangeTileFormat(project.tileset.format);
 
     CheckCanvasPresent();
     dckTilePicker->Update();
