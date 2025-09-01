@@ -1038,14 +1038,6 @@
     <string>Ctrl+S</string>
    </property>
   </action>
-  <action name="action16_color_mode">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>16 color mode</string>
-   </property>
-  </action>
   <action name="actionSave_as">
    <property name="icon">
     <iconset theme="document-save-as"/>

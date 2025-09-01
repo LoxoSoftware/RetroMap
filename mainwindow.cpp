@@ -17,24 +17,18 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     project.canvas_container= ui->winCanvasArea;
-    ui->action16_color_mode->setChecked(project.tileset.format == Tileset::GBA_4bpp);
-
-    if (project.tileset.format == Tileset::GBA_4bpp)
-        ui->dckPalette->setWindowTitle("Palettes (4bpp)");
-    if (project.tileset.format == Tileset::GBA_8bpp)
-        ui->dckPalette->setWindowTitle("Palette (8bpp)");
 
     ui->tblPalette->setCurrentCell(0,0);
     UpdatePaletteTable();
     UpdateToolStatus();
     UpdateColorStatus();
-    ChangeTileFormat(Tileset::GBA_8bpp);
 
     project.CreateNew(32, 32);
     if (project.editor_canvas)
         project.editor_canvas->draw_tilegrid= ui->actionShow_tile_grid->isChecked();
     CheckCanvasPresent();
-    on_action16_color_mode_changed();
+
+    ChangeTileFormat(Tileset::GBA_8bpp);
 
     connect(ui->sliRedChannel, &QSlider::valueChanged, this, &MainWindow::on_colorChanged);
     connect(ui->sliBlueChannel, &QSlider::valueChanged, this, &MainWindow::on_colorChanged);
@@ -194,8 +188,6 @@ void MainWindow::UpdatePaletteTable()
             ui->tblPalette->setItem(iy, ix, item);
         }
     }
-
-    ui->action16_color_mode->setChecked(project.tileset.format == Tileset::GBA_4bpp);
 }
 
 void MainWindow::UpdateToolStatus()
@@ -273,18 +265,6 @@ void MainWindow::on_tblTiles_currentCellChanged(int currentRow, int currentColum
     project.tileset_selected_tile= currentColumn+currentRow*ui->tblTiles->columnCount();
 }
 
-void MainWindow::on_action16_color_mode_changed()
-{
-    // project.tileset.format= ui->action16_color_mode->isChecked();
-
-    // if (project.tileset.is4bpp)
-    //     ui->dckPalette->setWindowTitle("Palettes (4bpp)");
-    // else
-    //     ui->dckPalette->setWindowTitle("Palette (8bpp)");
-
-    // ui->actionTilePicker_selected_pal->setEnabled(project.tileset.is4bpp);
-}
-
 void MainWindow::on_actionSave_triggered()
 {
     if (!project.editor_canvas)
@@ -359,8 +339,7 @@ void MainWindow::on_actionOptimize_tileset_triggered()
 {
     if (!project.tileset.image || !project.tileset.tiles.count())
     {
-        ui->action16_color_mode->setChecked(false);
-        project.tileset.format= Tileset::GBA_8bpp;
+        ChangeTileFormat(Tileset::GBA_8bpp);
         QMessageBox::critical(this, "Optimize tileset", "Please import a tileset first!");
         return;
     }
