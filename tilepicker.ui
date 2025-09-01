@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TilePicker</class>
+ <widget class="QDockWidget" name="TilePicker">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="features">
+   <set>QDockWidget::DockWidgetFeature::DockWidgetFloatable|QDockWidget::DockWidgetFeature::DockWidgetMovable</set>
+  </property>
+  <property name="windowTitle">
+   <string>Tileset</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="0">
+     <widget class="QTableWidget" name="tblTiles">
+      <property name="frameShape">
+       <enum>QFrame::Shape::Panel</enum>
+      </property>
+      <property name="lineWidth">
+       <number>2</number>
+      </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
+      </property>
+      <property name="rowCount">
+       <number>8</number>
+      </property>
+      <property name="columnCount">
+       <number>8</number>
+      </property>
+      <attribute name="horizontalHeaderMinimumSectionSize">
+       <number>24</number>
+      </attribute>
+      <attribute name="horizontalHeaderDefaultSectionSize">
+       <number>24</number>
+      </attribute>
+      <attribute name="verticalHeaderMinimumSectionSize">
+       <number>24</number>
+      </attribute>
+      <attribute name="verticalHeaderDefaultSectionSize">
+       <number>24</number>
+      </attribute>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <row/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+      <column/>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -45,8 +45,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>541</width>
-         <height>520</height>
+         <width>545</width>
+         <height>546</height>
         </rect>
        </property>
       </widget>
@@ -60,7 +60,7 @@
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>36</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -161,7 +161,7 @@
    <attribute name="dockWidgetArea">
     <number>1</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents">
+   <widget class="QWidget" name="dckToolbox_content">
     <widget class="QPushButton" name="tlbHFlipPen">
      <property name="geometry">
       <rect>
@@ -381,132 +381,6 @@
     </widget>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dckTiles">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="minimumSize">
-    <size>
-     <width>216</width>
-     <height>185</height>
-    </size>
-   </property>
-   <property name="features">
-    <set>QDockWidget::DockWidgetFeature::DockWidgetFloatable|QDockWidget::DockWidgetFeature::DockWidgetMovable</set>
-   </property>
-   <property name="allowedAreas">
-    <set>Qt::DockWidgetArea::AllDockWidgetAreas</set>
-   </property>
-   <property name="windowTitle">
-    <string>Tiles</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>2</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QGridLayout" name="gridLayout_3">
-     <item row="0" column="1">
-      <widget class="QTableWidget" name="tblTiles">
-       <property name="font">
-        <font>
-         <pointsize>6</pointsize>
-         <bold>true</bold>
-        </font>
-       </property>
-       <property name="frameShape">
-        <enum>QFrame::Shape::Panel</enum>
-       </property>
-       <property name="frameShadow">
-        <enum>QFrame::Shadow::Sunken</enum>
-       </property>
-       <property name="lineWidth">
-        <number>2</number>
-       </property>
-       <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
-       </property>
-       <property name="horizontalScrollBarPolicy">
-        <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
-       </property>
-       <property name="autoScroll">
-        <bool>false</bool>
-       </property>
-       <property name="editTriggers">
-        <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
-       </property>
-       <property name="dragEnabled">
-        <bool>true</bool>
-       </property>
-       <property name="dragDropMode">
-        <enum>QAbstractItemView::DragDropMode::NoDragDrop</enum>
-       </property>
-       <property name="defaultDropAction">
-        <enum>Qt::DropAction::TargetMoveAction</enum>
-       </property>
-       <property name="alternatingRowColors">
-        <bool>true</bool>
-       </property>
-       <property name="selectionMode">
-        <enum>QAbstractItemView::SelectionMode::SingleSelection</enum>
-       </property>
-       <property name="showGrid">
-        <bool>false</bool>
-       </property>
-       <property name="gridStyle">
-        <enum>Qt::PenStyle::DashLine</enum>
-       </property>
-       <property name="wordWrap">
-        <bool>false</bool>
-       </property>
-       <property name="cornerButtonEnabled">
-        <bool>false</bool>
-       </property>
-       <property name="rowCount">
-        <number>0</number>
-       </property>
-       <property name="columnCount">
-        <number>8</number>
-       </property>
-       <attribute name="horizontalHeaderVisible">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="horizontalHeaderMinimumSectionSize">
-        <number>16</number>
-       </attribute>
-       <attribute name="horizontalHeaderDefaultSectionSize">
-        <number>24</number>
-       </attribute>
-       <attribute name="horizontalHeaderHighlightSections">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="verticalHeaderVisible">
-        <bool>false</bool>
-       </attribute>
-       <attribute name="verticalHeaderMinimumSectionSize">
-        <number>16</number>
-       </attribute>
-       <attribute name="verticalHeaderDefaultSectionSize">
-        <number>24</number>
-       </attribute>
-       <attribute name="verticalHeaderHighlightSections">
-        <bool>false</bool>
-       </attribute>
-       <column/>
-       <column/>
-       <column/>
-       <column/>
-       <column/>
-       <column/>
-       <column/>
-       <column/>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
   <widget class="QDockWidget" name="dckPalette">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
@@ -538,7 +412,7 @@
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3">
+   <widget class="QWidget" name="dckPalette_content">
     <widget class="QTableWidget" name="tblPalette">
      <property name="geometry">
       <rect>

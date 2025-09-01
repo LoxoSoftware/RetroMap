@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "tile.h"
+#include "tilepicker.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -18,7 +19,6 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void CheckCanvasPresent();
-    void UpdateTilesetTable();
     void UpdatePaletteTable();
     void UpdateToolStatus();
     void UpdateColorStatus(bool force=true);
@@ -31,12 +31,15 @@ public:
 
     void ChangeTileFormat(Tileset::tile_format_t format);
 
+    TilePicker* dckTilePicker= nullptr;
+
+    bool opt_tilePicker_view_sel_pal();
+
 private slots:
     void on_actionQuit_triggered();
     void on_actionNew_triggered();
     void on_actionZoom_in_triggered();
     void on_actionZoom_out_triggered();
-    void on_tblTiles_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
     void on_actionSave_triggered();
     void on_actionSave_as_triggered();
     void on_actionLoad_triggered();
@@ -57,11 +60,11 @@ private slots:
     void on_colorChanged();
     void on_actionRedraw_canvas_triggered();
     void on_actionShow_tile_grid_triggered(bool checked);
-    void on_actionTilePicker_selected_pal_triggered();
     void on_actionExport_as_source_file_triggered();
     void on_actionAbout_triggered();
     void on_actionGBA_8bpp_triggered();
     void on_actionGBA_4bpp_triggered();
+    void on_actionTilePicker_selected_pal_triggered();
 
 private:
     Ui::MainWindow *ui;

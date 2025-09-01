@@ -20,6 +20,7 @@ set(PROJECT_SOURCES
         mapsizeselector.h mapsizeselector.cpp mapsizeselector.ui
         exportdialog.h exportdialog.cpp exportdialog.ui
         aboutdialog.h aboutdialog.cpp aboutdialog.ui
+        tilepicker.h tilepicker.cpp tilepicker.ui
         canvas.h canvas.cpp
         resources.qrc
         tile.h tile.cpp

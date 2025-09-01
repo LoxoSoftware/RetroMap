@@ -18,6 +18,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     project.canvas_container= ui->winCanvasArea;
 
+    dckTilePicker= new TilePicker(ui->centralwidget, this);
+    addDockWidget(Qt::RightDockWidgetArea, dckTilePicker);
+
     ui->tblPalette->setCurrentCell(0,0);
     UpdatePaletteTable();
     UpdateToolStatus();
@@ -43,6 +46,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+bool MainWindow::opt_tilePicker_view_sel_pal()
+    { return ui->actionTilePicker_selected_pal->isChecked(); }
+
 void MainWindow::on_actionQuit_triggered()
 {
     this->close();
@@ -64,7 +70,6 @@ void MainWindow::on_actionNew_triggered()
 void MainWindow::CheckCanvasPresent()
 {
     ui->dckPalette->setVisible((bool)project.editor_canvas);
-    ui->dckTiles->setVisible((bool)project.editor_canvas);
     ui->dckToolbox->setVisible((bool)project.editor_canvas);
     ui->menuTileset->setEnabled((bool)project.editor_canvas);
     ui->menuTilemap->setEnabled((bool)project.editor_canvas);
@@ -97,55 +102,7 @@ void MainWindow::ChangeTileFormat(Tileset::tile_format_t format)
     if (project.editor_canvas)
         project.editor_canvas->Redraw();
     UpdatePaletteTable();
-    UpdateTilesetTable();
-}
-
-void MainWindow::UpdateTilesetTable()
-{
-    int selx= project.tileset_selected_tile%ui->tblTiles->columnCount();
-    int sely= project.tileset_selected_tile/ui->tblTiles->columnCount();
-
-    ui->tblTiles->clear();
-    ui->tblTiles->setRowCount(ceil((float)project.tileset.tiles.count()/(float)ui->tblTiles->columnCount()));
-    for (int iy=0; iy<ui->tblTiles->rowCount(); iy++)
-    {
-        for (int ix=0; ix<ui->tblTiles->columnCount(); ix++)
-        {
-            int tindex= ix+iy*ui->tblTiles->columnCount();
-
-            if (tindex >= project.tileset.tiles.count())
-                break;
-
-            QPixmap pix;
-            if (ui->actionTilePicker_selected_pal->isChecked() && project.tileset.format == Tileset::GBA_4bpp)
-            {
-                QImage timg= project.tileset.tiles[tindex];
-                //Alter image pixels to clamp it to a 16 bit palette
-                for (int iiy=0; iiy<timg.height(); iiy++)
-                {
-                    unsigned char* slptr= timg.scanLine(iiy);
-
-                    for (int iix=0; iix<timg.width(); iix++)
-                    {
-                        slptr[iix]= slptr[iix]%PALETTE_W+project.paltable_current_row*PALETTE_W;
-                    }
-                }
-                pix.convertFromImage(timg);
-            }
-            else
-                pix.convertFromImage(project.tileset.tiles[tindex]);
-            QIcon icon= QIcon(pix.scaled(ui->tblTiles->columnWidth(0),ui->tblTiles->rowHeight(0)));
-            QTableWidgetItem* item= new QTableWidgetItem(icon, "");
-            ui->tblTiles->setItem(iy, ix, item);
-        }
-    }
-
-    if (project.tileset_selected_tile < project.tileset.tiles.count())
-    {
-        //Restore selection
-        //ui->tblTiles->setRangeSelected(QTableWidgetSelectionRange(sely,selx,sely,selx),true);
-        ui->tblTiles->setCurrentCell(sely, selx);
-    }
+    dckTilePicker->Update();
 }
 
 void MainWindow::UpdatePaletteTable()
@@ -260,10 +217,7 @@ void MainWindow::on_actionZoom_out_triggered()
     project.editor_canvas->ZoomOut();
 }
 
-void MainWindow::on_tblTiles_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
-{
-    project.tileset_selected_tile= currentColumn+currentRow*ui->tblTiles->columnCount();
-}
+
 
 void MainWindow::on_actionSave_triggered()
 {
@@ -306,7 +260,7 @@ void MainWindow::on_actionLoad_triggered()
     project.LoadFromFile(ifname);
 
     CheckCanvasPresent();
-    UpdateTilesetTable();
+    dckTilePicker->Update();
     UpdatePaletteTable();
 }
 
@@ -318,9 +272,8 @@ void MainWindow::on_actionImport_tileset_from_image_triggered()
     if (ifile_name == "")
         return;
     project.tileset.FromImage(ifile_name, true);
-    ui->tblTiles->setRowCount(0);
     project.tileset.Optimize(Tileset::OptimizeDefault);
-    UpdateTilesetTable();
+    dckTilePicker->Update();
     UpdatePaletteTable();
     project.editor_canvas->Redraw();
 }
@@ -344,7 +297,7 @@ void MainWindow::on_actionOptimize_tileset_triggered()
         return;
     }
     project.tileset.Optimize(Tileset::OptimizeWithFlip);
-    UpdateTilesetTable();
+    dckTilePicker->Update();
     project.editor_canvas->Redraw();
 }
 
@@ -363,7 +316,7 @@ void MainWindow::on_tblPalette_cellClicked(int row, int column)
     UpdateColorStatus(true);
     block_pal_updates= false;
     if (ui->actionTilePicker_selected_pal && project.tileset.format == Tileset::GBA_4bpp)
-        UpdateTilesetTable();
+        dckTilePicker->Update();
 }
 
 void MainWindow::on_tlbPen_clicked(bool checked)
@@ -435,7 +388,7 @@ void MainWindow::on_colorChanged()
     if (ui->actionAuto_canvas_update->isChecked())
     {
         project.editor_canvas->Redraw();
-        UpdateTilesetTable();
+        dckTilePicker->Update();
     }
 }
 
@@ -443,18 +396,13 @@ void MainWindow::on_actionRedraw_canvas_triggered()
 {
     project.tileset.UpdatePalettes();
     project.editor_canvas->Redraw();
-    UpdateTilesetTable();
+    dckTilePicker->Update();
 }
 
 void MainWindow::on_actionShow_tile_grid_triggered(bool checked)
 {
     project.editor_canvas->draw_tilegrid= checked;
     project.editor_canvas->Redraw();
-}
-
-void MainWindow::on_actionTilePicker_selected_pal_triggered()
-{
-    UpdateTilesetTable();
 }
 
 void MainWindow::on_actionExport_as_source_file_triggered()
@@ -479,3 +427,7 @@ void MainWindow::on_actionGBA_4bpp_triggered()
     ChangeTileFormat(Tileset::GBA_4bpp);
 }
 
+void MainWindow::on_actionTilePicker_selected_pal_triggered()
+{
+    dckTilePicker->Update();
+}
