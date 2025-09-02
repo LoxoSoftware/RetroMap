@@ -1,6 +1,6 @@
 #include "canvas.h"
 #include "project.h"
-#include "mainwindow.h"
+#include "toolboxpanel.h"
 #include <QMenu>
 #include <QMouseEvent>
 #include <QAction>
@@ -300,28 +300,28 @@ void Canvas::ManagedPlot(int tilex, int tiley)
     switch (mouse_down_button)
     {
     case Qt::LeftButton:
-        if (project.selected_tools & MainWindow::tool_OffsetPen
+        if (project.selected_tools & ToolBoxPanel::tool_OffsetPen
             && project.tileset_selected_tile >= 0)
             ttile.tileset_offset= project.tileset_selected_tile;
-        if (project.selected_tools & MainWindow::tool_HFlipPen)
+        if (project.selected_tools & ToolBoxPanel::tool_HFlipPen)
             ttile.hflip= false;
-        if (project.selected_tools & MainWindow::tool_VFlipPen)
+        if (project.selected_tools & ToolBoxPanel::tool_VFlipPen)
             ttile.vflip= false;
-        if (project.selected_tools & MainWindow::tool_PalettePen)
+        if (project.selected_tools & ToolBoxPanel::tool_PalettePen)
             ttile.palette_index= project.paltable_current_row;
 
         Plot(tiley, tilex, ttile);
         RedrawTile(tiley, tilex);
         break;
     case Qt::RightButton:
-        if (project.selected_tools & MainWindow::tool_OffsetPen
+        if (project.selected_tools & ToolBoxPanel::tool_OffsetPen
             && project.tileset_selected_tile >= 0)
             ttile.tileset_offset= 0;
-        if (project.selected_tools & MainWindow::tool_HFlipPen)
+        if (project.selected_tools & ToolBoxPanel::tool_HFlipPen)
             ttile.hflip= true;
-        if (project.selected_tools & MainWindow::tool_VFlipPen)
+        if (project.selected_tools & ToolBoxPanel::tool_VFlipPen)
             ttile.vflip= true;
-        if (project.selected_tools & MainWindow::tool_PalettePen
+        if (project.selected_tools & ToolBoxPanel::tool_PalettePen
             && project.tileset.palette.count() > 0)
             ttile.palette_index= project.tileset.tiles[ttile.tileset_offset].pixelIndex(0,0)/PALETTE_W;
 

@@ -22,9 +22,11 @@ MainWindow::MainWindow(QWidget *parent)
     addDockWidget(Qt::RightDockWidgetArea, dckTilePicker);
     dckPaletteEdit= new PaletteEdit(ui->centralwidget, this);
     addDockWidget(Qt::RightDockWidgetArea, dckPaletteEdit);
+    dckToolbox= new ToolBoxPanel(ui->centralwidget);
+    addDockWidget(Qt::LeftDockWidgetArea, dckToolbox);
 
     dckPaletteEdit->Update();
-    UpdateToolStatus();
+    dckToolbox->UpdateToolStatus();
     dckPaletteEdit->UpdateColorStatus();
 
     project.CreateNew(32, 32);
@@ -63,7 +65,6 @@ void MainWindow::on_actionNew_triggered()
 
 void MainWindow::CheckCanvasPresent()
 {
-    ui->dckToolbox->setVisible((bool)project.editor_canvas);
     ui->menuTileset->setEnabled((bool)project.editor_canvas);
     ui->menuTilemap->setEnabled((bool)project.editor_canvas);
     ui->menuView->setEnabled((bool)project.editor_canvas);
@@ -93,29 +94,6 @@ void MainWindow::ChangeTileFormat(Tileset::tile_format_t format)
         project.editor_canvas->Redraw();
     dckPaletteEdit->Update();
     dckTilePicker->Update();
-}
-
-void MainWindow::UpdateToolStatus()
-{
-    int new_status= 0;
-
-    if (ui->tlbPen->isChecked())
-        new_status += tool_OffsetPen;
-    if (ui->tlbVFlipPen->isChecked())
-        new_status += tool_VFlipPen;
-    if (ui->tlbHFlipPen->isChecked())
-        new_status += tool_HFlipPen;
-    if (ui->tlbPalettePen->isChecked())
-        new_status += tool_PalettePen;
-
-    // if (new_status == tool_NoTool)
-    // {
-    //     ui->tlbPen->setChecked(true);
-    //     ui->tlbPalettePen->setChecked(true);
-    //     return UpdateToolStatus();
-    // }
-
-    project.selected_tools= new_status;
 }
 
 void MainWindow::on_actionZoom_in_triggered()
@@ -213,50 +191,6 @@ void MainWindow::on_actionOptimize_tileset_triggered()
     project.tileset.Optimize(Tileset::OptimizeWithFlip);
     dckTilePicker->Update();
     project.editor_canvas->Redraw();
-}
-
-void MainWindow::on_tlbPen_clicked(bool checked)
-{
-    UpdateToolStatus();
-}
-
-void MainWindow::on_tlbVFlipPen_clicked(bool checked)
-{
-    UpdateToolStatus();
-}
-
-void MainWindow::on_tlbHFlipPen_clicked(bool checked)
-{
-    UpdateToolStatus();
-}
-
-void MainWindow::on_tlbPalettePen_clicked(bool checked)
-{
-    UpdateToolStatus();
-}
-
-void MainWindow::on_btnSize1_clicked(bool checked)
-{
-    ui->btnSize1->setChecked(true);
-    ui->btnSize2->setChecked(false);
-    ui->btnSize3->setChecked(false);
-    project.pen_size= 1;
-}
-
-void MainWindow::on_btnSize2_clicked(bool checked)
-{
-    ui->btnSize1->setChecked(false);
-    ui->btnSize2->setChecked(true);
-    ui->btnSize3->setChecked(false);
-    project.pen_size= 3;
-}
-
-void MainWindow::on_btnSize3_clicked(bool checked)
-{
-    ui->btnSize1->setChecked(false);
-    ui->btnSize2->setChecked(false);
-    ui->btnSize3->setChecked(true);
-    project.pen_size= 5;
 }
 
 void MainWindow::on_actionMapChange_Size_triggered()

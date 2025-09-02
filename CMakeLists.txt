@@ -22,6 +22,7 @@ set(PROJECT_SOURCES
         aboutdialog.h aboutdialog.cpp aboutdialog.ui
         tilepicker.h tilepicker.cpp tilepicker.ui
         paletteedit.h paletteedit.cpp paletteedit.ui
+        toolboxpanel.h toolboxpanel.cpp toolboxpanel.ui
         canvas.h canvas.cpp
         resources.qrc
         tile.h tile.cpp

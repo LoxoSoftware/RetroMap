@@ -5,6 +5,7 @@
 #include "tile.h"
 #include "tilepicker.h"
 #include "paletteedit.h"
+#include "toolboxpanel.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -20,18 +21,11 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void CheckCanvasPresent();
-    void UpdateToolStatus();
-
-    static const int tool_NoTool = 0;
-    static const int tool_OffsetPen = 1;
-    static const int tool_VFlipPen = 2;
-    static const int tool_HFlipPen = 4;
-    static const int tool_PalettePen = 8;
-
     void ChangeTileFormat(Tileset::tile_format_t format);
 
     TilePicker* dckTilePicker= nullptr;
     PaletteEdit* dckPaletteEdit= nullptr;
+    ToolBoxPanel* dckToolbox= nullptr;
 
     bool opt_tilePicker_view_sel_pal();
 
@@ -50,13 +44,6 @@ private slots:
     void on_actionImport_tileset_from_image_triggered();
     void on_actionExport_as_indexed_bitmap_triggered();
     void on_actionOptimize_tileset_triggered();
-    void on_tlbPen_clicked(bool checked);
-    void on_tlbVFlipPen_clicked(bool checked);
-    void on_tlbPalettePen_clicked(bool checked);
-    void on_tlbHFlipPen_clicked(bool checked);
-    void on_btnSize1_clicked(bool checked);
-    void on_btnSize2_clicked(bool checked);
-    void on_btnSize3_clicked(bool checked);
     void on_actionMapChange_Size_triggered();
     void on_actionUndo_triggered();
     void on_actionRedo_triggered();
