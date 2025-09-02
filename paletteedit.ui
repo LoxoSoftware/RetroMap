@@ -19,7 +19,7 @@
   <property name="maximumSize">
    <size>
     <width>233</width>
-    <height>371</height>
+    <height>16777215</height>
    </size>
   </property>
   <property name="features">
@@ -37,20 +37,20 @@
      <rect>
       <x>20</x>
       <y>130</y>
-      <width>196</width>
+      <width>195</width>
       <height>196</height>
      </rect>
     </property>
     <property name="minimumSize">
      <size>
-      <width>196</width>
+      <width>195</width>
       <height>196</height>
      </size>
     </property>
     <property name="maximumSize">
      <size>
-      <width>196</width>
-      <height>196</height>
+      <width>195</width>
+      <height>195</height>
      </size>
     </property>
     <property name="font">
@@ -68,6 +68,12 @@
     </property>
     <property name="lineWidth">
      <number>2</number>
+    </property>
+    <property name="verticalScrollBarPolicy">
+     <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+    </property>
+    <property name="horizontalScrollBarPolicy">
+     <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
     </property>
     <property name="editTriggers">
      <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
@@ -241,7 +247,7 @@
      <rect>
       <x>10</x>
       <y>10</y>
-      <width>211</width>
+      <width>206</width>
       <height>111</height>
      </rect>
     </property>
