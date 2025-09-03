@@ -41,9 +41,9 @@ jobs:
         target: 'desktop'
     - uses: actions/checkout@v4
     - name: cmake setup
-      run: cmake -S . -B build -G "Ninja Multi-Config" -DCMAKE_BUILD_TYPE=Debug
+      run: cmake -S . -B build -G "Ninja Multi-Config" -DCMAKE_BUILD_TYPE=Release
     - name: cmake build
-      run: cmake --build build
+      run: cmake --build build --target all
     - uses: actions/upload-artifact@v4
       with:
         name: Windows x86_64 executable
