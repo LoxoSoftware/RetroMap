@@ -2,6 +2,7 @@
 #define TILEPICKER_H
 
 #include <QDockWidget>
+#include <QTableWidgetItem>
 class MainWindow;
 
 namespace Ui {
@@ -17,14 +18,13 @@ public:
     ~TilePicker();
 
     void Update();
+    void RedrawSelection();
 
     void resizeEvent(QResizeEvent* event);
 
-public slots:
-    void on_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
-
 private slots:
-    void on_tblTiles_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn);
+    void on_tblTiles_cellClicked(int row, int column);
+    void on_tblTiles_customContextMenuRequested(const QPoint &pos);
 
 private:
     Ui::TilePicker *ui;

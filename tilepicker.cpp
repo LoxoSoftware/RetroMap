@@ -20,11 +20,6 @@ TilePicker::~TilePicker()
     delete ui;
 }
 
-void TilePicker::on_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
-{
-    project.tileset_selected_tile= currentColumn+currentRow*ui->tblTiles->columnCount();
-}
-
 void TilePicker::Update()
 {
     if (ui->tblTiles->columnCount() <= 0)
@@ -32,9 +27,6 @@ void TilePicker::Update()
         ui->tblTiles->clear();
         return;
     }
-
-    int selx= project.tileset_selected_tile%ui->tblTiles->columnCount();
-    int sely= project.tileset_selected_tile/ui->tblTiles->columnCount();
 
     ui->tblTiles->clear();
     ui->tblTiles->setRowCount(ceil((float)project.tileset.tiles.count()/(float)ui->tblTiles->columnCount()));
@@ -71,12 +63,44 @@ void TilePicker::Update()
         }
     }
 
-    if (project.tileset_selected_tile < project.tileset.tiles.count())
+    RedrawSelection();
+}
+
+void TilePicker::RedrawSelection()
+{
+    QBrush bru_fg;
+    bru_fg.setColor(QColor::fromRgb(255,0,0));
+    bru_fg.setStyle(Qt::SolidPattern);
+    QBrush bru_bg;
+    bru_bg.setColor(QColor::fromRgb(255,0,0));
+    bru_bg.setStyle(Qt::Dense5Pattern);
+    QBrush bru_both;
+    bru_both.setColor(QColor::fromRgb(128,0,128));
+    bru_both.setStyle(Qt::SolidPattern);
+    QBrush bru_notsel;
+    bru_notsel.setStyle(Qt::NoBrush);
+
+    for (int iy=0; iy<ui->tblTiles->rowCount(); iy++)
     {
-        //Restore selection
-        //ui->tblTiles->setRangeSelected(QTableWidgetSelectionRange(sely,selx,sely,selx),true);
-        ui->tblTiles->setCurrentCell(sely, selx);
+        for (int ix=0; ix<ui->tblTiles->columnCount(); ix++)
+        {
+            int i= ix+iy*ui->tblTiles->columnCount();
+            QTableWidgetItem* item= ui->tblTiles->item(iy, ix);
+            if (!item) continue;
+
+            if (i == project.tileset_selected_tile && i == project.tileset_selected_bgtile)
+                item->setBackground(bru_both);
+            else if (i == project.tileset_selected_bgtile)
+                item->setBackground(bru_bg);
+            else if (i == project.tileset_selected_tile)
+                item->setBackground(bru_fg);
+            else
+                item->setBackground(bru_notsel);
+        }
     }
+
+    ui->tblTiles->clearSelection();
+    ui->tblTiles->update();
 }
 
 void TilePicker::resizeEvent(QResizeEvent* event)
@@ -90,8 +114,34 @@ void TilePicker::resizeEvent(QResizeEvent* event)
         Update();
 }
 
-void TilePicker::on_tblTiles_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
+void TilePicker::on_tblTiles_cellClicked(int row, int column)
 {
-    project.tileset_selected_tile= currentColumn+currentRow*ui->tblTiles->columnCount();
+    int new_selected_tile= column+row*ui->tblTiles->columnCount();
+    if (new_selected_tile <= project.tileset.tiles.count())
+        project.tileset_selected_tile= column+row*ui->tblTiles->columnCount();
+
+    RedrawSelection();
 }
 
+void TilePicker::on_tblTiles_customContextMenuRequested(const QPoint &pos)
+{
+    if (project.tileset.tiles.count() <= 0)
+        return;
+
+    int new_selected_tile= ui->tblTiles->currentColumn()+ui->tblTiles->currentRow()*ui->tblTiles->columnCount();
+
+    if (new_selected_tile >= project.tileset.tiles.count())
+        return;
+
+    project.tileset_selected_bgtile= new_selected_tile;
+    RedrawSelection();
+
+    // QMenu* context_menu= new QMenu();
+
+    // context_menu->addAction("Select as background tile");
+
+    // context_menu->setGeometry(QRect(
+    //     pos.x()+x(), pos.y()+y()+50,
+    //     context_menu->sizeHint().width(), context_menu->sizeHint().height()));
+    // context_menu->show();
+}

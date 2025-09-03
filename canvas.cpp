@@ -316,7 +316,7 @@ void Canvas::ManagedPlot(int tilex, int tiley)
     case Qt::RightButton:
         if (project.selected_tools & ToolBoxPanel::tool_OffsetPen
             && project.tileset_selected_tile >= 0)
-            ttile.tileset_offset= 0;
+            ttile.tileset_offset= project.tileset_selected_bgtile;
         if (project.selected_tools & ToolBoxPanel::tool_HFlipPen)
             ttile.hflip= true;
         if (project.selected_tools & ToolBoxPanel::tool_VFlipPen)

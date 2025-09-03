@@ -22,6 +22,7 @@ public:
     Canvas*         editor_canvas= nullptr;
     Tileset         tileset;
     int             tileset_selected_tile= -1;
+    int             tileset_selected_bgtile= 0;
     int             paltable_current_row= 0;
     int             paltable_current_column= 0;
     int             selected_tools;
