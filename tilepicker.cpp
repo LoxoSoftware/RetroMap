@@ -81,7 +81,13 @@ void TilePicker::Update()
 
 void TilePicker::resizeEvent(QResizeEvent* event)
 {
-    ui->tblTiles->setGeometry(0,0,event->size().width(),event->size().height());
+    //ui->tblTiles->setGeometry(10,10,event->size().width()-10,event->size().height()-10);
+    event->accept();
+    int old_columns= (event->oldSize().width()-12)/ui->tblTiles->columnWidth(0)-1;
+    int new_columns= (event->size().width()-12)/ui->tblTiles->columnWidth(0)-1;
+    ui->tblTiles->setColumnCount(new_columns);
+    if (old_columns != new_columns)
+        Update();
 }
 
 void TilePicker::on_tblTiles_currentCellChanged(int currentRow, int currentColumn, int previousRow, int previousColumn)
