@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>178</width>
+    <height>167</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>178</width>
+    <height>167</height>
+   </size>
   </property>
   <property name="features">
    <set>QDockWidget::DockWidgetFeature::DockWidgetFloatable|QDockWidget::DockWidgetFeature::DockWidgetMovable</set>
@@ -26,6 +32,12 @@
       <property name="lineWidth">
        <number>2</number>
       </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
+      </property>
       <property name="editTriggers">
        <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
       </property>
@@ -41,11 +53,17 @@
       <attribute name="horizontalHeaderDefaultSectionSize">
        <number>24</number>
       </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
       <attribute name="verticalHeaderMinimumSectionSize">
        <number>24</number>
       </attribute>
       <attribute name="verticalHeaderDefaultSectionSize">
        <number>24</number>
+      </attribute>
+      <attribute name="verticalHeaderHighlightSections">
+       <bool>true</bool>
       </attribute>
       <row/>
       <row/>
