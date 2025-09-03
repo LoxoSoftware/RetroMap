@@ -37,7 +37,7 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.4.3'
+        version: '6.8.3'
         target: 'desktop'
     - uses: actions/checkout@v4
     - name: cmake setup
