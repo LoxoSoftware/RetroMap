@@ -39,6 +39,7 @@ jobs:
       with:
         version: '6.8.3'
         target: 'desktop'
+    - uses: actions/checkout@v4
     - name: cmake setup
       run: cmake -S . -B build -G "Ninja Multi-Config" -DCMAKE_BUILD_TYPE=Debug
     - name: cmake build
