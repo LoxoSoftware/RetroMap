@@ -68,6 +68,18 @@ void TilePicker::Update()
 
 void TilePicker::RedrawSelection()
 {
+    if (project.tileset.tiles.count() <= 0)
+        return;
+    if (project.tileset.tiles.count() < 2)
+        project.tileset_selected_tile= project.tileset_selected_bgtile= 0;
+    else
+    {
+        if (project.tileset_selected_tile < 0 || project.tileset_selected_tile >= project.tileset.tiles.count())
+            project.tileset_selected_tile= 1;
+        if (project.tileset_selected_bgtile < 0 || project.tileset_selected_bgtile >= project.tileset.tiles.count())
+            project.tileset_selected_bgtile= 0;
+    }
+
     QBrush bru_fg;
     bru_fg.setColor(QColor::fromRgb(255,0,0));
     bru_fg.setStyle(Qt::SolidPattern);
