@@ -28,5 +28,25 @@ jobs:
         name: Linux x86_64 executable
         path: build/RetroMap
         if-no-files-found: error
-        compression-level: 0
+        overwrite: true
+  build_windows-amd64:
+    runs-on: windows-latest
+    steps:
+    - name: Install Ninja
+      run: choco install ninja
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '6.4.3'
+        target: 'desktop'
+    - uses: actions/checkout@v4
+    - name: cmake setup
+      run: cmake -S . -B build -G "Ninja Multi-Config" -DCMAKE_BUILD_TYPE=Release
+    - name: cmake build
+      run: cmake --build build --target all
+    - uses: actions/upload-artifact@v4
+      with:
+        name: Windows x86_64 executable
+        path: build/RetroMap.exe
+        if-no-files-found: error
         overwrite: true
