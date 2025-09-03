@@ -37,11 +37,11 @@ jobs:
     - name: Install Qt
       uses: jurplel/install-qt-action@v4
       with:
-        version: '6.8.3'
+        version: '6.4.2'
         target: 'desktop'
     - uses: actions/checkout@v4
     - name: cmake setup
-      run: cmake -S . -B build -G "Ninja Multi-Config" -DCMAKE_BUILD_TYPE=Release
+      run: cmake -S . -B build -G "Ninja Multi-Config"
     - name: cmake build
       run: cmake --build build --target all
     - uses: actions/upload-artifact@v4
