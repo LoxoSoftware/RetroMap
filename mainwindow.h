@@ -6,6 +6,7 @@
 #include "tilepicker.h"
 #include "paletteedit.h"
 #include "toolboxpanel.h"
+#include <QScrollArea>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -28,6 +29,8 @@ public:
     ToolBoxPanel* dckToolbox= nullptr;
 
     bool opt_tilePicker_view_sel_pal();
+
+    QScrollArea* NewTilemapTab();
 
 public slots:
     void on_colorChanged();

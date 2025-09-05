@@ -27,29 +27,19 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QScrollArea" name="winCanvasArea">
-      <property name="frameShape">
-       <enum>QFrame::Shape::Panel</enum>
+     <widget class="QTabWidget" name="tabWidget">
+      <property name="styleSheet">
+       <string notr="true">QTabWidget:pane {
+	border: none;
+}
+</string>
       </property>
-      <property name="frameShadow">
-       <enum>QFrame::Shadow::Sunken</enum>
+      <property name="currentIndex">
+       <number>-1</number>
       </property>
-      <property name="lineWidth">
-       <number>2</number>
-      </property>
-      <property name="widgetResizable">
+      <property name="tabBarAutoHide">
        <bool>true</bool>
       </property>
-      <widget class="QWidget" name="winCanvasArea_content">
-       <property name="geometry">
-        <rect>
-         <x>0</x>
-         <y>0</y>
-         <width>888</width>
-         <height>546</height>
-        </rect>
-       </property>
-      </widget>
      </widget>
     </item>
    </layout>

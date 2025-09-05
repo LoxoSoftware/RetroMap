@@ -16,7 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    project.canvas_container= ui->winCanvasArea;
+    project.canvas_container= NewTilemapTab();
 
     dckTilePicker= new TilePicker(ui->centralwidget, this);
     addDockWidget(Qt::RightDockWidgetArea, dckTilePicker);
@@ -94,6 +94,15 @@ void MainWindow::ChangeTileFormat(Tileset::tile_format_t format)
         project.editor_canvas->Redraw();
     dckPaletteEdit->Update();
     dckTilePicker->Update();
+}
+
+QScrollArea* MainWindow::NewTilemapTab()
+{
+    QScrollArea* new_scrollarea = new QScrollArea();
+
+    ui->tabWidget->addTab(new_scrollarea, "Tilemap "+QString::number(ui->tabWidget->count()));
+
+    return new_scrollarea;
 }
 
 void MainWindow::on_actionZoom_in_triggered()
