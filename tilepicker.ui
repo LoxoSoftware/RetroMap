@@ -30,10 +30,7 @@
        <enum>Qt::ContextMenuPolicy::CustomContextMenu</enum>
       </property>
       <property name="frameShape">
-       <enum>QFrame::Shape::Panel</enum>
-      </property>
-      <property name="lineWidth">
-       <number>2</number>
+       <enum>QFrame::Shape::WinPanel</enum>
       </property>
       <property name="verticalScrollBarPolicy">
        <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>

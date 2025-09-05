@@ -21,7 +21,14 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow QScrollArea {
-  background-image: url(:/ui/bgtile);
+  	background-image: url(:/ui/bgtile);
+}
+
+QStatusBar {
+	border-top: 1px solid gray;
+	border-bottom: 1px solid gray;
+	border-left: 4px solid aqua;
+	border-right: none;
 }</string>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -119,7 +126,14 @@
    <addaction name="menuView"/>
    <addaction name="menuHelp"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="styleSheet">
+    <string notr="true">QStatusBar QLabel {
+	border: none;
+	margin-left: 8px;
+}</string>
+   </property>
+  </widget>
   <action name="actionQuit">
    <property name="icon">
     <iconset theme="application-exit"/>
