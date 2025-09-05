@@ -69,3 +69,16 @@ void ToolBoxPanel::UpdateToolStatus()
     project.selected_tools= new_status;
 }
 
+void ToolBoxPanel::enterEvent(QEnterEvent* event)
+{
+    if (!project.statusbar)
+        return;
+    project.statusbar->showMessage("Hover over a pen mode toggle button for a brief guide on what it does");
+}
+
+void ToolBoxPanel::leaveEvent(QEvent* event)
+{
+    if (!project.statusbar)
+        return;
+    project.statusbar->clearMessage();
+}

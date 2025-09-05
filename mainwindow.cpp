@@ -7,6 +7,7 @@
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QRgb>
+#include <QLabel>
 #include <math.h>
 
 Project project;
@@ -17,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     project.canvas_container= NewTilemapTab();
+    project.statusbar= statusBar();
 
     dckTilePicker= new TilePicker(ui->centralwidget, this);
     addDockWidget(Qt::RightDockWidgetArea, dckTilePicker);
@@ -99,6 +101,7 @@ void MainWindow::ChangeTileFormat(Tileset::tile_format_t format)
 QScrollArea* MainWindow::NewTilemapTab()
 {
     QScrollArea* new_scrollarea = new QScrollArea();
+    new_scrollarea->setFrameShape(QFrame::WinPanel);
 
     ui->tabWidget->addTab(new_scrollarea, "Tilemap "+QString::number(ui->tabWidget->count()));
 

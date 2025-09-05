@@ -25,6 +25,9 @@ public:
 
 private:
     Ui::ToolBoxPanel *ui;
+
+    void enterEvent(QEnterEvent* event);
+    void leaveEvent(QEvent* event);
 };
 
 #endif // TOOLBOXPANEL_H

@@ -132,3 +132,17 @@ void PaletteEdit::UpdateColorStatus(bool force)
         Update();
     }
 }
+
+void PaletteEdit::enterEvent(QEnterEvent* event)
+{
+    if (!project.statusbar)
+        return;
+    project.statusbar->showMessage("Click a color cell in the table to select it. In 4bpp tile mode, the current row will be used as the draw palette");
+}
+
+void PaletteEdit::leaveEvent(QEvent* event)
+{
+    if (!project.statusbar)
+        return;
+    project.statusbar->clearMessage();
+}

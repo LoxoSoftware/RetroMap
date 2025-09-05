@@ -45,10 +45,12 @@ public:
     bool draw_tilegrid= true;
 
 protected:
-    void mousePressEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void wheelEvent(QWheelEvent *event);
+    void mousePressEvent(QMouseEvent* event);
+    void mouseMoveEvent(QMouseEvent* event);
+    void mouseReleaseEvent(QMouseEvent* event);
+    void wheelEvent(QWheelEvent* event);
+    void enterEvent(QEnterEvent* event);
+    void leaveEvent(QEvent* event);
 
 private slots:
     void onMenuClearWithBgTile_triggered();

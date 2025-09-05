@@ -5,6 +5,7 @@
 #include "tile.h"
 #include <QString>
 #include <QWidget>
+#include <QStatusBar>
 
 class Project
 {
@@ -38,6 +39,8 @@ public:
     static const int ExportFormat=      4; //Used for bit shifting
     static const int ExportGBA4bpp=     0<<4;
     static const int ExportGBA8bpp=     1<<4;
+
+    QStatusBar* statusbar= nullptr;
 
 private:
     QVector<QString>    TiledataToString(int it, QString format, int export_flags);

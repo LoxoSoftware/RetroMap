@@ -126,6 +126,20 @@ void TilePicker::resizeEvent(QResizeEvent* event)
         Update();
 }
 
+void TilePicker::enterEvent(QEnterEvent* event)
+{
+    if (!project.statusbar)
+        return;
+    project.statusbar->showMessage("Left mouse click to select a tile as primary for drawing || Right mouse click to select a tile as secondary/background for drawing");
+}
+
+void TilePicker::leaveEvent(QEvent* event)
+{
+    if (!project.statusbar)
+        return;
+    project.statusbar->clearMessage();
+}
+
 void TilePicker::on_tblTiles_cellClicked(int row, int column)
 {
     int new_selected_tile= column+row*ui->tblTiles->columnCount();

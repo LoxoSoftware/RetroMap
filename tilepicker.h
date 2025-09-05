@@ -29,6 +29,9 @@ private slots:
 private:
     Ui::TilePicker *ui;
     MainWindow* main_window;
+
+    void enterEvent(QEnterEvent* event);
+    void leaveEvent(QEvent* event);
 };
 
 #endif // TILEPICKER_H

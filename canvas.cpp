@@ -6,6 +6,7 @@
 #include <QAction>
 #include <QScrollBar>
 #include <QMessageBox>
+#include <QLabel>
 #include <math.h>
 
 extern Project project;
@@ -430,6 +431,20 @@ void Canvas::wheelEvent(QWheelEvent *event)
         //This usually works with touchpads
         ((QScrollArea*)parent())->scroll(event->pixelDelta().x(), event->pixelDelta().y());
     }
+}
+
+void Canvas::enterEvent(QEnterEvent* event)
+{
+    if (!project.statusbar)
+        return;
+    project.statusbar->showMessage("Click and drag to draw with the selected tile || Hold Shift + click and drag to select tiles || Right mouse button for context menu");
+}
+
+void Canvas::leaveEvent(QEvent* event)
+{
+    if (!project.statusbar)
+        return;
+    project.statusbar->clearMessage();
 }
 
 void Canvas::UpdateHistory()

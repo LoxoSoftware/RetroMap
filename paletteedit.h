@@ -29,6 +29,9 @@ private:
     Ui::PaletteEdit *ui;
     bool block_pal_updates= false;
     MainWindow* main_window;
+
+    void enterEvent(QEnterEvent* event);
+    void leaveEvent(QEvent* event);
 };
 
 #endif // PALETTEEDIT_H
