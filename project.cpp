@@ -148,12 +148,16 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
         QMessageBox::critical(canvas_container, "Error - Export to source file", "Output file must have an extension");
         return 1;
     }
-    QString ofmt= fname.last(fname.size()-fname.lastIndexOf('.')-1);
+    QString ofmt= fname.right(fname.size()-fname.lastIndexOf('.')-1);
     QString oname;
     if (fname.lastIndexOf('/') >= 0)
-        oname= fname.sliced(fname.lastIndexOf('/')+1, fname.lastIndexOf('.')-fname.lastIndexOf('/')-1);
+    {
+        //oname= fname.sliced(fname.lastIndexOf('/')+1, fname.lastIndexOf('.')-fname.lastIndexOf('/')-1);
+        oname= fname.right(fname.size()-fname.lastIndexOf('/')-1);
+        oname= oname.chopped(ofmt.size()+1);
+    }
     else
-        oname= fname.first(fname.size()-ofmt.size()-1);
+        oname= fname.left(fname.size()-ofmt.size()-1);
 
     oname.replace(" ", "_");
 
@@ -256,7 +260,7 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
     if (export_flags&Project::ExportHFile)
     {
         QString obuf= "";
-        QFile ofile= QFile(fname.first(fname.size()-ofmt.size())+"h");
+        QFile ofile= QFile(fname.left(fname.size()-ofmt.size())+"h");
         ofile.open(QIODeviceBase::WriteOnly);
         if (!ofile.isOpen())
             return 2;
