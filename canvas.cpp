@@ -336,11 +336,13 @@ void Canvas::ManagedPlot(int tilex, int tiley)
 
 void Canvas::onMenuClearWithBgTile_triggered()
 {
+    if (project.tileset_selected_bgtile < 0 || project.tileset_selected_bgtile >= project.tileset.tiles.count())
+        return;
     Tile ttile;
     ttile.tileset_offset= project.tileset_selected_bgtile;
     ttile.hflip= false;
     ttile.vflip= false;
-    ttile.palette_index= project.tileset.tiles[ttile.tileset_offset].pixelIndex(0,0)/PALETTE_W;;
+    ttile.palette_index= project.tileset.tiles[ttile.tileset_offset].pixelIndex(0,0)/PALETTE_W;
     int xt= CANVASX_TO_COLUMN(mouse_last_pos.x());
     int yt= CANVASY_TO_ROW(mouse_last_pos.y());
     Plot(yt, xt, ttile);
