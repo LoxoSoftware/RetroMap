@@ -16,6 +16,7 @@ public:
     ~ToolBoxPanel();
 
     void UpdateToolStatus();
+    void UpdateTheme();
 
     static const int tool_NoTool = 0;
     static const int tool_OffsetPen = 1;
@@ -28,6 +29,7 @@ private:
 
     void enterEvent(QEnterEvent* event);
     void leaveEvent(QEvent* event);
+    void changeEvent(QEvent* event);
 };
 
 #endif // TOOLBOXPANEL_H

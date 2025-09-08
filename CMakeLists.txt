@@ -15,7 +15,7 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
         main.cpp
-        app_config.h
+        app_config.h macro.h
         mainwindow.cpp mainwindow.h mainwindow.ui
         mapsizeselector.h mapsizeselector.cpp mapsizeselector.ui
         exportdialog.h exportdialog.cpp exportdialog.ui

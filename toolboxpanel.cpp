@@ -1,4 +1,5 @@
 #include "toolboxpanel.h"
+#include "macro.h"
 #include "ui_toolboxpanel.h"
 #include "project.h"
 
@@ -9,6 +10,7 @@ ToolBoxPanel::ToolBoxPanel(QWidget *parent)
     , ui(new Ui::ToolBoxPanel)
 {
     ui->setupUi(this);
+    UpdateTheme();
 
     connect(ui->btnSize1, &QPushButton::clicked, this, &ToolBoxPanel::UpdateToolStatus);
     connect(ui->btnSize2, &QPushButton::clicked, this, &ToolBoxPanel::UpdateToolStatus);
@@ -67,6 +69,32 @@ void ToolBoxPanel::UpdateToolStatus()
     // }
 
     project.selected_tools= new_status;
+}
+
+void ToolBoxPanel::UpdateTheme()
+{
+    if (IS_DARK_THEME)
+    {
+        ui->btnSize1->setIcon(QIcon(":/tool_icons/dark/toolsize_1"));
+        ui->btnSize2->setIcon(QIcon(":/tool_icons/dark/toolsize_2"));
+        ui->btnSize3->setIcon(QIcon(":/tool_icons/dark/toolsize_3"));
+    } else {
+        ui->btnSize1->setIcon(QIcon(":/tool_icons/toolsize_1"));
+        ui->btnSize2->setIcon(QIcon(":/tool_icons/toolsize_2"));
+        ui->btnSize3->setIcon(QIcon(":/tool_icons/toolsize_3"));
+    }
+}
+
+void ToolBoxPanel::changeEvent(QEvent* event)
+{
+    switch (event->type())
+    {
+    case QEvent::PaletteChange:
+        UpdateTheme();
+        break;
+    default:
+        return;
+    }
 }
 
 void ToolBoxPanel::enterEvent(QEnterEvent* event)
