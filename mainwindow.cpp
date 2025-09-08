@@ -44,9 +44,6 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-bool MainWindow::opt_tilePicker_view_sel_pal()
-    { return ui->actionTilePicker_selected_pal->isChecked(); }
-
 void MainWindow::on_actionQuit_triggered()
 {
     this->close();
@@ -271,6 +268,6 @@ void MainWindow::on_actionGBA_4bpp_triggered()
 
 void MainWindow::on_actionTilePicker_selected_pal_triggered()
 {
-    if (opt_tilePicker_view_sel_pal() && project.tileset.format == Tileset::GBA_4bpp)
+    if (isTilePicker_ViewSelPal() && project.tileset.format == Tileset::GBA_4bpp)
         dckTilePicker->Update();
 }

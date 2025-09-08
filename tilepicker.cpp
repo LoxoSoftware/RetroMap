@@ -40,7 +40,7 @@ void TilePicker::Update()
                 break;
 
             QPixmap pix;
-            if (main_window->opt_tilePicker_view_sel_pal() && project.tileset.format == Tileset::GBA_4bpp)
+            if (main_window->isTilePicker_ViewSelPal() && project.tileset.format == Tileset::GBA_4bpp)
             {
                 QImage timg= project.tileset.tiles[tindex];
                 //Alter image pixels to clamp it to a 16 bit palette

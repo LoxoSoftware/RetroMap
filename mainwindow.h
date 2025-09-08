@@ -6,6 +6,7 @@
 #include "tilepicker.h"
 #include "paletteedit.h"
 #include "toolboxpanel.h"
+#include "ui_mainwindow.h"
 #include <QScrollArea>
 
 QT_BEGIN_NAMESPACE
@@ -28,7 +29,7 @@ public:
     PaletteEdit* dckPaletteEdit= nullptr;
     ToolBoxPanel* dckToolbox= nullptr;
 
-    bool opt_tilePicker_view_sel_pal();
+    bool isTilePicker_ViewSelPal() { return ui->actionTilePicker_selected_pal->isChecked(); }
 
     QScrollArea* NewTilemapTab();
 
