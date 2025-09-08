@@ -163,6 +163,8 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
 
     float tiles_sz=0, map_sz=0, pal_sz=0;
     int export_word_sz= sizeof(uint16_t);
+    int align_sz= 2;
+
     switch ((export_flags>>Project::ExportFormat)&0b11)
     {
         //This may be redundant, but I'm keeping it in case I want to add more formats in the future
@@ -197,7 +199,7 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
         obuf+= "\n\n";
         if (tileset.image && export_flags&Project::ExportGfx)
         {
-            obuf+= "\t.section .rodata\n\t.align 2\n\t.global "+oname+"Tiles\n";
+            obuf+= "\t.section .rodata\n\t.align "+QString::number(align_sz)+"\n\t.global "+oname+"Tiles\n";
             obuf+= oname+"Tiles:\n";
             for (int it=0; it<tileset.tiles.count(); it++)
             {
@@ -210,7 +212,7 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
             if (editor_canvas->width() < 8)
                 return 5;
 
-            obuf+= "\n\t.section .rodata\n\t.align 2\n\t.global "+oname+"Map\n";
+            obuf+= "\n\t.section .rodata\n\t.align "+QString::number(align_sz)+"\n\t.global "+oname+"Map\n";
             obuf+= oname+"Map:\n";
             for (int it=0; it<editor_canvas->tiles.count(); it++)
             {
@@ -227,7 +229,7 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
         }
         if (tileset.palette.count() && export_flags&Project::ExportPal)
         {
-            obuf+= "\n\t.section .rodata\n\t.align 2\n\t.global "+oname+"Pal\n";
+            obuf+= "\n\t.section .rodata\n\t.align "+QString::number(align_sz)+"\n\t.global "+oname+"Pal\n";
             obuf+= oname+"Pal:\n";
             for (int ip=0; ip<tileset.palette.count(); ip++)
             {
@@ -248,8 +250,71 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
     }
     else if (ofmt == "c")
     {
-        QMessageBox::critical(canvas_container, "Error - Export to C source file", "Not implemented yet :(");
-        return 3;
+        QString obuf= "";
+        QFile ofile= QFile(fname);
+        ofile.open(QIODeviceBase::WriteOnly);
+        if (!ofile.isOpen())
+            return 2;
+
+        obuf+= "//{{BLOCK("+oname+")\n";
+        obuf+= "\n//====================================================================//";
+        obuf+= "\n//                Exported by RetroMap by LoxoSoftware                //";
+        obuf+= "\n//              https://github.com/LoxoSoftware/RetroMap              //";
+        obuf+= "\n//====================================================================//";
+        obuf+= "\n\n";
+        if (tileset.image && export_flags&Project::ExportGfx)
+        {
+            obuf+= "const unsigned short "+oname+"Tiles["+QString::number(ceil(tiles_sz)/export_word_sz)+"] ";
+            obuf+= "__attribute__((aligned("+QString::number(align_sz)+"))) __attribute__((visibility(\"hidden\"))) = \n{\n";
+            for (int it=0; it<tileset.tiles.count(); it++)
+            {
+                foreach (QString tstr, TiledataToString(it, ofmt, export_flags))
+                    obuf+= tstr;
+            }
+            obuf+= "};\n\n";
+        }
+        if (editor_canvas && export_flags&Project::ExportMap)
+        {
+            if (editor_canvas->width() < 8)
+                return 5;
+
+            obuf+= "const unsigned short "+oname+"Map["+QString::number(ceil(map_sz)/export_word_sz)+"] ";
+            obuf+= "__attribute__((aligned("+QString::number(align_sz)+"))) __attribute__((visibility(\"hidden\"))) = \n{\n";
+            for (int it=0; it<editor_canvas->tiles.count(); it++)
+            {
+                Tile ttile= editor_canvas->tiles[it];
+                unsigned int tdata= (ttile.tileset_offset)%0x0400+
+                                     (ttile.hflip?0x0400:0)+
+                                     (ttile.vflip?0x0800:0)+
+                                     ((ttile.palette_index%16)*0x1000);
+                if (it%8 == 0) obuf+= "\t0x";
+                else           obuf+= ",0x";
+                obuf+= QString::number(tdata, 16);
+                if (it%8 == 7) obuf+= ",\n";
+            }
+            obuf+= "};\n\n";
+        }
+        if (tileset.palette.count() && export_flags&Project::ExportPal)
+        {
+            obuf+= "const unsigned short "+oname+"Pal["+QString::number(ceil(pal_sz)/export_word_sz)+"] ";
+            obuf+= "__attribute__((aligned("+QString::number(align_sz)+"))) __attribute__((visibility(\"hidden\"))) = \n{\n";
+            for (int ip=0; ip<tileset.palette.count(); ip++)
+            {
+                QColor tcol= tileset.palette[ip];
+                unsigned int tdata=  tcol.red()/8+
+                                     (tcol.green()/8)*32+
+                                     (tcol.blue()/8)*1024;
+                if (ip%8 == 0) obuf+= "\t0x";
+                else           obuf+= ",0x";
+                obuf+= QString::number(tdata, 16);
+                if (ip%8 == 7) obuf+= ",\n";
+            }
+            obuf+= "};\n";
+        }
+        obuf+= "\n//}}BLOCK("+oname+")";
+
+        ofile.write(obuf.toLocal8Bit());
+        ofile.close();
     }
     else
     {
