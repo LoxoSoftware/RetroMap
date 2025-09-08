@@ -337,10 +337,10 @@ void Canvas::ManagedPlot(int tilex, int tiley)
 void Canvas::onMenuClearWithBgTile_triggered()
 {
     Tile ttile;
-    ttile.tileset_offset= 0;
+    ttile.tileset_offset= project.tileset_selected_bgtile;
     ttile.hflip= false;
     ttile.vflip= false;
-    ttile.palette_index= 0;
+    ttile.palette_index= project.tileset.tiles[ttile.tileset_offset].pixelIndex(0,0)/PALETTE_W;;
     int xt= CANVASX_TO_COLUMN(mouse_last_pos.x());
     int yt= CANVASY_TO_ROW(mouse_last_pos.y());
     Plot(yt, xt, ttile);
@@ -437,7 +437,7 @@ void Canvas::enterEvent(QEnterEvent* event)
 {
     if (!project.statusbar)
         return;
-    project.statusbar->showMessage("Click and drag to draw with the selected tile || Hold Shift + click and drag to select tiles || Right mouse button for context menu");
+    project.statusbar->showMessage("Click and drag to draw with the selected tile || Right mouse button for context menu");
 }
 
 void Canvas::leaveEvent(QEvent* event)

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.16)
 
-project(RetroMap VERSION 0.9.0 LANGUAGES CXX)
+project(RetroMap VERSION 1.0.0 LANGUAGES CXX)
 configure_file(config.h.in app_config.h)
 
 set(CMAKE_AUTOUIC ON)
@@ -10,7 +10,7 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(QT NAMES Qt6 REQUIRED COMPONENTS Widgets)
+find_package(QT NAMES Qt5 Qt6 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
 set(PROJECT_SOURCES
