@@ -236,7 +236,11 @@ void Canvas::mousePressEvent(QMouseEvent *event)
     //event->accept();
     mouse_down_button= event->button();
     mouse_last_pos= event->pos();
+#if QT_VERSION_MAJOR > 5
     mouse_last_global_pos= event->globalPosition();
+#else
+    mouse_last_global_pos= event->globalPos();
+#endif
 
     if (mouse_down_button == Qt::MiddleButton)
         this->setCursor(Qt::ClosedHandCursor);
@@ -265,9 +269,15 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
 
     if (mouse_down_button == Qt::MiddleButton)
     {
+#if QT_VERSION_MAJOR > 5
         ((QScrollArea*)parent())->scroll(event->globalPosition().x()-mouse_last_global_pos.x(),
                                          event->globalPosition().y()-mouse_last_global_pos.y());
         mouse_last_global_pos= event->globalPosition();
+#else
+        ((QScrollArea*)parent())->scroll(event->globalPos().x()-mouse_last_global_pos.x(),
+                                         event->globalPos().y()-mouse_last_global_pos.y());
+        mouse_last_global_pos= event->globalPos();
+#endif
     }
 
     mouse_has_moved= true;
@@ -281,7 +291,11 @@ void Canvas::mouseReleaseEvent(QMouseEvent *event)
         this->setCursor(Qt::ArrowCursor);
 
     if (!mouse_has_moved && mouse_down_button == Qt::RightButton)
+#if QT_VERSION_MAJOR > 5
         OpenContextMenu(event->globalPosition().toPoint(), event->pos());
+#else
+        OpenContextMenu(event->globalPos(), event->pos());
+#endif
     else if (mouse_down_button == Qt::RightButton || mouse_down_button == Qt::LeftButton)
         UpdateHistory();
 
@@ -435,7 +449,7 @@ void Canvas::wheelEvent(QWheelEvent *event)
     }
 }
 
-void Canvas::enterEvent(QEnterEvent* event)
+void Canvas::enterEvent(QEvent* event)
 {
     if (!project.statusbar)
         return;

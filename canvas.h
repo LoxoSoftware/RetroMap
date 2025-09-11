@@ -49,7 +49,7 @@ protected:
     void mouseMoveEvent(QMouseEvent* event);
     void mouseReleaseEvent(QMouseEvent* event);
     void wheelEvent(QWheelEvent* event);
-    void enterEvent(QEnterEvent* event);
+    void enterEvent(QEvent* event);
     void leaveEvent(QEvent* event);
 
 private slots:

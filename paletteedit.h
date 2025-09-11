@@ -30,7 +30,7 @@ private:
     bool block_pal_updates= false;
     MainWindow* main_window;
 
-    void enterEvent(QEnterEvent* event);
+    void enterEvent(QEvent* event);
     void leaveEvent(QEvent* event);
 };
 

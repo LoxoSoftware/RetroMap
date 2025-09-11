@@ -97,7 +97,7 @@ void ToolBoxPanel::changeEvent(QEvent* event)
     }
 }
 
-void ToolBoxPanel::enterEvent(QEnterEvent* event)
+void ToolBoxPanel::enterEvent(QEvent* event)
 {
     if (!project.statusbar)
         return;

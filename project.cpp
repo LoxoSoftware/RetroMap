@@ -6,6 +6,7 @@
 #include <QFile>
 #include <QImage>
 #include <QFileDialog>
+#include <math.h>
 
 Project::Project()
 {
@@ -187,7 +188,11 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
     {
         QString obuf= "";
         QFile ofile= QFile(fname);
+#if QT_VERSION_MAJOR > 5
         ofile.open(QIODeviceBase::WriteOnly);
+#else
+        ofile.open(QIODevice::WriteOnly);
+#endif
         if (!ofile.isOpen())
             return 2;
 
@@ -252,7 +257,11 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
     {
         QString obuf= "";
         QFile ofile= QFile(fname);
+#if QT_VERSION_MAJOR > 5
         ofile.open(QIODeviceBase::WriteOnly);
+#else
+        ofile.open(QIODevice::WriteOnly);
+#endif
         if (!ofile.isOpen())
             return 2;
 
@@ -326,7 +335,11 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
     {
         QString obuf= "";
         QFile ofile= QFile(fname.left(fname.size()-ofmt.size())+"h");
+#if QT_VERSION_MAJOR > 5
         ofile.open(QIODeviceBase::WriteOnly);
+#else
+        ofile.open(QIODevice::WriteOnly);
+#endif
         if (!ofile.isOpen())
             return 2;
         obuf= "";

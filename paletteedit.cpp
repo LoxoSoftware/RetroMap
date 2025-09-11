@@ -133,7 +133,7 @@ void PaletteEdit::UpdateColorStatus(bool force)
     }
 }
 
-void PaletteEdit::enterEvent(QEnterEvent* event)
+void PaletteEdit::enterEvent(QEvent* event)
 {
     if (!project.statusbar)
         return;

@@ -4,6 +4,7 @@
 #include "mainwindow.h"
 #include <QResizeEvent>
 #include <QMessageBox>
+#include <math.h>
 
 extern Project project;
 
@@ -126,7 +127,7 @@ void TilePicker::resizeEvent(QResizeEvent* event)
         Update();
 }
 
-void TilePicker::enterEvent(QEnterEvent* event)
+void TilePicker::enterEvent(QEvent* event)
 {
     if (!project.statusbar)
         return;
