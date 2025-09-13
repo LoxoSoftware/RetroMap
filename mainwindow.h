@@ -48,6 +48,7 @@ private slots:
     void on_actionImport_tileset_from_image_triggered();
     void on_actionExport_as_indexed_bitmap_triggered();
     void on_actionOptimize_tileset_triggered();
+    void on_actionUnoptimize_triggered();
     void on_actionMapChange_Size_triggered();
     void on_actionUndo_triggered();
     void on_actionRedo_triggered();

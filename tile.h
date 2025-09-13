@@ -10,18 +10,18 @@
 #define TILE_W          8
 #define TILE_H          8
 
+class Tileset;
+
 class Tile
 {
 public:
-    Tile();
-    Tile(int tileset_offset);
-    // Tile(int tileset_offset, int x, int y);
-    // Tile(int tileset_offset, QPoint pos);
-    // int     x, y;           //In tiles, not pixels, of course
+    Tile(int offs=0, bool vflip=false, bool hflip=false, int palid=0);
     bool    hflip=false;
     bool    vflip=false;
     int     tileset_offset;
     int     palette_index;
+
+    QImage  RenderImage(Tileset* tileset, bool bpp4);
 };
 
 class Tileset
@@ -48,7 +48,8 @@ public:
     bool            FromImage(QString fname, bool load_new=false);
     void            UpdatePalettes();
     void            Optimize(Tileset::optimize_flags_t optiflags=Tileset::OptimizeDefault);
-    void            RebuildTilesetImage(int columns);
+    QVector<QImage> Unoptimized(QList<Tile>* tilemap);
+    void            RebuildTilesetImage(int columns=16);
 };
 
 #endif // TILE_HPP

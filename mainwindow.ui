@@ -57,7 +57,7 @@ QStatusBar {
      <x>0</x>
      <y>0</y>
      <width>900</width>
-     <height>20</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -88,6 +88,7 @@ QStatusBar {
     </property>
     <addaction name="actionImport_tileset_from_image"/>
     <addaction name="actionOptimize_tileset"/>
+    <addaction name="actionUnoptimize"/>
    </widget>
    <widget class="QMenu" name="menuTilemap">
     <property name="title">
@@ -339,6 +340,14 @@ QStatusBar {
    </property>
    <property name="text">
     <string>GBA 4bpp</string>
+   </property>
+  </action>
+  <action name="actionUnoptimize">
+   <property name="text">
+    <string>Unoptimize</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+U</string>
    </property>
   </action>
  </widget>
