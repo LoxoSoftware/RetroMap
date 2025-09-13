@@ -100,7 +100,7 @@ void ToolBoxPanel::changeEvent(QEvent* event)
 #if QT_VERSION_MAJOR > 5
 void ToolBoxPanel::enterEvent(QEnterEvent* event)
 #else
-void ToolToolBoxPanel::enterEvent(QEvent* event)
+void ToolBoxPanel::enterEvent(QEvent* event)
 #endif
 {
     if (!project.statusbar)
