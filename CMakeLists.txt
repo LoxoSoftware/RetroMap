@@ -23,6 +23,7 @@ set(PROJECT_SOURCES
         tilepicker.h tilepicker.cpp tilepicker.ui
         paletteedit.h paletteedit.cpp paletteedit.ui
         toolboxpanel.h toolboxpanel.cpp toolboxpanel.ui
+        optimizedialog.h optimizedialog.cpp optimizedialog.ui
         canvas.h canvas.cpp
         resources.qrc
         tile.h tile.cpp

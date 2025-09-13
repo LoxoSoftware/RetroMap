@@ -116,6 +116,9 @@ bool Tileset::FromImage(QString fname, bool load_new)
 
 void Tileset::Optimize(Tileset::optimize_flags_t optiflags)
 {
+    if (optiflags == Tileset::OptimizeNone)
+        return;
+
     QVector<QImage> new_tileset;
     new_tileset.clear();
 

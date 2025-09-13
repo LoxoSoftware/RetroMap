@@ -4,6 +4,7 @@
 #include "mapsizeselector.h"
 #include "exportdialog.h"
 #include "aboutdialog.h"
+#include "optimizedialog.h"
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QRgb>
@@ -173,7 +174,7 @@ void MainWindow::on_actionImport_tileset_from_image_triggered()
     if (ifile_name == "")
         return;
     project.tileset.FromImage(ifile_name, true);
-    project.tileset.Optimize(Tileset::OptimizeDefault);
+    project.tileset.Optimize(Tileset::OptimizeDuplicate);
     dckTilePicker->Update();
     dckPaletteEdit->Update();
     project.editor_canvas->Redraw();
@@ -197,7 +198,7 @@ void MainWindow::on_actionOptimize_tileset_triggered()
         QMessageBox::critical(this, "Optimize tileset", "Please import a tileset first!");
         return;
     }
-    project.tileset.Optimize(Tileset::OptimizeWithFlip);
+    project.tileset.Optimize(OptimizeDialog(this).GetFlags());
     dckTilePicker->Update();
     project.editor_canvas->Redraw();
 }
