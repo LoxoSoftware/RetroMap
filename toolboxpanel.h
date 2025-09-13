@@ -27,7 +27,11 @@ public:
 private:
     Ui::ToolBoxPanel *ui;
 
+#if QT_VERSION_MAJOR > 5
+    void enterEvent(QEnterEvent* event);
+#else
     void enterEvent(QEvent* event);
+#endif
     void leaveEvent(QEvent* event);
     void changeEvent(QEvent* event);
 };

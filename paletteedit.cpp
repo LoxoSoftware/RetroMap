@@ -133,7 +133,11 @@ void PaletteEdit::UpdateColorStatus(bool force)
     }
 }
 
+#if QT_VERSION_MAJOR > 5
+void PaletteEdit::enterEvent(QEnterEvent* event)
+#else
 void PaletteEdit::enterEvent(QEvent* event)
+#endif
 {
     if (!project.statusbar)
         return;

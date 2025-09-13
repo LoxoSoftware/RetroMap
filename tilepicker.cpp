@@ -127,7 +127,11 @@ void TilePicker::resizeEvent(QResizeEvent* event)
         Update();
 }
 
+#if QT_VERSION_MAJOR > 5
+void TilePicker::enterEvent(QEnterEvent* event)
+#else
 void TilePicker::enterEvent(QEvent* event)
+#endif
 {
     if (!project.statusbar)
         return;

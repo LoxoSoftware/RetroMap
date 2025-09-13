@@ -449,7 +449,11 @@ void Canvas::wheelEvent(QWheelEvent *event)
     }
 }
 
+#if QT_VERSION_MAJOR > 5
+void Canvas::enterEvent(QEnterEvent* event)
+#else
 void Canvas::enterEvent(QEvent* event)
+#endif
 {
     if (!project.statusbar)
         return;

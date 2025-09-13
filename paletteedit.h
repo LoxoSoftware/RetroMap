@@ -30,7 +30,11 @@ private:
     bool block_pal_updates= false;
     MainWindow* main_window;
 
+#if QT_VERSION_MAJOR > 5
+    void enterEvent(QEnterEvent* event);
+#else
     void enterEvent(QEvent* event);
+#endif
     void leaveEvent(QEvent* event);
 };
 
