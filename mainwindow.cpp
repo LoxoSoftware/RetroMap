@@ -78,17 +78,7 @@ void MainWindow::ChangeTileFormat(Tileset::tile_format_t format)
     ui->actionGBA_8bpp->setChecked(format==Tileset::GBA_8bpp);
     ui->actionGBA_4bpp->setChecked(format==Tileset::GBA_4bpp);
 
-    switch (format)
-    {
-    case Tileset::GBA_4bpp:
-        ui->actionTilePicker_selected_pal->setEnabled(true);
-        break;
-    case Tileset::GBA_8bpp:
-        ui->actionTilePicker_selected_pal->setEnabled(false);
-        break;
-    default:
-        break;
-    }
+    ui->actionTilePicker_selected_pal->setEnabled(project.tileset.isPalettedFormat());
 
     if (project.editor_canvas)
         project.editor_canvas->Redraw();
@@ -202,7 +192,7 @@ void MainWindow::on_actionOptimize_tileset_triggered()
         QMessageBox::critical(this, "Optimize tileset", "Please import a tileset first!");
         return;
     }
-    unsigned int optiflags= OptimizeDialog(this).GetFlags(project.tileset.format==Tileset::GBA_4bpp);
+    unsigned int optiflags= OptimizeDialog(this).GetFlags(project.tileset.isPalettedFormat());
     if (!(optiflags&0x80))
         return; //User rejected on the dialog
     project.tileset.tiles= project.tileset.Optimized(&project.editor_canvas->tiles, optiflags&0x7F);
@@ -278,7 +268,7 @@ void MainWindow::on_actionGBA_4bpp_triggered()
 
 void MainWindow::on_actionTilePicker_selected_pal_triggered()
 {
-    if (isTilePicker_ViewSelPal() && project.tileset.format == Tileset::GBA_4bpp)
+    if (isTilePicker_ViewSelPal() && project.tileset.isPalettedFormat())
         dckTilePicker->Update();
 }
 

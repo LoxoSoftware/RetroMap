@@ -12,8 +12,8 @@ ExportDialog::ExportDialog(QWidget *parent)
 {
     ui->setupUi(this);
 
-    ui->rdbGBA4bpp->setChecked(project.tileset.format == Tileset::GBA_4bpp);
-    ui->rdbGBA8bpp->setChecked(project.tileset.format == Tileset::GBA_8bpp);
+    ui->rdbGBA4bpp->setChecked(project.tileset.isPalettedFormat());
+    ui->rdbGBA8bpp->setChecked(!project.tileset.isPalettedFormat());
 }
 
 ExportDialog::~ExportDialog()

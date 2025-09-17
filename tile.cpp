@@ -223,3 +223,14 @@ void Tileset::UpdatePalettes()
         tiles[it].setColorTable(palette);
     }
 }
+
+bool Tileset::isPalettedFormat()
+{
+    switch (format)
+    {
+        case Tileset::GBA_4bpp:
+            return true;
+        default:
+            return false;
+    }
+}
