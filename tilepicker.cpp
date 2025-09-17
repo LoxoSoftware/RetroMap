@@ -41,23 +41,9 @@ void TilePicker::Update()
                 break;
 
             QPixmap pix;
-            if (main_window->isTilePicker_ViewSelPal() && project.tileset.isPalettedFormat())
-            {
-                QImage timg= project.tileset.tiles[tindex];
-                //Alter image pixels to clamp it to a 16 bit palette
-                for (int iiy=0; iiy<timg.height(); iiy++)
-                {
-                    unsigned char* slptr= timg.scanLine(iiy);
+            bool previewPal= main_window->isTilePicker_ViewSelPal() && project.tileset.isPalettedFormat();
+            pix.convertFromImage(Tile(tindex,false,false,project.paltable_current_row).RenderImage(&project.tileset, previewPal));
 
-                    for (int iix=0; iix<timg.width(); iix++)
-                    {
-                        slptr[iix]= slptr[iix]%PALETTE_W+project.paltable_current_row*PALETTE_W;
-                    }
-                }
-                pix.convertFromImage(timg);
-            }
-            else
-                pix.convertFromImage(project.tileset.tiles[tindex]);
             QIcon icon= QIcon(pix.scaled(ui->tblTiles->columnWidth(0),ui->tblTiles->rowHeight(0)));
             QTableWidgetItem* item= new QTableWidgetItem(icon, "");
             ui->tblTiles->setItem(iy, ix, item);

@@ -142,7 +142,7 @@ void Canvas::RedrawTile(int row, int column)
     pen.setStyle(Qt::SolidLine);
     Tile* ttile= &tiles[column+row*size.width()];
 
-    if (ttile->tileset_offset >= project.tileset.tiles.count())
+    if (ttile->tileset_offset >= project.tileset.tiles.count() || ttile->tileset_offset < 0)
     {
         //Tile index is outside the bounds of the tileset
         scene.addRect(column*TILE_W*scaling+TILEPAD*column, row*TILE_H*scaling+TILEPAD*row,
@@ -151,30 +151,7 @@ void Canvas::RedrawTile(int row, int column)
     else
     {
         QPixmap pix;
-        QTransform trans= QTransform();
-
-        if (project.tileset.isPalettedFormat())
-        {
-            //Clamp 256 color indexes to 16 colors of one of 16 palettes
-            QImage pix_tf= project.tileset.tiles[ttile->tileset_offset];
-
-            for (int iy=0; iy<pix_tf.height(); iy++)
-            {
-                unsigned char* slptr= pix_tf.scanLine(iy);
-
-                for (int ix=0; ix<pix_tf.width(); ix++)
-                {
-                    slptr[ix]= tiles[column+row*size.width()].palette_index*PALETTE_W+(slptr[ix]%PALETTE_W);
-                }
-            }
-
-            pix= QPixmap::fromImage(pix_tf);
-        }
-        else
-            pix= QPixmap::fromImage(project.tileset.tiles[ttile->tileset_offset]);
-
-        trans= trans.scale((ttile->hflip?-1:1), (ttile->vflip?-1:1));
-        pix= pix.transformed(trans);
+        pix= QPixmap::fromImage(ttile->RenderImage(&project.tileset, project.tileset.isPalettedFormat()));
 
         QGraphicsPixmapItem* item= new QGraphicsPixmapItem(pix);
         item->setX(column*TILE_W*scaling+TILEPAD*column);
