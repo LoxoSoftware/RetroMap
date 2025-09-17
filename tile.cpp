@@ -130,82 +130,8 @@ bool Tileset::FromImage(QString fname, bool load_new)
     return FromImage();
 }
 
-void Tileset::Optimize(Tileset::optimize_flags_t optiflags)
-{
-    if (optiflags == Tileset::OptimizeNone)
-        return;
-
-    QVector<QImage> new_tileset;
-    new_tileset.clear();
-
-    for (int it=0; it<tiles.count(); it++)
-    {
-        QImage tstile= tiles[it];
-        QTransform ttrans;
-
-        int ind_found= new_tileset.indexOf(tstile);
-        bool vflipped= false, hflipped= false;
-
-        //Flip the tiles for all possible combinations and calculate the hash for each one
-        if (optiflags & Tileset::OptimizeWithFlip && ind_found < 0)
-        {
-            ttrans.scale(-1,1);
-            tstile= tstile.transformed(ttrans);
-            ind_found= new_tileset.indexOf(tstile);
-            if (ind_found >= 0)
-                vflipped= false, hflipped= true;
-        }
-        if (optiflags & Tileset::OptimizeWithFlip && ind_found < 0)
-        {
-            ttrans.scale(1,-1);
-            tstile= tstile.transformed(ttrans);
-            ind_found= new_tileset.indexOf(tstile);
-            if (ind_found >= 0)
-                vflipped= true, hflipped= false;
-        }
-        if (optiflags & Tileset::OptimizeWithFlip && ind_found < 0)
-        {
-            ttrans.scale(-1,-1);
-            tstile= tstile.transformed(ttrans);
-            ind_found= new_tileset.indexOf(tstile);
-            if (ind_found >= 0)
-                vflipped= true, hflipped= true;
-        }
-
-        int new_offs;
-
-        if (ind_found >= 0)
-            new_offs= ind_found;
-        else
-        {
-            new_tileset+= tiles[it];
-            new_offs= new_tileset.count()-1;
-        }
-
-        //Update all occurrences of the tile in the tilemap
-        for (int iit=0; iit<project.editor_canvas->tiles.count(); iit++)
-        {
-            Tile* ttile= &project.editor_canvas->tiles[iit];
-            if (ttile->tileset_offset != it)
-                continue;
-            ttile->tileset_offset= new_offs;
-            if (ind_found >= 0)
-            {
-                ttile->hflip= hflipped;
-                ttile->vflip= vflipped;
-            }
-        }
-    }
-
-    tiles= new_tileset;
-    RebuildTilesetImage();
-}
-
 QVector<QImage> Tileset::Optimized(QList<Tile>* tilemap, Tileset::optimize_flags_t optiflags)
 {
-    if (optiflags == Tileset::OptimizeNone)
-        return this->tiles;
-
     QVector<QImage> new_tileset;
     QVector<QImage> temp_tileset;
     QList<Tile> new_tilemap;

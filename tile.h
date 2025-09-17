@@ -31,10 +31,9 @@ class Tileset
 public:
     typedef int optimize_flags_t;
 
-    const static int OptimizeNone =         0<<0;
-    const static int OptimizeDuplicate =    1<<0;
-    const static int OptimizeWithFlip =     1<<1;
-    const static int OptimizeWithPalette =  1<<2;
+    const static int OptimizeNone =         0;
+    const static int OptimizeWithFlip =     1;
+    const static int OptimizeWithPalette =  2;
 
     enum tile_format_t {
         GBA_8bpp = 1,
@@ -50,9 +49,7 @@ public:
     bool            FromImage();
     bool            FromImage(QString fname, bool load_new=false);
     void            UpdatePalettes();
-    [[deprecated]]
-    void            Optimize(Tileset::optimize_flags_t optiflags=Tileset::OptimizeDuplicate);
-    QVector<QImage> Optimized(QList<Tile>* tilemap, Tileset::optimize_flags_t optiflags=Tileset::OptimizeDuplicate);
+    QVector<QImage> Optimized(QList<Tile>* tilemap, Tileset::optimize_flags_t optiflags);
     QVector<QImage> Unoptimized(QList<Tile>* tilemap);
     void            RebuildTilesetImage(int columns=16);
 };

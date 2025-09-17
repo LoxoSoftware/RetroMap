@@ -17,21 +17,22 @@ Tileset::optimize_flags_t OptimizeDialog::GetFlags()
 {
     this->setModal(true);
     this->exec();
-    return  ( ui->chkRmDuplicate->isChecked()?Tileset::OptimizeDuplicate:0 ) |
-            ( ui->chkRmFlip->isChecked()?Tileset::OptimizeWithFlip:0 ) |
-            ( ui->chkRmPalette->isChecked()?Tileset::OptimizeWithPalette:0 );
+    return  ( ui->chkRmFlip->isChecked()?Tileset::OptimizeWithFlip:0 ) |
+            ( ui->chkRmPalette->isChecked()?Tileset::OptimizeWithPalette:0 )
+            + (accepted?0x80:0);
 }
 
 void OptimizeDialog::on_bnbDialog_accepted()
 {
+    accepted= true;
     this->close();
 }
 
 void OptimizeDialog::on_bnbDialog_rejected()
 {
-    ui->chkRmDuplicate->setChecked(false);
     ui->chkRmFlip->setChecked(false);
     ui->chkRmPalette->setChecked(false);
+    accepted= false;
     this->close();
 }
 

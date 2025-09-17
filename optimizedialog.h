@@ -24,6 +24,8 @@ private slots:
 
 private:
     Ui::OptimizeDialog *ui;
+
+    bool accepted= false;
 };
 
 #endif // OPTIMIZEDIALOG_H

@@ -174,7 +174,6 @@ void MainWindow::on_actionImport_tileset_from_image_triggered()
     if (ifile_name == "")
         return;
     project.tileset.FromImage(ifile_name, true);
-    project.tileset.Optimize(Tileset::OptimizeDuplicate);
     dckTilePicker->Update();
     dckPaletteEdit->Update();
     project.editor_canvas->Redraw();
@@ -203,7 +202,10 @@ void MainWindow::on_actionOptimize_tileset_triggered()
         QMessageBox::critical(this, "Optimize tileset", "Please import a tileset first!");
         return;
     }
-    project.tileset.tiles= project.tileset.Optimized(&project.editor_canvas->tiles, OptimizeDialog(this).GetFlags());
+    unsigned int optiflags= OptimizeDialog(this).GetFlags();
+    if (!(optiflags&0x80))
+        return; //User rejected on the dialog
+    project.tileset.tiles= project.tileset.Optimized(&project.editor_canvas->tiles, optiflags&0x7F);
     project.tileset.RebuildTilesetImage();
     dckTilePicker->Update();
     project.editor_canvas->Redraw();
