@@ -1,11 +1,13 @@
 #include "optimizedialog.h"
 #include "ui_optimizedialog.h"
 
-OptimizeDialog::OptimizeDialog(QWidget *parent)
+OptimizeDialog::OptimizeDialog(QWidget *parent, bool isPalettedFmt)
     : QDialog(parent)
     , ui(new Ui::OptimizeDialog)
 {
     ui->setupUi(this);
+
+    ui->chkRmPalette->setChecked(isPalettedFmt);
 }
 
 OptimizeDialog::~OptimizeDialog()
@@ -13,9 +15,10 @@ OptimizeDialog::~OptimizeDialog()
     delete ui;
 }
 
-Tileset::optimize_flags_t OptimizeDialog::GetFlags()
+Tileset::optimize_flags_t OptimizeDialog::GetFlags(bool isPalettedFmt)
 {
     this->setModal(true);
+    ui->chkRmPalette->setChecked(isPalettedFmt);
     this->exec();
     return  ( ui->chkRmFlip->isChecked()?Tileset::OptimizeWithFlip:0 ) |
             ( ui->chkRmPalette->isChecked()?Tileset::OptimizeWithPalette:0 )

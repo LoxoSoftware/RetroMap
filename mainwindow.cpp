@@ -202,7 +202,7 @@ void MainWindow::on_actionOptimize_tileset_triggered()
         QMessageBox::critical(this, "Optimize tileset", "Please import a tileset first!");
         return;
     }
-    unsigned int optiflags= OptimizeDialog(this).GetFlags();
+    unsigned int optiflags= OptimizeDialog(this).GetFlags(project.tileset.format==Tileset::GBA_4bpp);
     if (!(optiflags&0x80))
         return; //User rejected on the dialog
     project.tileset.tiles= project.tileset.Optimized(&project.editor_canvas->tiles, optiflags&0x7F);

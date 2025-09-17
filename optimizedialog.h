@@ -13,10 +13,10 @@ class OptimizeDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit OptimizeDialog(QWidget *parent = nullptr);
+    explicit OptimizeDialog(QWidget *parent = nullptr, bool isPalettedFmt=true);
     ~OptimizeDialog();
 
-    Tileset::optimize_flags_t GetFlags();
+    Tileset::optimize_flags_t GetFlags(bool isPalettedFmt=true);
 
 private slots:
     void on_bnbDialog_accepted();
