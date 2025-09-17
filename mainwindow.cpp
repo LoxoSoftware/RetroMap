@@ -212,26 +212,6 @@ void MainWindow::on_actionOptimize_tileset_triggered()
     project.editor_canvas->UpdateHistory();
 }
 
-void MainWindow::on_actionUnoptimize_triggered()
-{
-    if (!project.editor_canvas)
-    {
-        QMessageBox::critical(this, "Error - Unoptimize tileset", "Canvas is null!");
-        return;
-    }
-    if (!project.tileset.image || !project.tileset.tiles.count())
-    {
-        ChangeTileFormat(Tileset::GBA_8bpp);
-        QMessageBox::critical(this, "Unoptimize tileset", "Please import a tileset first!");
-        return;
-    }
-    project.tileset.tiles= project.tileset.Unoptimized(&project.editor_canvas->tiles);
-    project.tileset.RebuildTilesetImage();
-    dckTilePicker->Update();
-    project.editor_canvas->Redraw();
-    project.editor_canvas->UpdateHistory();
-}
-
 void MainWindow::on_actionMapChange_Size_triggered()
 {
     MapSizeSelector* resizeui= new MapSizeSelector();

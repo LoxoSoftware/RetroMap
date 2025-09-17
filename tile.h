@@ -50,7 +50,6 @@ public:
     bool            FromImage(QString fname, bool load_new=false);
     void            UpdatePalettes();
     QVector<QImage> Optimized(QList<Tile>* tilemap, Tileset::optimize_flags_t optiflags);
-    QVector<QImage> Unoptimized(QList<Tile>* tilemap);
     void            RebuildTilesetImage(int columns=16);
 };
 
