@@ -35,6 +35,22 @@ QImage Tile::RenderImage(Tileset* tileset, bool bpp4)
     return oimg;
 }
 
+QImage Tile::TransformImage(QImage img, bool vflip, bool hflip, int palid)
+{
+    QImage oimg;
+    QTransform ttrans;
+    ttrans.scale(hflip?-1:1, vflip?-1:1);
+    oimg= img.transformed(ttrans);
+
+    if (palid >= 0)
+    {
+        for (int iy=0; iy<img.height(); iy++) for (int ix=0; ix<img.width(); ix++)
+            oimg.scanLine(iy)[ix]= ((palid%16)<<4)|(oimg.scanLine(iy)[ix]&0x0F);
+    }
+
+    return oimg;
+}
+
 ///// Tileset operations /////
 
 bool Tileset::FromImage()
@@ -185,15 +201,73 @@ void Tileset::Optimize(Tileset::optimize_flags_t optiflags)
     RebuildTilesetImage();
 }
 
+QVector<QImage> Tileset::Optimized(QList<Tile>* tilemap, Tileset::optimize_flags_t optiflags)
+{
+    if (optiflags == Tileset::OptimizeNone)
+        return this->tiles;
+
+    QVector<QImage> new_tileset;
+    QVector<QImage> temp_tileset;
+    QList<Tile> new_tilemap;
+    new_tileset.clear();
+    temp_tileset.clear();
+    new_tilemap.clear();
+
+    for (int im=0; im<tilemap->count(); im++)
+    {
+        Tile* tmtile= &(*tilemap)[im];
+        QImage tmtile_img= tmtile->RenderImage(this,true);
+        bool hflipped=false, vflipped=false;
+        int ind_found= -2;
+
+        //Search the new tilemap by all the possible versions of this tile
+        for (int ipal=0; ipal<PALETTE_H; ipal++)
+        {
+            if (!(optiflags&Tileset::OptimizeWithPalette))
+                if (ipal != tmtile->palette_index) continue;
+
+            hflipped=false, vflipped=false;
+            ind_found= new_tileset.indexOf(Tile::TransformImage(tmtile_img,vflipped,hflipped,ipal));
+            if (ind_found >= 0) break;
+
+            if (!(optiflags&Tileset::OptimizeWithFlip)) continue;
+
+            hflipped=false, vflipped=true;
+            ind_found= new_tileset.indexOf(Tile::TransformImage(tmtile_img,vflipped,hflipped,ipal));
+            if (ind_found >= 0) break;
+            hflipped=true, vflipped=false;
+            ind_found= new_tileset.indexOf(Tile::TransformImage(tmtile_img,vflipped,hflipped,ipal));
+            if (ind_found >= 0) break;
+            hflipped=true, vflipped=true;
+            ind_found= new_tileset.indexOf(Tile::TransformImage(tmtile_img,vflipped,hflipped,ipal));
+            if (ind_found >= 0) break;
+        }
+
+        if (ind_found >= 0)
+        {
+            new_tilemap+= Tile(ind_found,vflipped,hflipped,tmtile->palette_index);
+        }
+        else
+        {
+            new_tileset+= tmtile_img;
+            new_tilemap+= Tile(new_tileset.count()-1,false,false,new_tileset.last().scanLine(0)[0]>>4);
+        }
+
+        (*tilemap)[im]= new_tilemap[im];
+    }
+
+    return new_tileset;
+}
+
 QVector<QImage> Tileset::Unoptimized(QList<Tile>* tilemap)
 {
     QVector<QImage> new_tileset;
     QList<Tile> new_tilemap;
     new_tileset.clear();
     new_tilemap.clear();
-
     QList<bool> tilemap_matchstatus;
-    for (int i=0; i<project.editor_canvas->tiles.count(); i++)
+
+    for (int i=0; i<tilemap->count(); i++)
         tilemap_matchstatus+= false,
         new_tilemap+= Tile(-1);
 
@@ -211,7 +285,7 @@ QVector<QImage> Tileset::Unoptimized(QList<Tile>* tilemap)
             tile_combos[itc+3]= Tile(it,true,true,itc>>2).RenderImage(this,true);
         }
 
-        //Check for every tile in the map if it matches with at least one of the precomputed versions of this tile
+        //Check for every tile in the map if it matches with one of the precomputed versions of this tile
         for (int im=0; im<tilemap->count(); im++)
         {
             if (tilemap_matchstatus[im]) //There is another tile that has already matched, no need to check again

@@ -22,6 +22,8 @@ public:
     int     palette_index;
 
     QImage  RenderImage(Tileset* tileset, bool bpp4);
+
+    static QImage TransformImage(QImage img, bool vflip, bool hflip, int palid=-1);
 };
 
 class Tileset
@@ -48,7 +50,9 @@ public:
     bool            FromImage();
     bool            FromImage(QString fname, bool load_new=false);
     void            UpdatePalettes();
+    [[deprecated]]
     void            Optimize(Tileset::optimize_flags_t optiflags=Tileset::OptimizeDuplicate);
+    QVector<QImage> Optimized(QList<Tile>* tilemap, Tileset::optimize_flags_t optiflags=Tileset::OptimizeDuplicate);
     QVector<QImage> Unoptimized(QList<Tile>* tilemap);
     void            RebuildTilesetImage(int columns=16);
 };

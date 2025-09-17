@@ -192,15 +192,22 @@ void MainWindow::on_actionExport_as_indexed_bitmap_triggered()
 
 void MainWindow::on_actionOptimize_tileset_triggered()
 {
+    if (!project.editor_canvas)
+    {
+        QMessageBox::critical(this, "Error - Optimize tileset", "Canvas is null!");
+        return;
+    }
     if (!project.tileset.image || !project.tileset.tiles.count())
     {
         ChangeTileFormat(Tileset::GBA_8bpp);
         QMessageBox::critical(this, "Optimize tileset", "Please import a tileset first!");
         return;
     }
-    project.tileset.Optimize(OptimizeDialog(this).GetFlags());
+    project.tileset.tiles= project.tileset.Optimized(&project.editor_canvas->tiles, OptimizeDialog(this).GetFlags());
+    project.tileset.RebuildTilesetImage();
     dckTilePicker->Update();
     project.editor_canvas->Redraw();
+    project.editor_canvas->UpdateHistory();
 }
 
 void MainWindow::on_actionUnoptimize_triggered()
