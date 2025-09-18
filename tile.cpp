@@ -133,11 +133,12 @@ bool Tileset::FromImage(QString fname, bool load_new)
 QVector<QImage> Tileset::Optimized(QList<Tile>* tilemap, Tileset::optimize_flags_t optiflags)
 {
     QVector<QImage> new_tileset;
-    QVector<QImage> temp_tileset;
+    bool tileset_matchstatus[this->tiles.count()];
     QList<Tile> new_tilemap;
     new_tileset.clear();
-    temp_tileset.clear();
     new_tilemap.clear();
+    for (int i=0; i<this->tiles.count(); i++)
+        tileset_matchstatus[i]= false;
 
     for (int im=0; im<tilemap->count(); im++)
     {
@@ -179,8 +180,15 @@ QVector<QImage> Tileset::Optimized(QList<Tile>* tilemap, Tileset::optimize_flags
             new_tilemap+= Tile(new_tileset.count()-1,false,false,new_tileset.last().scanLine(0)[0]>>4);
         }
 
+        tileset_matchstatus[tmtile->tileset_offset]= true;
         (*tilemap)[im]= new_tilemap[im];
     }
+
+    //Restore tiles that were not matched (aka. unused)
+    if (optiflags&Tileset::OptimizeKeepUnused)
+    for (int it=0; it<this->tiles.count(); it++)
+        if (!tileset_matchstatus[it])
+            new_tileset+= this->tiles[it];
 
     return new_tileset;
 }

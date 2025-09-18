@@ -34,6 +34,7 @@ public:
     const static int OptimizeNone =         0;
     const static int OptimizeWithFlip =     1;
     const static int OptimizeWithPalette =  2;
+    const static int OptimizeKeepUnused =   4;
 
     enum tile_format_t {
         GBA_8bpp = 1,
