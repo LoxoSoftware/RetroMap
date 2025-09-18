@@ -12,8 +12,15 @@ ExportDialog::ExportDialog(QWidget *parent)
 {
     ui->setupUi(this);
 
-    ui->rdbGBA4bpp->setChecked(project.tileset.isPalettedFormat());
-    ui->rdbGBA8bpp->setChecked(!project.tileset.isPalettedFormat());
+    switch (project.tileset.format)
+    {
+    case Tileset::GBA_4bpp:
+        ui->cmbFormat->setCurrentIndex(1);
+        break;
+    case Tileset::GBA_8bpp:
+        ui->cmbFormat->setCurrentIndex(0);
+        break;
+    }
 }
 
 ExportDialog::~ExportDialog()
@@ -46,8 +53,19 @@ void ExportDialog::on_btnDialog_accepted()
     export_flags+= ui->chkExportMap->isChecked()?Project::ExportMap:0;
     export_flags+= ui->chkExportPal->isChecked()?Project::ExportPal:0;
     export_flags+= ui->chkIncludeHFile->isChecked()?Project::ExportHFile:0;
-    export_flags+= ui->rdbGBA4bpp->isChecked()?Project::ExportGBA4bpp:0;
-    export_flags+= ui->rdbGBA8bpp->isChecked()?Project::ExportGBA8bpp:0;
+    export_flags+= ui->chkOptimize->isChecked()?Project::ExportOptimize:0;
+    switch(ui->cmbFormat->currentIndex())
+    {
+    case 0:
+        export_flags+= Project::ExportGBA8bpp;
+        break;
+    case 1:
+        export_flags+= Project::ExportGBA4bpp;
+        break;
+    case 2:
+        export_flags+= Project::ExportGBAAffine;
+        break;
+    }
     if ((export_flags&Project::ExportAll) == Project::ExportNone)
     {
         QMessageBox::warning(this, "", "Nothing to do...");
