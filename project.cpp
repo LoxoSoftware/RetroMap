@@ -6,6 +6,7 @@
 #include <QFile>
 #include <QImage>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <math.h>
 
 Project::Project()
@@ -178,6 +179,10 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
         tiles_sz= tileset.tiles.count();
         map_sz= editor_canvas?(editor_canvas->tiles.count()*2):0;
         break;
+    case Project::ExportGBAAffine>>Project::ExportFormat:
+        tiles_sz= tileset.tiles.count();
+        map_sz= editor_canvas?editor_canvas->tiles.count():0;
+        break;
     default:
         break;
     }
@@ -219,18 +224,8 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
 
             obuf+= "\n\t.section .rodata\n\t.align "+QString::number(align_sz)+"\n\t.global "+oname+"Map\n";
             obuf+= oname+"Map:\n";
-            for (int it=0; it<editor_canvas->tiles.count(); it++)
-            {
-                Tile ttile= editor_canvas->tiles[it];
-                unsigned int tdata= (ttile.tileset_offset)%0x0400+
-                                    (ttile.hflip?0x0400:0)+
-                                    (ttile.vflip?0x0800:0)+
-                                    ((ttile.palette_index%16)*0x1000);
-                if (it%8 == 0) obuf+= "\t.hword 0x";
-                else           obuf+= ",0x";
-                obuf+= QString::number(tdata, 16);
-                if (it%8 == 7) obuf+= "\n";
-            }
+            foreach (QString tstr, MapdataToString(ofmt, export_flags))
+                obuf+= tstr;
         }
         if (tileset.palette.count() && export_flags&Project::ExportPal)
         {
@@ -289,18 +284,8 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
 
             obuf+= "const unsigned short "+oname+"Map["+QString::number(ceil(map_sz)/export_word_sz)+"] ";
             obuf+= "__attribute__((aligned("+QString::number(align_sz)+"))) __attribute__((visibility(\"hidden\"))) = \n{\n";
-            for (int it=0; it<editor_canvas->tiles.count(); it++)
-            {
-                Tile ttile= editor_canvas->tiles[it];
-                unsigned int tdata= (ttile.tileset_offset)%0x0400+
-                                     (ttile.hflip?0x0400:0)+
-                                     (ttile.vflip?0x0800:0)+
-                                     ((ttile.palette_index%16)*0x1000);
-                if (it%8 == 0) obuf+= "\t0x";
-                else           obuf+= ",0x";
-                obuf+= QString::number(tdata, 16);
-                if (it%8 == 7) obuf+= ",\n";
-            }
+            foreach (QString tstr, MapdataToString(ofmt, export_flags))
+                obuf+= tstr;
             obuf+= "};\n\n";
         }
         if (tileset.palette.count() && export_flags&Project::ExportPal)
@@ -379,6 +364,8 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
 
 QVector<QString> Project::TiledataToString(int it, QString format, int export_flags)
 {
+    //Tile by tile
+
     QVector<QString> ostrv;
     ostrv.clear();
     QString tstr;
@@ -415,6 +402,7 @@ QVector<QString> Project::TiledataToString(int it, QString format, int export_fl
         break;
 
     case Project::ExportGBA8bpp>>Project::ExportFormat:
+    case Project::ExportGBAAffine>>Project::ExportFormat:
 
         //Assuming a tile is 64 bytes, so 4 rows of 8 16 bit words
         for (int iti=0; iti<8; iti+=2)
@@ -447,6 +435,92 @@ QVector<QString> Project::TiledataToString(int it, QString format, int export_fl
 
     return ostrv;
 }
+
+QVector<QString> Project::MapdataToString(QString format, int export_flags)
+{
+    //All tiles at once
+
+    QVector<QString> ostrv;
+    ostrv.clear();
+    QString tstr;
+
+    switch ((export_flags>>Project::ExportFormat)&0b11)
+    {
+    case Project::ExportGBA8bpp>>Project::ExportFormat:
+    case Project::ExportGBA4bpp>>Project::ExportFormat:
+    {
+        for (int it=0; it<editor_canvas->tiles.count(); it++)
+        {
+            Tile ttile= editor_canvas->tiles[it];
+            unsigned int tdata= (ttile.tileset_offset)%0x0400 |
+                                (ttile.hflip?0x0400:0) |
+                                (ttile.vflip?0x0800:0) |
+                                ((ttile.palette_index%16)*0x1000);
+
+            if (it%8 == 0)
+            {
+                if (format == "s")
+                    tstr+= "\t.hword 0x";
+                if (format == "c")
+                    tstr+= "\t.0x";
+            }
+            else
+                tstr+= ",0x";
+
+            tstr+= QString::number(tdata, 16);
+
+            if (it%8 == 7)
+            {
+                if (format == "c")
+                    tstr+= ",";
+                tstr+= "\n";
+                ostrv+= tstr;
+                tstr= "";
+            }
+        }
+
+        break;
+    }
+    case Project::ExportGBAAffine>>Project::ExportFormat:
+    {
+        for (int it=0; it<editor_canvas->tiles.count(); it+=2)
+        {
+            Tile ttile= editor_canvas->tiles[it];
+            Tile ttile2= editor_canvas->tiles[it+1];
+
+            unsigned int tdata= ((ttile2.tileset_offset%0xFF)<<8)+(ttile.tileset_offset%0xFF);
+
+            if (it%16 == 0)
+            {
+                if (format == "s")
+                    tstr+= "\t.hword 0x";
+                if (format == "c")
+                    tstr+= "\t0x";
+            }
+            else
+                tstr+= ",0x";
+
+            tstr+= QString::number(tdata, 16);
+
+            if (it%16 == 14)
+            {
+                if (format == "c")
+                    tstr+= ",";
+                tstr+= "\n";
+                ostrv+= tstr;
+                tstr= "";
+            }
+        }
+
+        break;
+    }
+    default:
+        break;
+    }
+
+    return ostrv;
+}
+
 
 uint16_t Project::TruncPal(uint32_t n32)
 {

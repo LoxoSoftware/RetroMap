@@ -34,16 +34,19 @@ public:
     static const int ExportMap=         1<<1;
     static const int ExportPal=         1<<2;
     static const int ExportHFile=       1<<3;
-    static const int ExportDefault=     ExportGfx|ExportMap|ExportPal|ExportHFile;
+    static const int ExportOptimize=    1<<4;
+    static const int ExportDefault=     ExportGfx|ExportMap|ExportPal|ExportHFile|ExportOptimize;
     static const int ExportAll=         ExportGfx|ExportMap|ExportPal;
-    static const int ExportFormat=      4; //Used for bit shifting
-    static const int ExportGBA4bpp=     0<<4;
-    static const int ExportGBA8bpp=     1<<4;
+    static const int ExportFormat=      5; //Used for bit shifting
+    static const int ExportGBA4bpp=     0<<ExportFormat;
+    static const int ExportGBA8bpp=     1<<ExportFormat;
+    static const int ExportGBAAffine=   2<<ExportFormat;
 
     QStatusBar* statusbar= nullptr;
 
 private:
     QVector<QString>    TiledataToString(int it, QString format, int export_flags);
+    QVector<QString>    MapdataToString(QString format, int export_flags);
     uint16_t            TruncPal(uint32_t n32);
 };
 
