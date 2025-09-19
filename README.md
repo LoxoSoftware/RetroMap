@@ -1,5 +1,7 @@
 ## RetroMap: A tilemap editor
 
+![Screenshot of the main window](/home/loxo/Nextcloud/Projects/Qt/Mapped/.readme/screen1.png)
+
 RetroMap is a tilemap editor that is specifically aimed at GameBoy Advance development, altough I want it to have a bigger scope in the future.  
 It was born out of the need to have a tool that could handle 4bpp tilesets and different maps that use the same graphics data.  
 **RetroMap does not have any way of editing the tileset graphics (for now)**, for that you need to use an external image editor that can export as 8 bit indexed bitmaps.
