@@ -171,9 +171,27 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
     QList<Tile> out_map= QList<Tile>();
     if (editor_canvas) out_map= editor_canvas->tiles;
 
+    //Optimize data if necessary
+    if (export_flags&Project::ExportOptimize)
+    {
+        switch ((export_flags>>Project::ExportFormat)&0b11)
+        {
+        case Project::ExportGBA4bpp>>Project::ExportFormat:
+            out_tileset.tiles= out_tileset.Optimized(&out_map, Tileset::OptimizeWithFlip|Tileset::OptimizeWithPalette);
+            break;
+        case Project::ExportGBA8bpp>>Project::ExportFormat:
+            out_tileset.tiles= out_tileset.Optimized(&out_map, Tileset::OptimizeWithFlip);
+            break;
+        case Project::ExportGBAAffine>>Project::ExportFormat:
+            out_tileset.tiles= out_tileset.Optimized(&out_map, Tileset::OptimizeNone);
+            break;
+        default:
+            break;
+        }
+    }
+
     switch ((export_flags>>Project::ExportFormat)&0b11)
     {
-        //This may be redundant, but I'm keeping it in case I want to add more formats in the future
         //NOTE: Assuming export_word_sz is 1 (byte) before normalization (that happens later)
     case Project::ExportGBA4bpp>>Project::ExportFormat:
         tiles_sz= out_tileset.tiles.count()/2;
