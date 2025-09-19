@@ -167,27 +167,31 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
     int export_word_sz= sizeof(uint16_t);
     int align_sz= 2;
 
+    Tileset     out_tileset= tileset;
+    QList<Tile> out_map= QList<Tile>();
+    if (editor_canvas) out_map= editor_canvas->tiles;
+
     switch ((export_flags>>Project::ExportFormat)&0b11)
     {
         //This may be redundant, but I'm keeping it in case I want to add more formats in the future
         //NOTE: Assuming export_word_sz is 1 (byte) before normalization (that happens later)
     case Project::ExportGBA4bpp>>Project::ExportFormat:
-        tiles_sz= tileset.tiles.count()/2;
-        map_sz= editor_canvas?(editor_canvas->tiles.count()*2):0;
+        tiles_sz= out_tileset.tiles.count()/2;
+        map_sz= out_map.count()*2;
         break;
     case Project::ExportGBA8bpp>>Project::ExportFormat:
-        tiles_sz= tileset.tiles.count();
-        map_sz= editor_canvas?(editor_canvas->tiles.count()*2):0;
+        tiles_sz= out_tileset.tiles.count();
+        map_sz= out_map.count()*2;
         break;
     case Project::ExportGBAAffine>>Project::ExportFormat:
-        tiles_sz= tileset.tiles.count();
-        map_sz= editor_canvas?editor_canvas->tiles.count():0;
+        tiles_sz= out_tileset.tiles.count();
+        map_sz= out_map.count();
         break;
     default:
         break;
     }
     tiles_sz *= TILE_W*TILE_H;
-    pal_sz    = (tileset.palette.count()*2);
+    pal_sz    = (out_tileset.palette.count()*2);
 
     if (ofmt == "s")
     {
@@ -207,13 +211,13 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
         obuf+= "\n@              https://github.com/LoxoSoftware/RetroMap              @";
         obuf+= "\n@====================================================================@";
         obuf+= "\n\n";
-        if (tileset.image && export_flags&Project::ExportGfx)
+        if (out_tileset.image && export_flags&Project::ExportGfx)
         {
             obuf+= "\t.section .rodata\n\t.align "+QString::number(align_sz)+"\n\t.global "+oname+"Tiles\n";
             obuf+= oname+"Tiles:\n";
-            for (int it=0; it<tileset.tiles.count(); it++)
+            for (int it=0; it<out_tileset.tiles.count(); it++)
             {
-                foreach (QString tstr, TiledataToString(it, ofmt, export_flags))
+                foreach (QString tstr, TiledataToString(it, &out_tileset, ofmt, export_flags))
                     obuf+= tstr;
             }
         }
@@ -224,16 +228,16 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
 
             obuf+= "\n\t.section .rodata\n\t.align "+QString::number(align_sz)+"\n\t.global "+oname+"Map\n";
             obuf+= oname+"Map:\n";
-            foreach (QString tstr, MapdataToString(ofmt, export_flags))
+            foreach (QString tstr, MapdataToString(&out_map, ofmt, export_flags))
                 obuf+= tstr;
         }
-        if (tileset.palette.count() && export_flags&Project::ExportPal)
+        if (out_tileset.palette.count() && export_flags&Project::ExportPal)
         {
             obuf+= "\n\t.section .rodata\n\t.align "+QString::number(align_sz)+"\n\t.global "+oname+"Pal\n";
             obuf+= oname+"Pal:\n";
-            for (int ip=0; ip<tileset.palette.count(); ip++)
+            for (int ip=0; ip<out_tileset.palette.count(); ip++)
             {
-                QColor tcol= tileset.palette[ip];
+                QColor tcol= out_tileset.palette[ip];
                 unsigned int tdata=  tcol.red()/8+
                                      (tcol.green()/8)*32+
                                      (tcol.blue()/8)*1024;
@@ -266,13 +270,13 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
         obuf+= "\n//              https://github.com/LoxoSoftware/RetroMap              //";
         obuf+= "\n//====================================================================//";
         obuf+= "\n\n";
-        if (tileset.image && export_flags&Project::ExportGfx)
+        if (out_tileset.image && export_flags&Project::ExportGfx)
         {
             obuf+= "const unsigned short "+oname+"Tiles["+QString::number(ceil(tiles_sz)/export_word_sz)+"] ";
             obuf+= "__attribute__((aligned("+QString::number(align_sz)+"))) __attribute__((visibility(\"hidden\"))) = \n{\n";
-            for (int it=0; it<tileset.tiles.count(); it++)
+            for (int it=0; it<out_tileset.tiles.count(); it++)
             {
-                foreach (QString tstr, TiledataToString(it, ofmt, export_flags))
+                foreach (QString tstr, TiledataToString(it, &out_tileset, ofmt, export_flags))
                     obuf+= tstr;
             }
             obuf+= "};\n\n";
@@ -284,17 +288,17 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
 
             obuf+= "const unsigned short "+oname+"Map["+QString::number(ceil(map_sz)/export_word_sz)+"] ";
             obuf+= "__attribute__((aligned("+QString::number(align_sz)+"))) __attribute__((visibility(\"hidden\"))) = \n{\n";
-            foreach (QString tstr, MapdataToString(ofmt, export_flags))
+            foreach (QString tstr, MapdataToString(&out_map, ofmt, export_flags))
                 obuf+= tstr;
             obuf+= "};\n\n";
         }
-        if (tileset.palette.count() && export_flags&Project::ExportPal)
+        if (out_tileset.palette.count() && export_flags&Project::ExportPal)
         {
             obuf+= "const unsigned short "+oname+"Pal["+QString::number(ceil(pal_sz)/export_word_sz)+"] ";
             obuf+= "__attribute__((aligned("+QString::number(align_sz)+"))) __attribute__((visibility(\"hidden\"))) = \n{\n";
-            for (int ip=0; ip<tileset.palette.count(); ip++)
+            for (int ip=0; ip<out_tileset.palette.count(); ip++)
             {
-                QColor tcol= tileset.palette[ip];
+                QColor tcol= out_tileset.palette[ip];
                 unsigned int tdata=  tcol.red()/8+
                                      (tcol.green()/8)*32+
                                      (tcol.blue()/8)*1024;
@@ -337,7 +341,7 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
         obuf+= "\n\n";
         obuf+= "#ifndef __RES__"+oname.toUpper()+"\n";
         obuf+= "#define __RES__"+oname.toUpper()+"\n\n";
-        if (tileset.image && export_flags&Project::ExportGfx)
+        if (out_tileset.image && export_flags&Project::ExportGfx)
         {
             obuf+= "#define "+oname+"TilesLen "+QString::number(ceil(tiles_sz))+"\n";
             obuf+= "extern const unsigned short "+oname+"Tiles["+QString::number(ceil(tiles_sz)/export_word_sz)+"];\n\n";
@@ -347,7 +351,7 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
             obuf+= "#define "+oname+"MapLen "+QString::number(ceil(map_sz))+"\n";
             obuf+= "extern const unsigned short "+oname+"Map["+QString::number(ceil(map_sz)/export_word_sz)+"];\n\n";
         }
-        if (tileset.palette.count() && export_flags&Project::ExportPal)
+        if (out_tileset.palette.count() && export_flags&Project::ExportPal)
         {
             obuf+= "#define "+oname+"PalLen "+QString::number(ceil(pal_sz))+"\n";
             obuf+= "extern const unsigned short "+oname+"Pal["+QString::number(ceil(pal_sz)/export_word_sz)+"];\n\n";
@@ -362,7 +366,7 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
     return 0;
 }
 
-QVector<QString> Project::TiledataToString(int it, QString format, int export_flags)
+QVector<QString> Project::TiledataToString(int it, Tileset* out_tileset, QString format, int export_flags)
 {
     //Tile by tile
 
@@ -370,8 +374,8 @@ QVector<QString> Project::TiledataToString(int it, QString format, int export_fl
     ostrv.clear();
     QString tstr;
 
-    int imgposx= (it*TILE_W)%tileset.image->width();
-    int imgposy= ((it*TILE_W)/tileset.image->width())*TILE_H;
+    int imgposx= (it*TILE_W)%out_tileset->image->width();
+    int imgposy= ((it*TILE_W)/out_tileset->image->width())*TILE_H;
 
     switch ((export_flags>>Project::ExportFormat)&0b11)
     {
@@ -386,14 +390,14 @@ QVector<QString> Project::TiledataToString(int it, QString format, int export_fl
             if (format == "c")
                 tstr+= "\t";
             tstr+=
-                "0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+0)))[imgposx/4+0]),16)+
-                ",0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+0)))[imgposx/4+1]),16)+
-                ",0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+1)))[imgposx/4+0]),16)+
-                ",0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+1)))[imgposx/4+1]),16)+
-                ",0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+2)))[imgposx/4+0]),16)+
-                ",0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+2)))[imgposx/4+1]),16)+
-                ",0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+3)))[imgposx/4+0]),16)+
-                ",0x"+QString::number(TruncPal(((uint32_t*)(tileset.image->scanLine(iti+imgposy+3)))[imgposx/4+1]),16);
+                "0x"+QString::number(TruncPal(((uint32_t*)(out_tileset->image->scanLine(iti+imgposy+0)))[imgposx/4+0]),16)+
+                ",0x"+QString::number(TruncPal(((uint32_t*)(out_tileset->image->scanLine(iti+imgposy+0)))[imgposx/4+1]),16)+
+                ",0x"+QString::number(TruncPal(((uint32_t*)(out_tileset->image->scanLine(iti+imgposy+1)))[imgposx/4+0]),16)+
+                ",0x"+QString::number(TruncPal(((uint32_t*)(out_tileset->image->scanLine(iti+imgposy+1)))[imgposx/4+1]),16)+
+                ",0x"+QString::number(TruncPal(((uint32_t*)(out_tileset->image->scanLine(iti+imgposy+2)))[imgposx/4+0]),16)+
+                ",0x"+QString::number(TruncPal(((uint32_t*)(out_tileset->image->scanLine(iti+imgposy+2)))[imgposx/4+1]),16)+
+                ",0x"+QString::number(TruncPal(((uint32_t*)(out_tileset->image->scanLine(iti+imgposy+3)))[imgposx/4+0]),16)+
+                ",0x"+QString::number(TruncPal(((uint32_t*)(out_tileset->image->scanLine(iti+imgposy+3)))[imgposx/4+1]),16);
             if (format == "c")
                 tstr+= ",";
             tstr+= "\n";
@@ -413,14 +417,14 @@ QVector<QString> Project::TiledataToString(int it, QString format, int export_fl
             if (format == "c")
                 tstr+= "\t";
             tstr+=
-                "0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+0)))[imgposx/2+0],16)+
-                ",0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+0)))[imgposx/2+1],16)+
-                ",0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+0)))[imgposx/2+2],16)+
-                ",0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+0)))[imgposx/2+3],16)+
-                ",0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+1)))[imgposx/2+0],16)+
-                ",0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+1)))[imgposx/2+1],16)+
-                ",0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+1)))[imgposx/2+2],16)+
-                ",0x"+QString::number(((uint16_t*)(tileset.image->scanLine(iti+imgposy+1)))[imgposx/2+3],16);
+                "0x"+QString::number(((uint16_t*)(out_tileset->image->scanLine(iti+imgposy+0)))[imgposx/2+0],16)+
+                ",0x"+QString::number(((uint16_t*)(out_tileset->image->scanLine(iti+imgposy+0)))[imgposx/2+1],16)+
+                ",0x"+QString::number(((uint16_t*)(out_tileset->image->scanLine(iti+imgposy+0)))[imgposx/2+2],16)+
+                ",0x"+QString::number(((uint16_t*)(out_tileset->image->scanLine(iti+imgposy+0)))[imgposx/2+3],16)+
+                ",0x"+QString::number(((uint16_t*)(out_tileset->image->scanLine(iti+imgposy+1)))[imgposx/2+0],16)+
+                ",0x"+QString::number(((uint16_t*)(out_tileset->image->scanLine(iti+imgposy+1)))[imgposx/2+1],16)+
+                ",0x"+QString::number(((uint16_t*)(out_tileset->image->scanLine(iti+imgposy+1)))[imgposx/2+2],16)+
+                ",0x"+QString::number(((uint16_t*)(out_tileset->image->scanLine(iti+imgposy+1)))[imgposx/2+3],16);
             if (format == "c")
                 tstr+= ",";
             tstr+= "\n";
@@ -436,7 +440,7 @@ QVector<QString> Project::TiledataToString(int it, QString format, int export_fl
     return ostrv;
 }
 
-QVector<QString> Project::MapdataToString(QString format, int export_flags)
+QVector<QString> Project::MapdataToString(QList<Tile>* out_map, QString format, int export_flags)
 {
     //All tiles at once
 
@@ -449,9 +453,9 @@ QVector<QString> Project::MapdataToString(QString format, int export_flags)
     case Project::ExportGBA8bpp>>Project::ExportFormat:
     case Project::ExportGBA4bpp>>Project::ExportFormat:
     {
-        for (int it=0; it<editor_canvas->tiles.count(); it++)
+        for (int it=0; it<out_map->count(); it++)
         {
-            Tile ttile= editor_canvas->tiles[it];
+            Tile ttile= (*out_map)[it];
             unsigned int tdata= (ttile.tileset_offset)%0x0400 |
                                 (ttile.hflip?0x0400:0) |
                                 (ttile.vflip?0x0800:0) |
@@ -462,7 +466,7 @@ QVector<QString> Project::MapdataToString(QString format, int export_flags)
                 if (format == "s")
                     tstr+= "\t.hword 0x";
                 if (format == "c")
-                    tstr+= "\t.0x";
+                    tstr+= "\t0x";
             }
             else
                 tstr+= ",0x";
@@ -483,10 +487,10 @@ QVector<QString> Project::MapdataToString(QString format, int export_flags)
     }
     case Project::ExportGBAAffine>>Project::ExportFormat:
     {
-        for (int it=0; it<editor_canvas->tiles.count(); it+=2)
+        for (int it=0; it<out_map->count(); it+=2)
         {
-            Tile ttile= editor_canvas->tiles[it];
-            Tile ttile2= editor_canvas->tiles[it+1];
+            Tile ttile= (*out_map)[it];
+            Tile ttile2= (*out_map)[it+1];
 
             unsigned int tdata= ((ttile2.tileset_offset%0xFF)<<8)+(ttile.tileset_offset%0xFF);
 

@@ -45,8 +45,8 @@ public:
     QStatusBar* statusbar= nullptr;
 
 private:
-    QVector<QString>    TiledataToString(int it, QString format, int export_flags);
-    QVector<QString>    MapdataToString(QString format, int export_flags);
+    QVector<QString>    TiledataToString(int it, Tileset* out_tileset, QString format, int export_flags);
+    QVector<QString>    MapdataToString(QList<Tile>* out_map, QString format, int export_flags);
     uint16_t            TruncPal(uint32_t n32);
 };
 
