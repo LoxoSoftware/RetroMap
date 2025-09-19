@@ -188,6 +188,8 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
         default:
             break;
         }
+
+        out_tileset.RebuildTilesetImage();
     }
 
     switch ((export_flags>>Project::ExportFormat)&0b11)
