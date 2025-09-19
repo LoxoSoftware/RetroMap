@@ -80,12 +80,16 @@ void ToolBoxPanel::UpdateTheme()
         ui->btnSize3->setIcon(QIcon(":/tool_icons/dark/toolsize_3"));
         ui->tlbHFlipPen->setIcon(QIcon(":/tool_icons/dark/hflip_pen"));
         ui->tlbVFlipPen->setIcon(QIcon(":/tool_icons/dark/vflip_pen"));
+        ui->tlbPen->setIcon(QIcon(":/tool_icons/dark/pen"));
+        ui->tlbPalettePen->setIcon(QIcon(":/tool_icons/dark/palette_pen"));
     } else {
         ui->btnSize1->setIcon(QIcon(":/tool_icons/toolsize_1"));
         ui->btnSize2->setIcon(QIcon(":/tool_icons/toolsize_2"));
         ui->btnSize3->setIcon(QIcon(":/tool_icons/toolsize_3"));
         ui->tlbHFlipPen->setIcon(QIcon(":/tool_icons/hflip_pen"));
         ui->tlbVFlipPen->setIcon(QIcon(":/tool_icons/vflip_pen"));
+        ui->tlbPen->setIcon(QIcon(":/tool_icons/pen"));
+        ui->tlbPalettePen->setIcon(QIcon(":/tool_icons/palette_pen"));
     }
 }
 

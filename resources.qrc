@@ -19,5 +19,7 @@
         <file alias="toolsize_3">res/dark/toolsize-3.png</file>
         <file alias="hflip_pen">res/dark/tool-hflip_pen.png</file>
         <file alias="vflip_pen">res/dark/tool-vflip_pen.png</file>
+        <file alias="pen">res/dark/tool-pen.png</file>
+        <file alias="palette_pen">res/dark/tool-palette_pen.png</file>
     </qresource>
 </RCC>

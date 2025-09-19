@@ -148,7 +148,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Optimize output tileset</string>
+    <string>Optimize output</string>
    </property>
    <property name="checked">
     <bool>true</bool>
