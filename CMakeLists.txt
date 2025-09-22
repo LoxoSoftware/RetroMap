@@ -25,6 +25,7 @@ set(PROJECT_SOURCES
         toolboxpanel.h toolboxpanel.cpp toolboxpanel.ui
         optimizedialog.h optimizedialog.cpp optimizedialog.ui
         canvas.h canvas.cpp
+        tilecanvas.h tilecanvas.cpp
         resources.qrc
         tile.h tile.cpp
         project.h project.cpp
