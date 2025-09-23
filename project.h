@@ -1,11 +1,15 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include "canvas.h"
-#include "tile.h"
 #include <QString>
 #include <QWidget>
 #include <QStatusBar>
+#include <QTabWidget>
+#include "tilecanvas.h"
+#include "mapcanvas.h"
+#include "tile.h"
+
+class MainWindow;
 
 class Project
 {
@@ -18,10 +22,17 @@ public:
     int LoadFromFile(QString fname);
     int ExportToSourceFile(QString fname, int export_flags= ExportDefault|ExportGBA8bpp);
 
+    MapCanvas*      GetMainMapCanvas();
+
+    MainWindow*     main_window;
     QString         project_fpath= "";
-    QScrollArea*    canvas_container= nullptr;
-    Canvas*         editor_canvas= nullptr;
     Tileset         tileset;
+    QTabWidget*     tab_widget= nullptr;
+    AbstractCanvas* current_canvas= nullptr;
+    QScrollArea*    current_container= nullptr;
+    MapCanvas*      current_mapcanvas= nullptr;
+    MapCanvas*      main_mapcanvas= nullptr;
+    TileCanvas*     current_tilecanvas= nullptr;
     int             tileset_selected_tile= -1;
     int             tileset_selected_bgtile= 0;
     int             paltable_current_row= 0;

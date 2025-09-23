@@ -1,4 +1,4 @@
-#include "canvas.h"
+#include "mapcanvas.h"
 #include "project.h"
 #include "toolboxpanel.h"
 #include <QMenu>
@@ -17,7 +17,7 @@ extern Project project;
 
 #define CANVAS_HISTORY_MAX      32
 
-Canvas::Canvas(QScrollArea* parent, int width, int height)
+MapCanvas::MapCanvas(QScrollArea* parent, int width, int height)
 {
     size= QSize(width, height);
     setScene(&scene);
@@ -35,7 +35,7 @@ Canvas::Canvas(QScrollArea* parent, int width, int height)
     show();
 }
 
-void Canvas::Clear(int bgtile)
+void MapCanvas::Clear(int bgtile)
 {
     tiles.clear();
     for (int i=0; i<size.width()*size.height(); i++)
@@ -43,7 +43,7 @@ void Canvas::Clear(int bgtile)
     //Redraw();
 }
 
-void Canvas::Resize(int width, int height)
+void MapCanvas::Resize(int width, int height)
 {
     QList<Tile> new_tiles;
 
@@ -78,7 +78,7 @@ void Canvas::Resize(int width, int height)
     Redraw();
 }
 
-void Canvas::Plot(int row, int column, Tile tile)
+void MapCanvas::Plot(int row, int column, Tile tile)
 {
     if (row<0 || row>=size.height())
         return;
@@ -87,17 +87,17 @@ void Canvas::Plot(int row, int column, Tile tile)
     tiles[column+row*size.width()]= tile;
 }
 
-Canvas::~Canvas()
+MapCanvas::~MapCanvas()
 {
     close();
 }
 
-QSize Canvas::Size()
+QSize MapCanvas::Size()
 {
     return size;
 }
 
-void Canvas::ZoomIn()
+void MapCanvas::ZoomIn()
 {
     if (scaling >= CANVAS_MAX_SCALING)
         return;
@@ -105,7 +105,7 @@ void Canvas::ZoomIn()
     Redraw();
 }
 
-void Canvas::ZoomOut()
+void MapCanvas::ZoomOut()
 {
     if (scaling <= 1)
         return;
@@ -113,7 +113,7 @@ void Canvas::ZoomOut()
     Redraw();
 }
 
-void Canvas::Redraw()
+void MapCanvas::Redraw()
 {
     scene.clear();
     UpdateScaling();
@@ -126,7 +126,7 @@ void Canvas::Redraw()
     }
 }
 
-void Canvas::RedrawTile(int row, int column)
+void MapCanvas::RedrawTile(int row, int column)
 {
     if (row<0 || row>=size.height())
         return;
@@ -161,7 +161,7 @@ void Canvas::RedrawTile(int row, int column)
     }
 }
 
-void Canvas::UpdateScaling()
+void MapCanvas::UpdateScaling()
 {
     setMinimumSize(size.width()*TILE_W*scaling+(CANVAS_BORDER_W*2)+TILEPAD*size.width(),
                    size.height()*TILE_H*scaling+(CANVAS_BORDER_W*2)+TILEPAD*size.height());
@@ -169,7 +169,7 @@ void Canvas::UpdateScaling()
     scene.setSceneRect(QRect(0,0,size.width()*(TILE_W+TILEPAD)*scaling,size.height()*(TILE_H+TILEPAD)*scaling));
 }
 
-void Canvas::OpenContextMenu(QPoint screen_pos, QPoint canvas_pos)
+void MapCanvas::OpenContextMenu(QPoint screen_pos, QPoint canvas_pos)
 {
     int tilex= CANVASX_TO_COLUMN(canvas_pos.x());
     int tiley= CANVASY_TO_ROW(canvas_pos.y());
@@ -186,29 +186,29 @@ void Canvas::OpenContextMenu(QPoint screen_pos, QPoint canvas_pos)
 
     context_menu= new QMenu();
     context_menu->addAction("Clear tile with background");
-    connect(context_menu->actions().last(), &QAction::triggered, this, &Canvas::onMenuClearWithBgTile_triggered);
+    connect(context_menu->actions().last(), &QAction::triggered, this, &MapCanvas::onMenuClearWithBgTile_triggered);
     context_menu_palette_sel= context_menu->addMenu("Palette index: "+QString::number(tiles[tilen].palette_index)+" (change)");
     for (int i=0; i<PALETTE_H; i++)
     {
         context_menu_palette_sel->addAction(""+QString::number(i));
     }
-    connect(context_menu_palette_sel, &QMenu::triggered, this, &Canvas::onMenuChangePal_triggered);
+    connect(context_menu_palette_sel, &QMenu::triggered, this, &MapCanvas::onMenuChangePal_triggered);
     context_menu_palette_sel->setEnabled(project.tileset.isPalettedFormat());
     context_menu->addAction("Flip tile horizontally");
     context_menu->actions().last()->setCheckable(true);
     context_menu->actions().last()->setChecked(tiles[tilen].hflip);
-    connect(context_menu->actions().last(), &QAction::triggered, this, &Canvas::onMenuHFlip_triggered);
+    connect(context_menu->actions().last(), &QAction::triggered, this, &MapCanvas::onMenuHFlip_triggered);
     context_menu->addAction("Flip tile vertically");
     context_menu->actions().last()->setCheckable(true);
     context_menu->actions().last()->setChecked(tiles[tilen].vflip);
-    connect(context_menu->actions().last(), &QAction::triggered, this, &Canvas::onMenuVFlip_triggered);
+    connect(context_menu->actions().last(), &QAction::triggered, this, &MapCanvas::onMenuVFlip_triggered);
 
     context_menu->setWindowModality(Qt::ApplicationModal);
     context_menu->setGeometry(QRect(screen_pos,context_menu->sizeHint()));
     context_menu->show();
 }
 
-void Canvas::mousePressEvent(QMouseEvent *event)
+void MapCanvas::mousePressEvent(QMouseEvent *event)
 {
     //event->accept();
     mouse_down_button= event->button();
@@ -228,7 +228,7 @@ void Canvas::mousePressEvent(QMouseEvent *event)
     mouse_has_moved= false;
 }
 
-void Canvas::mouseMoveEvent(QMouseEvent *event)
+void MapCanvas::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
 
@@ -260,7 +260,7 @@ void Canvas::mouseMoveEvent(QMouseEvent *event)
     mouse_has_moved= true;
 }
 
-void Canvas::mouseReleaseEvent(QMouseEvent *event)
+void MapCanvas::mouseReleaseEvent(QMouseEvent *event)
 {
     event->accept();
 
@@ -280,7 +280,7 @@ void Canvas::mouseReleaseEvent(QMouseEvent *event)
     mouse_has_moved= false;
 }
 
-void Canvas::ManagedPlot(int tilex, int tiley)
+void MapCanvas::ManagedPlot(int tilex, int tiley)
 {
     if (tilex < 0 || tilex >= size.width())
         return;
@@ -325,7 +325,7 @@ void Canvas::ManagedPlot(int tilex, int tiley)
     }
 }
 
-void Canvas::onMenuClearWithBgTile_triggered()
+void MapCanvas::onMenuClearWithBgTile_triggered()
 {
     if (project.tileset_selected_bgtile < 0 || project.tileset_selected_bgtile >= project.tileset.tiles.count())
         return;
@@ -341,7 +341,7 @@ void Canvas::onMenuClearWithBgTile_triggered()
     UpdateHistory();
 }
 
-void Canvas::onMenuHFlip_triggered()
+void MapCanvas::onMenuHFlip_triggered()
 {
     int xt= CANVASX_TO_COLUMN(mouse_last_pos.x());
     int yt= CANVASY_TO_ROW(mouse_last_pos.y());
@@ -351,7 +351,7 @@ void Canvas::onMenuHFlip_triggered()
     UpdateHistory();
 }
 
-void Canvas::onMenuVFlip_triggered()
+void MapCanvas::onMenuVFlip_triggered()
 {
     int xt= CANVASX_TO_COLUMN(mouse_last_pos.x());
     int yt= CANVASY_TO_ROW(mouse_last_pos.y());
@@ -360,7 +360,7 @@ void Canvas::onMenuVFlip_triggered()
     RedrawTile(yt, xt);
 }
 
-void Canvas::onMenuChangePal_triggered(QAction* selected_action)
+void MapCanvas::onMenuChangePal_triggered(QAction* selected_action)
 {
     int xt= CANVASX_TO_COLUMN(mouse_last_pos.x());
     int yt= CANVASY_TO_ROW(mouse_last_pos.y());
@@ -370,7 +370,7 @@ void Canvas::onMenuChangePal_triggered(QAction* selected_action)
     UpdateHistory();
 }
 
-QImage Canvas::GetImage()
+QImage MapCanvas::GetImage()
 {
     QImage timg= QImage(size.width()*TILE_W, size.height()*TILE_H, QImage::Format_Indexed8);
     timg.fill(0);
@@ -408,7 +408,7 @@ QImage Canvas::GetImage()
     return timg;
 }
 
-void Canvas::wheelEvent(QWheelEvent *event)
+void MapCanvas::wheelEvent(QWheelEvent *event)
 {
     event->accept();
 
@@ -427,9 +427,9 @@ void Canvas::wheelEvent(QWheelEvent *event)
 }
 
 #if QT_VERSION_MAJOR > 5
-void Canvas::enterEvent(QEnterEvent* event)
+void MapCanvas::enterEvent(QEnterEvent* event)
 #else
-void Canvas::enterEvent(QEvent* event)
+void MapCanvas::enterEvent(QEvent* event)
 #endif
 {
     if (!project.statusbar)
@@ -437,14 +437,14 @@ void Canvas::enterEvent(QEvent* event)
     project.statusbar->showMessage("Click and drag to draw with the selected tile || Right mouse button for context menu");
 }
 
-void Canvas::leaveEvent(QEvent* event)
+void MapCanvas::leaveEvent(QEvent* event)
 {
     if (!project.statusbar)
         return;
     project.statusbar->clearMessage();
 }
 
-void Canvas::UpdateHistory()
+void MapCanvas::UpdateHistory()
 {
     if (history_current_index >= CANVAS_HISTORY_MAX)
     {
@@ -463,7 +463,7 @@ void Canvas::UpdateHistory()
     history_current_index++;
 }
 
-void Canvas::Undo()
+void MapCanvas::Undo()
 {
     if (tiles_history.isEmpty())
         return;
@@ -477,7 +477,7 @@ void Canvas::Undo()
     Redraw();
 }
 
-void Canvas::Redo()
+void MapCanvas::Redo()
 {
     if (tiles_history.isEmpty() || history_current_index < 0)
         return;

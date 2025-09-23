@@ -1,11 +1,13 @@
-#ifndef CANVAS_H
-#define CANVAS_H
+#ifndef MAPCANVAS_H
+#define MAPCANVAS_H
 
 #include <QWidget>
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include <QGraphicsItem>
 #include <QMenu>
+#include "abstractcanvas.h"
+#include "macro.h"
 #include "tile.h"
 
 #define CANVAS_MAX_SCALING      10
@@ -13,16 +15,16 @@
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-class Canvas;
+class MapCanvas;
 }
 QT_END_NAMESPACE
 
-class Canvas : public QGraphicsView
+class MapCanvas : public AbstractCanvas
 {
     Q_OBJECT
 public:
-    Canvas(QScrollArea* parent, int width, int height); //In tiles
-    ~Canvas();
+    MapCanvas(QScrollArea* parent, int width, int height); //In tiles
+    ~MapCanvas();
 
     void Clear(int bgtile);
     void Resize(int width, int height); //In tiles
@@ -38,6 +40,8 @@ public:
     void RedrawTile(int row, int column);
 
     QImage GetImage();
+
+    char Type() { return TYPE_MAPCANVAS; }
 
     QList<Tile> tiles;
     QList<QList<Tile>> tiles_history;
@@ -63,7 +67,7 @@ private slots:
     void onMenuChangePal_triggered(QAction*);
 
 private:
-    Ui::Canvas* ui;
+    Ui::MapCanvas* ui;
     QSize size;
     QGraphicsScene scene;
     QBrush brush;
@@ -82,4 +86,4 @@ private:
     void ManagedPlot(int tilex, int tiley);
 };
 
-#endif // CANVAS_H
+#endif // MAPCANVAS_H

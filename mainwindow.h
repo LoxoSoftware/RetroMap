@@ -22,7 +22,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    void CheckCanvasPresent();
+    void CheckCanvasPresence();
     void ChangeTileFormat(Tileset::tile_format_t format);
 
     TilePicker* dckTilePicker= nullptr;
@@ -57,6 +57,7 @@ private slots:
     void on_actionAbout_triggered();
     void on_actionGBA_8bpp_triggered();
     void on_actionGBA_4bpp_triggered();
+    void on_tabWidget_currentChanged(int index);
 
 private:
     Ui::MainWindow *ui;

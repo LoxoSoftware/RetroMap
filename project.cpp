@@ -1,4 +1,5 @@
 #include "project.h"
+#include "mainwindow.h"
 #include <QMessageBox>
 #include <QJsonArray>
 #include <QJsonObject>
@@ -18,11 +19,11 @@ Project::~Project() {}
 
 int Project::CreateNew(int width_tiles, int height_tiles)
 {
-    if (editor_canvas)
-        delete editor_canvas;
+    current_container= main_window->NewTilemapTab();
 
-    editor_canvas= new Canvas(canvas_container, width_tiles, height_tiles);
-    editor_canvas->UpdateHistory();
+    current_mapcanvas= new MapCanvas(current_container, width_tiles, height_tiles);
+    current_mapcanvas->UpdateHistory();
+    current_canvas= current_mapcanvas;
 
     project_fpath= "";
     return 0;
@@ -30,17 +31,17 @@ int Project::CreateNew(int width_tiles, int height_tiles)
 
 int Project::SaveToFile(QString fname)
 {
-    if (!editor_canvas)
+    if (!GetMainMapCanvas())
         return 1;
     if (!tileset.image)
     {
-        QMessageBox::critical(canvas_container, "Cannot save project", "No tileset image is loaded");
+        QMessageBox::critical(main_window, "Cannot save project", "No tileset image is loaded");
         return 2;
     }
     if (tileset.image_fpath != "//clone//")
     if (!QFile::exists(tileset.image_fpath))
     {
-        QMessageBox::critical(canvas_container, "Cannot save project", "Tileset image file is invalid");
+        QMessageBox::critical(main_window, "Cannot save project", "Tileset image file is invalid");
         return 3;
     }
 
@@ -49,7 +50,7 @@ int Project::SaveToFile(QString fname)
 
     jobj.insert("version","1");
 
-    foreach (Tile ttile, editor_canvas->tiles)
+    foreach (Tile ttile, main_mapcanvas->tiles)
     {
         //Save in GBA format
         jtilemap+=  (ttile.tileset_offset)%0x0400+
@@ -74,8 +75,8 @@ int Project::SaveToFile(QString fname)
 
     jobj.insert("tileset_source",tileset.image_fpath);
     jobj.insert("tileset_bpp", ((tileset.format==Tileset::GBA_4bpp)?"4":"8"));
-    jobj.insert("tilemap_rows", QString::number(editor_canvas->Size().height()));
-    jobj.insert("tilemap_columns", QString::number(editor_canvas->Size().width()));
+    jobj.insert("tilemap_rows", QString::number(main_mapcanvas->Size().height()));
+    jobj.insert("tilemap_columns", QString::number(main_mapcanvas->Size().width()));
     jobj.insert("tilemap_tiles", QJsonValue(jtilemap));
 
     QJsonDocument jdoc= QJsonDocument(jobj);
@@ -84,7 +85,7 @@ int Project::SaveToFile(QString fname)
     ofile.open(QIODevice::WriteOnly);
     if (!ofile.isOpen())
     {
-        QMessageBox::critical(canvas_container, "Cannot save project", "Cannot open output file for writing");
+        QMessageBox::critical(main_window, "Cannot save project", "Cannot open output file for writing");
         return 4;
     }
     ofile.write(jdoc.toJson());
@@ -101,7 +102,7 @@ int Project::LoadFromFile(QString fname)
     ifile.open(QIODevice::ReadOnly);
     if (!ifile.isOpen())
     {
-        QMessageBox::critical(canvas_container, "Cannot save project", "Cannot open input file for reading");
+        QMessageBox::critical(main_window, "Cannot save project", "Cannot open input file for reading");
         return 1;
     }
     QByteArray ifile_data= ifile.readAll();
@@ -112,7 +113,7 @@ int Project::LoadFromFile(QString fname)
     CreateNew(jdoc["tilemap_columns"].toString().toInt(), jdoc["tilemap_rows"].toString().toInt());
 
     if (!QFile::exists(jdoc["tileset_source"].toString()))
-        tileset.FromImage(QFileDialog::getOpenFileName(canvas_container, "Please locate missing tileset image", "", "Supported image formats (*.bmp)"), false);
+        tileset.FromImage(QFileDialog::getOpenFileName(main_window, "Please locate missing tileset image", "", "Supported image formats (*.bmp)"), false);
     else
         tileset.FromImage(jdoc["tileset_source"].toString(), false);
 
@@ -121,22 +122,29 @@ int Project::LoadFromFile(QString fname)
     else
         tileset.format= Tileset::GBA_8bpp;
 
-    for (int iy=0; iy<editor_canvas->Size().height(); iy++)
+    if (!GetMainMapCanvas())
     {
-        for (int ix=0; ix<editor_canvas->Size().width(); ix++)
+        main_window->NewTilemapTab();
+        if (!GetMainMapCanvas())
+            return 1;
+    }
+
+    for (int iy=0; iy<main_mapcanvas->Size().height(); iy++)
+    {
+        for (int ix=0; ix<main_mapcanvas->Size().width(); ix++)
         {
             Tile ttile;
-            unsigned int tdata= jtilemap[ix+iy*editor_canvas->Size().width()].toInt();
+            unsigned int tdata= jtilemap[ix+iy*main_mapcanvas->Size().width()].toInt();
             ttile.tileset_offset=   (tdata)%0x0400;
             ttile.hflip=            (tdata/0x0800)%2;
             ttile.vflip=            (tdata/0x1000)%2;
             ttile.palette_index=    (tdata/0x2000)%16;
-            editor_canvas->Plot(iy, ix, ttile);
+            main_mapcanvas->Plot(iy, ix, ttile);
         }
     }
 
-    editor_canvas->Redraw();
-    editor_canvas->UpdateHistory();
+    main_mapcanvas->Redraw();
+    main_mapcanvas->UpdateHistory();
 
     project_fpath= fname;
     return 0;
@@ -147,7 +155,7 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
     //Get file type from file extension
     if (fname.lastIndexOf('.') < 0 || fname.lastIndexOf('.') < fname.lastIndexOf('/'))
     {
-        QMessageBox::critical(canvas_container, "Error - Export to source file", "Output file must have an extension");
+        QMessageBox::critical(main_window, "Error - Export to source file", "Output file must have an extension");
         return 1;
     }
     QString ofmt= fname.right(fname.size()-fname.lastIndexOf('.')-1);
@@ -169,7 +177,7 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
 
     Tileset     out_tileset= tileset;
     QList<Tile> out_map= QList<Tile>();
-    if (editor_canvas) out_map= editor_canvas->tiles;
+    if (current_mapcanvas) out_map= current_mapcanvas->tiles;
 
     //Optimize data if necessary
     if (export_flags&Project::ExportOptimize)
@@ -241,9 +249,9 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
                     obuf+= tstr;
             }
         }
-        if (editor_canvas && export_flags&Project::ExportMap)
+        if (current_mapcanvas && export_flags&Project::ExportMap)
         {
-            if (editor_canvas->width() < 8)
+            if (current_mapcanvas->width() < 8)
                 return 5;
 
             obuf+= "\n\t.section .rodata\n\t.align "+QString::number(align_sz)+"\n\t.global "+oname+"Map\n";
@@ -301,9 +309,9 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
             }
             obuf+= "};\n\n";
         }
-        if (editor_canvas && export_flags&Project::ExportMap)
+        if (current_mapcanvas && export_flags&Project::ExportMap)
         {
-            if (editor_canvas->width() < 8)
+            if (current_mapcanvas->width() < 8)
                 return 5;
 
             obuf+= "const unsigned short "+oname+"Map["+QString::number(ceil(map_sz)/export_word_sz)+"] ";
@@ -336,7 +344,7 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
     }
     else
     {
-        QMessageBox::critical(canvas_container, "Error - Export to source file", "Invalid output file format \"."+ofmt+"\"");
+        QMessageBox::critical(main_window, "Error - Export to source file", "Invalid output file format \"."+ofmt+"\"");
         return 4;
     }
 
@@ -366,7 +374,7 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
             obuf+= "#define "+oname+"TilesLen "+QString::number(ceil(tiles_sz))+"\n";
             obuf+= "extern const unsigned short "+oname+"Tiles["+QString::number(ceil(tiles_sz)/export_word_sz)+"];\n\n";
         }
-        if (editor_canvas && export_flags&Project::ExportMap)
+        if (current_mapcanvas && export_flags&Project::ExportMap)
         {
             obuf+= "#define "+oname+"MapLen "+QString::number(ceil(map_sz))+"\n";
             obuf+= "extern const unsigned short "+oname+"Map["+QString::number(ceil(map_sz)/export_word_sz)+"];\n\n";
@@ -550,4 +558,27 @@ uint16_t Project::TruncPal(uint32_t n32)
 {
     // 0xPCPCPCPC -> 0xCCCC (Palette, Color)
     return ((n32&0x0F000000)>>12)|((n32&0x000F0000)>>8)|((n32&0x00000F00)>>4)|(n32&0x0000000F);
+}
+
+MapCanvas* Project::GetMainMapCanvas()
+{
+    //Initial implementation
+
+    if (!tab_widget)
+        return nullptr;
+
+    for (int i=0; i<tab_widget->count(); i++)
+    {
+        QScrollArea* tsa= dynamic_cast<QScrollArea*>(tab_widget->widget(i));
+        if (!tsa)
+            continue;
+        MapCanvas* tmap= dynamic_cast<MapCanvas*>(tsa->widget());
+        if (tmap)
+        {
+            main_mapcanvas= tmap;
+            return tmap;
+        }
+    }
+
+    return nullptr;
 }

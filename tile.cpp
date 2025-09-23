@@ -111,13 +111,13 @@ bool Tileset::FromImage(QString fname, bool load_new)
     image= new QImage(fname);
     if (!image || image->format() != QImage::Format_Indexed8)
     {
-        QMessageBox::critical(project.canvas_container, "Error! - Import tileset from image", "Image is invalid!");
+        QMessageBox::critical(project.tab_widget->currentWidget(), "Error", "Image is invalid!");
         return false;
     }
 
     if (load_new)
     {
-        QMessageBox::StandardButton dial_result= QMessageBox::question(project.canvas_container, "Question - Import tileset from image",
+        QMessageBox::StandardButton dial_result= QMessageBox::question(project.tab_widget->currentWidget(), "Question - Import tileset from image",
                               "It is reccomended that you create a copy of the image for the project.\r\nDo you wish to create a copy now?\r\nChoosing \"no\" will overwrite the original file");
         if (dial_result == QMessageBox::Yes)
             image_fpath= "//clone//";

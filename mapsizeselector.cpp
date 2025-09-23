@@ -10,11 +10,13 @@ MapSizeSelector::MapSizeSelector(QWidget *parent)
 {
     ui->setupUi(this);
 
-    if (project.editor_canvas)
+    if (project.current_mapcanvas)
     {
-        ui->spbWidth->setValue(project.editor_canvas->Size().width()*TILE_W);
-        ui->spbHeight->setValue(project.editor_canvas->Size().height()*TILE_H);
+        ui->spbWidth->setValue(project.current_mapcanvas->Size().width()*TILE_W);
+        ui->spbHeight->setValue(project.current_mapcanvas->Size().height()*TILE_H);
     }
+    else
+        close();
 }
 
 MapSizeSelector::~MapSizeSelector()
@@ -71,9 +73,9 @@ void MapSizeSelector::on_bnbDialogButtons_rejected()
 
 void MapSizeSelector::on_bnbDialogButtons_accepted()
 {
-    if (project.editor_canvas)
+    if (project.current_mapcanvas)
     {
-        project.editor_canvas->Resize(ui->spbWidth->value()/TILE_W, ui->spbHeight->value()/TILE_H);
+        project.current_mapcanvas->Resize(ui->spbWidth->value()/TILE_W, ui->spbHeight->value()/TILE_H);
     }
     else
         return; //TODO: add this case for when creating a new project

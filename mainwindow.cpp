@@ -18,9 +18,8 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    project.canvas_container= NewTilemapTab();
     project.statusbar= statusBar();
-
+    project.tab_widget= ui->tabWidget;
     dckTilePicker= new TilePicker(ui->centralwidget, this);
     addDockWidget(Qt::RightDockWidgetArea, dckTilePicker);
     dckPaletteEdit= new PaletteEdit(ui->centralwidget, this);
@@ -33,9 +32,11 @@ MainWindow::MainWindow(QWidget *parent)
     dckPaletteEdit->UpdateColorStatus();
 
     project.CreateNew(32, 32);
-    if (project.editor_canvas)
-        project.editor_canvas->draw_tilegrid= ui->actionShow_tile_grid->isChecked();
-    CheckCanvasPresent();
+    if (project.current_mapcanvas)
+        project.current_mapcanvas->draw_tilegrid= ui->actionShow_tile_grid->isChecked();
+    CheckCanvasPresence();
+
+    on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
 
     ChangeTileFormat(Tileset::GBA_8bpp);
 }
@@ -54,21 +55,24 @@ void MainWindow::on_actionNew_triggered()
 {
     project.CreateNew(32, 32);
 
-    CheckCanvasPresent();
+    CheckCanvasPresence();
 
-    if (!project.editor_canvas)
+    if (!project.current_mapcanvas)
     {
         printf("Error creating canvas!\n");
         exit(1);
     }
 }
 
-void MainWindow::CheckCanvasPresent()
+void MainWindow::CheckCanvasPresence()
 {
-    ui->menuTileset->setEnabled((bool)project.editor_canvas);
-    ui->menuTilemap->setEnabled((bool)project.editor_canvas);
-    ui->menuView->setEnabled((bool)project.editor_canvas);
-    ui->menuEdit->setEnabled((bool)project.editor_canvas);
+    ui->menuTileset->menuAction()->setVisible((bool)project.current_mapcanvas);
+    ui->menuTilemap->menuAction()->setVisible((bool)project.current_mapcanvas);
+    ui->menuView->menuAction()->setVisible((bool)project.current_canvas);
+    ui->menuEdit->menuAction()->setVisible((bool)project.current_canvas);
+    dckPaletteEdit->setVisible((bool)project.current_canvas);
+    dckTilePicker->setVisible((bool)project.current_mapcanvas);
+    dckToolbox->setVisible((bool)project.current_mapcanvas);
 }
 
 void MainWindow::ChangeTileFormat(Tileset::tile_format_t format)
@@ -80,8 +84,8 @@ void MainWindow::ChangeTileFormat(Tileset::tile_format_t format)
 
     ui->actionTilePicker_selected_pal->setEnabled(project.tileset.isPalettedFormat());
 
-    if (project.editor_canvas)
-        project.editor_canvas->Redraw();
+    if (project.current_mapcanvas)
+        project.current_mapcanvas->Redraw();
     dckPaletteEdit->Update();
     dckTilePicker->Update();
 }
@@ -91,28 +95,33 @@ QScrollArea* MainWindow::NewTilemapTab()
     QScrollArea* new_scrollarea = new QScrollArea();
     new_scrollarea->setFrameShape(QFrame::WinPanel);
 
-    ui->tabWidget->addTab(new_scrollarea, "Tilemap "+QString::number(ui->tabWidget->count()));
+    if (project.GetMainMapCanvas())
+        delete project.main_mapcanvas;
+    project.tab_widget->clear();
+
+    project.tab_widget->addTab(new_scrollarea, "&Tilemap");
+    project.GetMainMapCanvas();
 
     return new_scrollarea;
 }
 
 void MainWindow::on_actionZoom_in_triggered()
 {
-    if (!project.editor_canvas)
+    if (!project.current_canvas)
         return;
-    project.editor_canvas->ZoomIn();
+    project.current_canvas->ZoomIn();
 }
 
 void MainWindow::on_actionZoom_out_triggered()
 {
-    if (!project.editor_canvas)
+    if (!project.current_canvas)
         return;
-    project.editor_canvas->ZoomOut();
+    project.current_canvas->ZoomOut();
 }
 
 void MainWindow::on_actionSave_triggered()
 {
-    if (!project.editor_canvas)
+    if (!project.current_canvas)
         return;
 
     if (project.project_fpath == "")
@@ -128,7 +137,7 @@ void MainWindow::on_actionSave_triggered()
 
 void MainWindow::on_actionSave_as_triggered()
 {
-    if (!project.editor_canvas)
+    if (!project.GetMainMapCanvas())
         return;
 
     QString ofname;
@@ -151,14 +160,14 @@ void MainWindow::on_actionLoad_triggered()
     project.LoadFromFile(ifname);
     ChangeTileFormat(project.tileset.format);
 
-    CheckCanvasPresent();
+    CheckCanvasPresence();
     dckTilePicker->Update();
     dckPaletteEdit->Update();
 }
 
 void MainWindow::on_actionImport_tileset_from_image_triggered()
 {
-    if (!project.editor_canvas)
+    if (!project.current_mapcanvas)
         return;
     QString ifile_name= QFileDialog::getOpenFileName(this, "Import tileset from image", "", "Supported image formats (*.bmp)");
     if (ifile_name == "")
@@ -166,40 +175,40 @@ void MainWindow::on_actionImport_tileset_from_image_triggered()
     project.tileset.FromImage(ifile_name, true);
     dckTilePicker->Update();
     dckPaletteEdit->Update();
-    project.editor_canvas->Redraw();
+    project.current_mapcanvas->Redraw();
 }
 
 void MainWindow::on_actionExport_as_indexed_bitmap_triggered()
 {
-    if (!project.editor_canvas)
+    if (!project.current_mapcanvas)
         return;
     QString ofile_name= QFileDialog::getSaveFileName(this, "Export map as bitmap", "", "Indexed bitmap (*.bmp)");
     if (ofile_name == "")
         return;
-    project.editor_canvas->GetImage().save(ofile_name, "bmp");
+    project.current_mapcanvas->GetImage().save(ofile_name, "bmp");
 }
 
 void MainWindow::on_actionOptimize_tileset_triggered()
 {
-    if (!project.editor_canvas)
+    if (!project.current_mapcanvas)
     {
-        QMessageBox::critical(this, "Error - Optimize tileset", "Canvas is null!");
+        QMessageBox::critical(this, "Error", "Canvas is null!");
         return;
     }
     if (!project.tileset.image || !project.tileset.tiles.count())
     {
         ChangeTileFormat(Tileset::GBA_8bpp);
-        QMessageBox::critical(this, "Optimize tileset", "Please import a tileset first!");
+        QMessageBox::critical(this, "Error", "Please import a tileset first!");
         return;
     }
     unsigned int optiflags= OptimizeDialog(this).GetFlags(project.tileset.isPalettedFormat());
     if (!(optiflags&0x80))
         return; //User rejected on the dialog
-    project.tileset.tiles= project.tileset.Optimized(&project.editor_canvas->tiles, optiflags&0x7F);
+    project.tileset.tiles= project.tileset.Optimized(&project.current_mapcanvas->tiles, optiflags&0x7F);
     project.tileset.RebuildTilesetImage();
     dckTilePicker->Update();
-    project.editor_canvas->Redraw();
-    project.editor_canvas->UpdateHistory();
+    project.current_mapcanvas->Redraw();
+    project.current_mapcanvas->UpdateHistory();
 }
 
 void MainWindow::on_actionMapChange_Size_triggered()
@@ -211,12 +220,16 @@ void MainWindow::on_actionMapChange_Size_triggered()
 
 void MainWindow::on_actionUndo_triggered()
 {
-    project.editor_canvas->Undo();
+    if (!project.current_canvas)
+        return;
+    project.current_canvas->Undo();
 }
 
 void MainWindow::on_actionRedo_triggered()
 {
-    project.editor_canvas->Redo();
+    if (!project.current_canvas)
+        return;
+    project.current_canvas->Redo();
 }
 
 void MainWindow::on_colorChanged()
@@ -226,22 +239,28 @@ void MainWindow::on_colorChanged()
     project.tileset.UpdatePalettes();
     if (ui->actionAuto_canvas_update->isChecked())
     {
-        project.editor_canvas->Redraw();
+        if (!project.current_mapcanvas)
+            return;
+        project.current_mapcanvas->Redraw();
         dckTilePicker->Update();
     }
 }
 
 void MainWindow::on_actionRedraw_canvas_triggered()
 {
+    if (!project.current_mapcanvas)
+        return;
     project.tileset.UpdatePalettes();
-    project.editor_canvas->Redraw();
+    project.current_mapcanvas->Redraw();
     dckTilePicker->Update();
 }
 
 void MainWindow::on_actionShow_tile_grid_triggered(bool checked)
 {
-    project.editor_canvas->draw_tilegrid= checked;
-    project.editor_canvas->Redraw();
+    if (!project.current_mapcanvas)
+        return;
+    project.current_mapcanvas->draw_tilegrid= checked;
+    project.current_mapcanvas->Redraw();
 }
 
 void MainWindow::on_actionExport_as_source_file_triggered()
@@ -270,5 +289,36 @@ void MainWindow::on_actionTilePicker_selected_pal_triggered()
 {
     if (isTilePicker_ViewSelPal() && project.tileset.isPalettedFormat())
         dckTilePicker->Update();
+}
+
+void MainWindow::on_tabWidget_currentChanged(int index)
+{
+    if (ui->tabWidget->count() <= 0)
+    {
+        project.current_container= nullptr;
+        project.current_canvas= nullptr;
+        project.current_mapcanvas= nullptr;
+        project.current_tilecanvas= nullptr;
+
+        CheckCanvasPresence();
+        return;
+    }
+    if (!static_cast<QScrollArea*>(project.tab_widget->currentWidget()))
+    {
+        project.current_container= nullptr;
+        project.current_canvas= nullptr;
+        project.current_mapcanvas= nullptr;
+        project.current_tilecanvas= nullptr;
+
+        CheckCanvasPresence();
+        return;
+    }
+
+    project.current_container= dynamic_cast<QScrollArea*>(project.tab_widget->currentWidget());
+    project.current_canvas= dynamic_cast<AbstractCanvas*>(project.current_container->widget());
+    project.current_mapcanvas= dynamic_cast<MapCanvas*>(project.current_container->widget());
+    project.current_tilecanvas= dynamic_cast<TileCanvas*>(project.current_container->widget());
+
+    CheckCanvasPresence();
 }
 

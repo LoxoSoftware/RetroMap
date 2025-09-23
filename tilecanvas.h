@@ -1,6 +1,7 @@
 #ifndef TILECANVAS_H
 #define TILECANVAS_H
 
+#include "macro.h"
 #include <QWidget>
 #include <QImage>
 #include <QGraphicsView>
@@ -36,6 +37,8 @@ public:
     //void RedrawPixel(int x, int y);
 
     QImage image;
+
+    char Type() { return TYPE_TILECANVAS; }
 
 protected:
     void mousePressEvent(QMouseEvent* event);
