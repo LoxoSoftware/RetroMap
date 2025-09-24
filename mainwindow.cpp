@@ -337,9 +337,26 @@ void MainWindow::on_tabWidget_currentChanged(int index)
 
     project.current_container= dynamic_cast<QScrollArea*>(project.tab_widget->currentWidget());
     project.current_canvas= dynamic_cast<AbstractCanvas*>(project.current_container->widget());
-    project.current_mapcanvas= dynamic_cast<MapCanvas*>(project.current_container->widget());
-    project.current_tilecanvas= dynamic_cast<TileCanvas*>(project.current_container->widget());
+    project.current_mapcanvas= dynamic_cast<MapCanvas*>(project.current_canvas);
+    project.current_tilecanvas= dynamic_cast<TileCanvas*>(project.current_canvas);
+
+    if (project.current_mapcanvas)
+        on_actionRedraw_canvas_triggered();
+    if (project.current_tilecanvas)
+        project.current_tilecanvas->UpdateMyTile();
 
     CheckCanvasPresence();
+}
+
+void MainWindow::on_tabWidget_tabCloseRequested(int index)
+{
+    project.tab_widget->setCurrentIndex(index);
+    on_tabWidget_currentChanged(index);
+
+    if (project.current_tilecanvas)
+    {
+        project.tab_widget->removeTab(project.tab_widget->currentIndex());
+        project.tab_widget->setCurrentIndex(0);
+    }
 }
 

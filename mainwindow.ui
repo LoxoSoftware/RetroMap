@@ -44,6 +44,12 @@ QStatusBar {
       <property name="currentIndex">
        <number>-1</number>
       </property>
+      <property name="tabsClosable">
+       <bool>true</bool>
+      </property>
+      <property name="tabBarAutoHide">
+       <bool>true</bool>
+      </property>
      </widget>
     </item>
    </layout>

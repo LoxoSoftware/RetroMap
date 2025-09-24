@@ -1,6 +1,7 @@
 #ifndef TILECANVAS_H
 #define TILECANVAS_H
 
+#include "abstractcanvas.h"
 #include "macro.h"
 #include <QWidget>
 #include <QImage>
@@ -9,7 +10,7 @@
 #include <QGraphicsItem>
 #include <QMenu>
 
-#define TILECANVAS_MAX_SCALING      32
+#define TILECANVAS_MAX_SCALING      64
 #define TILECANVAS_BORDER_W         2
 
 QT_BEGIN_NAMESPACE
@@ -18,7 +19,7 @@ class Canvas;
 }
 QT_END_NAMESPACE
 
-class TileCanvas  : public QGraphicsView
+class TileCanvas  : public AbstractCanvas
 {
     Q_OBJECT
 public:
@@ -41,6 +42,10 @@ public:
     char Type() { return TYPE_TILECANVAS; }
     int  TileId() { return tile_id; }
 
+    void UpdateTileId(int new_tile_id);
+    void UpdateSourceTile();
+    void UpdateMyTile();
+
 protected:
     void mousePressEvent(QMouseEvent* event);
     void mouseMoveEvent(QMouseEvent* event);
@@ -58,7 +63,7 @@ private:
     QGraphicsScene scene;
     QBrush brush;
     QPen pen;
-    int scaling= 8;
+    int scaling= 20;
     Qt::MouseButton mouse_down_button= Qt::NoButton;
     bool mouse_has_moved= false;
     QPointF mouse_last_pos;
