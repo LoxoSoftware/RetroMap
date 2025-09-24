@@ -1,4 +1,6 @@
 #include "tilecanvas.h"
+#include "tile.h"
+#include "project.h"
 #include <QMenu>
 #include <QMouseEvent>
 #include <QAction>
@@ -7,9 +9,11 @@
 
 #define TILECANVAS_HISTORY_MAX      32
 
-TileCanvas::TileCanvas(QScrollArea* parent, int width, int height)
+extern Project project;
+
+TileCanvas::TileCanvas(QScrollArea* parent, int tile_id)
 {
-    image= QImage(width, height, QImage::Format_Indexed8);
+    image= QImage(TILE_W, TILE_H, QImage::Format_Indexed8);
     setScene(&scene);
     setParent(parent);
     parent->setWidget(this);
@@ -19,7 +23,14 @@ TileCanvas::TileCanvas(QScrollArea* parent, int width, int height)
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
-    Clear(0);
+    if (tile_id < 0 || tile_id >= project.tileset.tiles.count())
+    {
+        QMessageBox::critical(this, "Error", "Target tile id is out of bounds");
+        return;
+    }
+
+    image= project.tileset.tiles[tile_id];
+    this->tile_id= tile_id;
 
     Redraw();
     show();

@@ -25,6 +25,7 @@ public:
 private slots:
     void on_tblTiles_cellClicked(int row, int column);
     void on_tblTiles_customContextMenuRequested(const QPoint &pos);
+    void on_tblTiles_cellDoubleClicked(int row, int column);
 
 private:
     Ui::TilePicker *ui;

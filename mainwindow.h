@@ -32,6 +32,7 @@ public:
     bool isTilePicker_ViewSelPal() { return ui->actionTilePicker_selected_pal->isChecked(); }
 
     QScrollArea* NewTilemapTab();
+    QScrollArea* NewTileEditTab(int tile_id);
 
 public slots:
     void on_colorChanged();

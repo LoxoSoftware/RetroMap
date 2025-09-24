@@ -162,3 +162,9 @@ void TilePicker::on_tblTiles_customContextMenuRequested(const QPoint &pos)
     //     context_menu->sizeHint().width(), context_menu->sizeHint().height()));
     // context_menu->show();
 }
+
+void TilePicker::on_tblTiles_cellDoubleClicked(int row, int column)
+{
+    main_window->NewTileEditTab(column+row*ui->tblTiles->columnCount());
+}
+

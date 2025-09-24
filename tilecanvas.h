@@ -22,7 +22,7 @@ class TileCanvas  : public QGraphicsView
 {
     Q_OBJECT
 public:
-    TileCanvas(QScrollArea* parent, int width, int height); //In pixels
+    TileCanvas(QScrollArea* parent, int tile_id);
     ~TileCanvas();
 
     void Clear(int color);
@@ -39,6 +39,7 @@ public:
     QImage image;
 
     char Type() { return TYPE_TILECANVAS; }
+    int  TileId() { return tile_id; }
 
 protected:
     void mousePressEvent(QMouseEvent* event);
@@ -63,6 +64,8 @@ private:
     QPointF mouse_last_pos;
     QPointF mouse_last_global_pos;
     int history_current_index= -1;
+
+    int tile_id= -1;
 
     void UpdateScaling();
     //void OpenContextMenu(QPoint screen_pos, QPoint canvas_pos);

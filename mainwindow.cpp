@@ -105,6 +105,27 @@ QScrollArea* MainWindow::NewTilemapTab()
     return new_scrollarea;
 }
 
+QScrollArea* MainWindow::NewTileEditTab(int tile_id)
+{
+    int existing= project.GetTileCanvasIndex(tile_id);
+
+    if (existing >= 0)
+    {
+        project.tab_widget->setCurrentIndex(existing);
+        return dynamic_cast<QScrollArea*>(project.tab_widget->currentWidget());
+    }
+
+    QScrollArea* new_scrollarea = new QScrollArea();
+    new_scrollarea->setFrameShape(QFrame::WinPanel);
+    new_scrollarea->setWidget(new TileCanvas(new_scrollarea, tile_id));
+
+    int new_tab_ind= project.tab_widget->addTab(new_scrollarea,
+                                                "Edit tile (&"+QString::number(project.tab_widget->count()-1)+")");
+    project.tab_widget->setCurrentIndex(new_tab_ind);
+
+    return new_scrollarea;
+}
+
 void MainWindow::on_actionZoom_in_triggered()
 {
     if (!project.current_canvas)
