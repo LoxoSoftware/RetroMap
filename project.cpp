@@ -26,6 +26,28 @@ int Project::CreateNew(int width_tiles, int height_tiles)
     current_canvas= current_mapcanvas;
 
     project_fpath= "";
+    tileset.tiles.clear();
+    tileset.image_fpath= "//clone//";
+
+    //Add default palette
+    QFile palfile= QFile(":/res/default_palette");
+    palfile.open(QIODevice::ReadOnly);
+    if (palfile.isOpen())
+    {
+        tileset.palette.clear();
+        QByteArray data= palfile.readAll();
+
+        for (int i=0; i<256; i++)
+        {
+            if (i*4+2 >= data.size())
+                tileset.palette+= QColor(64,0,0).rgb();
+            else
+                tileset.palette+= QColor((uchar)data[i*4+0],(uchar)data[i*4+1],(uchar)data[i*4+2]).rgb();
+        }
+
+        palfile.close();
+    }
+
     return 0;
 }
 
@@ -33,6 +55,7 @@ int Project::SaveToFile(QString fname)
 {
     if (!GetMainMapCanvas())
         return 1;
+    tileset.RebuildTilesetImage();
     if (!tileset.image)
     {
         QMessageBox::critical(main_window, "Cannot save project", "No tileset image is loaded");
@@ -70,7 +93,6 @@ int Project::SaveToFile(QString fname)
             tileset.image_fpath= fname+suffix;
     }
 
-    tileset.RebuildTilesetImage();
     tileset.image->setColorTable(tileset.palette);
     tileset.image->save(tileset.image_fpath, "BMP");
 
