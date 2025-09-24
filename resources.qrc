@@ -25,4 +25,7 @@
     <qresource prefix="/icons">
         <file alias="tilepicker-new_tile">res/tilepicker-new_tile.png</file>
     </qresource>
+    <qresource prefix="/res">
+        <file alias="default_palette">res/default_palette.bin</file>
+    </qresource>
 </RCC>
