@@ -30,7 +30,7 @@ void TilePicker::Update()
     }
 
     ui->tblTiles->clear();
-    ui->tblTiles->setRowCount(ceil((float)project.tileset.tiles.count()/(float)ui->tblTiles->columnCount()));
+    ui->tblTiles->setRowCount(floor((float)project.tileset.tiles.count()/(float)ui->tblTiles->columnCount())+1);
     for (int iy=0; iy<ui->tblTiles->rowCount(); iy++)
     {
         for (int ix=0; ix<ui->tblTiles->columnCount(); ix++)
@@ -165,6 +165,17 @@ void TilePicker::on_tblTiles_customContextMenuRequested(const QPoint &pos)
 
 void TilePicker::on_tblTiles_cellDoubleClicked(int row, int column)
 {
-    main_window->NewTileEditTab(column+row*ui->tblTiles->columnCount());
+    int tile_id= column+row*ui->tblTiles->columnCount();
+    if (tile_id == project.tileset.tiles.count())
+    {
+        //Add new tile
+        QImage new_image= QImage(TILE_W, TILE_H, QImage::Format_Indexed8);
+        new_image.setColorTable(project.tileset.palette);
+        new_image.fill(0);
+        project.tileset.tiles+= new_image;
+    }
+    if (tile_id > project.tileset.tiles.count())
+        return;
+    main_window->NewTileEditTab(tile_id);
 }
 
