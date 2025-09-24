@@ -53,7 +53,7 @@ QImage Tile::TransformImage(QImage img, bool vflip, bool hflip, int palid)
 
 ///// Tileset operations /////
 
-bool Tileset::FromImage()
+bool Tileset::FromImage(int count)
 {
     //Returns true on success
 
@@ -77,10 +77,14 @@ bool Tileset::FromImage()
     }
     //Populate the pixmap array with 8x8 tiles from the image
     tiles.clear();
+    if (count<0)
+        count= (image->width()/TILE_W) * (image->height()/TILE_H);
     for (int ity=0; ity<image->height()/TILE_H; ity++)
     {
         for (int itx=0; itx<image->width()/TILE_W; itx++)
         {
+            if (itx+ity*(image->width()/TILE_W) >= count)
+                break;
             tiles+= image->copy(itx*TILE_W, ity*TILE_H, TILE_W, TILE_H);
         }
     }
@@ -100,7 +104,7 @@ bool Tileset::FromImage()
     return true;
 }
 
-bool Tileset::FromImage(QString fname, bool load_new)
+bool Tileset::FromImage(QString fname, bool load_new, int count)
 {
     if (image)
     {
@@ -127,7 +131,7 @@ bool Tileset::FromImage(QString fname, bool load_new)
     else
         image_fpath= fname;
 
-    return FromImage();
+    return FromImage(count);
 }
 
 QVector<QImage> Tileset::Optimized(QList<Tile>* tilemap, Tileset::optimize_flags_t optiflags)

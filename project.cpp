@@ -70,11 +70,13 @@ int Project::SaveToFile(QString fname)
             tileset.image_fpath= fname+suffix;
     }
 
+    tileset.RebuildTilesetImage();
     tileset.image->setColorTable(tileset.palette);
     tileset.image->save(tileset.image_fpath, "BMP");
 
     jobj.insert("tileset_source",tileset.image_fpath);
     jobj.insert("tileset_bpp", ((tileset.format==Tileset::GBA_4bpp)?"4":"8"));
+    jobj.insert("tileset_count", QString::number(tileset.tiles.count()));
     jobj.insert("tilemap_rows", QString::number(main_mapcanvas->Size().height()));
     jobj.insert("tilemap_columns", QString::number(main_mapcanvas->Size().width()));
     jobj.insert("tilemap_tiles", QJsonValue(jtilemap));
@@ -112,10 +114,15 @@ int Project::LoadFromFile(QString fname)
 
     CreateNew(jdoc["tilemap_columns"].toString().toInt(), jdoc["tilemap_rows"].toString().toInt());
 
+    int tscount= -1;
+    if (jdoc["tileset_count"] != QJsonValue::Undefined)
+        tscount= jdoc["tileset_count"].toString().toInt();
+
     if (!QFile::exists(jdoc["tileset_source"].toString()))
-        tileset.FromImage(QFileDialog::getOpenFileName(main_window, "Please locate missing tileset image", "", "Supported image formats (*.bmp)"), false);
+        tileset.FromImage(QFileDialog::getOpenFileName(main_window, "Please locate missing tileset image", "", "Supported image formats (*.bmp)"),
+                          false, tscount);
     else
-        tileset.FromImage(jdoc["tileset_source"].toString(), false);
+        tileset.FromImage(jdoc["tileset_source"].toString(), false, tscount);
 
     if (jdoc["tileset_bpp"].toString() == "4")
         tileset.format= Tileset::GBA_4bpp;

@@ -47,8 +47,8 @@ public:
     QVector<QRgb>   palette;
     tile_format_t   format= GBA_8bpp;
 
-    bool            FromImage();
-    bool            FromImage(QString fname, bool load_new=false);
+    bool            FromImage(int count);
+    bool            FromImage(QString fname, bool load_new=false, int count=-1);
     void            UpdatePalettes();
     QVector<QImage> Optimized(QList<Tile>* tilemap, Tileset::optimize_flags_t optiflags);
     void            RebuildTilesetImage(int columns=16);
