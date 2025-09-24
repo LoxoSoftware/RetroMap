@@ -37,8 +37,17 @@ void TilePicker::Update()
         {
             int tindex= ix+iy*ui->tblTiles->columnCount();
 
-            if (tindex >= project.tileset.tiles.count())
+            if (tindex > project.tileset.tiles.count())
                 break;
+
+            if (tindex == project.tileset.tiles.count())
+            {
+                QPixmap pix= QPixmap(":/icons/tilepicker-new_tile");
+                QIcon icon= QIcon(pix.scaled(ui->tblTiles->columnWidth(0),ui->tblTiles->rowHeight(0)));
+                QTableWidgetItem* item= new QTableWidgetItem(icon, "");
+                ui->tblTiles->setItem(iy, ix, item);
+                break;
+            }
 
             QPixmap pix;
             bool previewPal= main_window->isTilePicker_ViewSelPal() && project.tileset.isPalettedFormat();
