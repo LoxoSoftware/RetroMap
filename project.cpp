@@ -177,12 +177,15 @@ int Project::ExportToSourceFile(QString fname, int export_flags)
         switch ((export_flags>>Project::ExportFormat)&0b11)
         {
         case Project::ExportGBA4bpp>>Project::ExportFormat:
+            out_tileset.format= Tileset::GBA_4bpp;
             out_tileset.tiles= out_tileset.Optimized(&out_map, Tileset::OptimizeWithFlip|Tileset::OptimizeWithPalette);
             break;
         case Project::ExportGBA8bpp>>Project::ExportFormat:
+            out_tileset.format= Tileset::GBA_8bpp;
             out_tileset.tiles= out_tileset.Optimized(&out_map, Tileset::OptimizeWithFlip);
             break;
         case Project::ExportGBAAffine>>Project::ExportFormat:
+            out_tileset.format= Tileset::GBA_8bpp;
             out_tileset.tiles= out_tileset.Optimized(&out_map, Tileset::OptimizeNone);
             break;
         default:
