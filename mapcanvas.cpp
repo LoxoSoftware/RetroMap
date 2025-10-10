@@ -151,7 +151,7 @@ void MapCanvas::RedrawTile(int row, int column)
     else
     {
         QPixmap pix;
-        pix= QPixmap::fromImage(ttile->RenderImage(&project.tileset, project.tileset.isPalettedFormat()));
+        pix= QPixmap::fromImage(ttile->RenderImage(&project.tileset, project.tileset.isSubPalettedFormat()));
 
         QGraphicsPixmapItem* item= new QGraphicsPixmapItem(pix);
         item->setX(column*TILE_W*scaling+TILEPAD*column);
@@ -193,7 +193,7 @@ void MapCanvas::OpenContextMenu(QPoint screen_pos, QPoint canvas_pos)
         context_menu_palette_sel->addAction(""+QString::number(i));
     }
     connect(context_menu_palette_sel, &QMenu::triggered, this, &MapCanvas::onMenuChangePal_triggered);
-    context_menu_palette_sel->setEnabled(project.tileset.isPalettedFormat());
+    context_menu_palette_sel->setEnabled(project.tileset.isSubPalettedFormat());
     context_menu->addAction("Flip tile horizontally");
     context_menu->actions().last()->setCheckable(true);
     context_menu->actions().last()->setChecked(tiles[tilen].hflip);
@@ -394,7 +394,7 @@ QImage MapCanvas::GetImage()
                 for (int ix=0; ix<TILE_W; ix++)
                 {
                     unsigned char pixel= tile_scanline[ix];
-                    if (project.tileset.isPalettedFormat())
+                    if (project.tileset.isSubPalettedFormat())
                         pixel= tiles[tm_ti].palette_index*PALETTE_W+pixel%PALETTE_W;
 
                     if (!tiles[tm_ti].hflip)

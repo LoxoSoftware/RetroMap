@@ -157,7 +157,7 @@ QVector<QImage> Tileset::Optimized(QList<Tile>* tilemap, Tileset::optimize_flags
             if (!(optiflags&Tileset::OptimizeWithPalette))
                 if (ipal != tmtile->palette_index) continue;
 
-            if (!isPalettedFormat()) ipal= -1;
+            if (!isSubPalettedFormat()) ipal= -1;
 
             hflipped=false, vflipped=false;
             ind_found= new_tileset.indexOf(Tile::TransformImage(tmtile_img,vflipped,hflipped,ipal));
@@ -165,7 +165,7 @@ QVector<QImage> Tileset::Optimized(QList<Tile>* tilemap, Tileset::optimize_flags
 
             if (!(optiflags&Tileset::OptimizeWithFlip))
             {
-                if (isPalettedFormat())
+                if (isSubPalettedFormat())
                     continue;
                 else
                     break;
@@ -181,7 +181,7 @@ QVector<QImage> Tileset::Optimized(QList<Tile>* tilemap, Tileset::optimize_flags
             ind_found= new_tileset.indexOf(Tile::TransformImage(tmtile_img,vflipped,hflipped,ipal));
             if (ind_found >= 0) break;
 
-            if (!isPalettedFormat())
+            if (!isSubPalettedFormat())
                 break;
         }
 
@@ -191,7 +191,7 @@ QVector<QImage> Tileset::Optimized(QList<Tile>* tilemap, Tileset::optimize_flags
         }
         else
         {
-            new_tileset+= tmtile->RenderImage(this,isPalettedFormat());;
+            new_tileset+= tmtile->RenderImage(this,isSubPalettedFormat());;
             new_tilemap+= Tile(new_tileset.count()-1,false,false,new_tileset.last().scanLine(0)[0]>>4);
         }
 
@@ -247,7 +247,7 @@ void Tileset::UpdatePalettes()
     }
 }
 
-bool Tileset::isPalettedFormat()
+bool Tileset::isSubPalettedFormat()
 {
     switch (format)
     {

@@ -44,7 +44,7 @@ void PaletteEdit::Update()
                 int lumarand= rand()%32;
                 bru_bg.setColor(QColor::fromRgb(lumarand*8, lumarand*8, lumarand*8));
             }
-            if (project.tileset.isPalettedFormat())
+            if (project.tileset.isSubPalettedFormat())
             {
                 if (project.paltable_current_row == iy && project.paltable_current_column == ix)
                     bru_bg.setStyle(Qt::Dense3Pattern);
@@ -61,7 +61,7 @@ void PaletteEdit::Update()
                     bru_bg.setStyle(Qt::SolidPattern);
             }
             item->setBackground(bru_bg);
-            if (project.tileset.isPalettedFormat())
+            if (project.tileset.isSubPalettedFormat())
                 item->setToolTip("Pal #"+QString::number(iy)+": "+QString::number(ix));
             else
                 item->setToolTip("Index: "+QString::number(ix+iy*PALETTE_W));

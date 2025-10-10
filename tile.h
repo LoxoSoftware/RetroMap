@@ -53,7 +53,7 @@ public:
     QVector<QImage> Optimized(QList<Tile>* tilemap, Tileset::optimize_flags_t optiflags);
     void            RebuildTilesetImage(int columns=16);
 
-    bool            isPalettedFormat();
+    bool            isSubPalettedFormat();
 };
 
 #endif // TILE_HPP

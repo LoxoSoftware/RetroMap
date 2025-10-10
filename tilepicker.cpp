@@ -50,7 +50,7 @@ void TilePicker::Update()
             }
 
             QPixmap pix;
-            bool previewPal= main_window->isTilePicker_ViewSelPal() && project.tileset.isPalettedFormat();
+            bool previewPal= main_window->isTilePicker_ViewSelPal() && project.tileset.isSubPalettedFormat();
             pix.convertFromImage(Tile(tindex,false,false,project.paltable_current_row).RenderImage(&project.tileset, previewPal));
 
             QIcon icon= QIcon(pix.scaled(ui->tblTiles->columnWidth(0),ui->tblTiles->rowHeight(0)));
