@@ -159,7 +159,7 @@ void TileCanvas::enterEvent(QEvent* event)
 {
     if (!project.statusbar)
         return;
-    project.statusbar->showMessage("TileCanvas");
+    project.statusbar->showMessage("Click and drag to draw with the selected color");
 }
 
 void TileCanvas::leaveEvent(QEvent* event)
