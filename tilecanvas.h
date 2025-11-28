@@ -69,6 +69,8 @@ private:
     QPointF mouse_last_pos;
     QPointF mouse_last_global_pos;
     int history_current_index= -1;
+    bool fill_screen= true;
+    bool draw_tilegrid= true;
 
     int tile_id= -1;
 

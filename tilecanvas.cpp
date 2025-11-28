@@ -9,6 +9,7 @@
 
 #define TILECANVASX_TO_PIXEL(x)     ((x/scaling)%TILE_W)
 #define TILECANVASY_TO_PIXEL(y)     ((y/scaling)%TILE_H)
+#define TILECANVAS_TILEPAD          (draw_tilegrid? 1:0)
 
 #define TILECANVAS_HISTORY_MAX      32
 
@@ -90,11 +91,20 @@ void TileCanvas::Redraw()
     UpdateScaling();
     QPixmap pix;
     pix= QPixmap::fromImage(image);
-    QGraphicsPixmapItem* item= new QGraphicsPixmapItem(pix);
-    item->setX(0);
-    item->setY(0);
-    item->setScale(scaling);
-    scene.addItem(item);
+    int iterx= fill_screen? scene.width()/scaling : 1;
+    int itery= fill_screen? scene.height()/scaling : 1;
+    for (int iy=0; iy<itery; iy++)
+    {
+        for (int ix=0; ix<iterx; ix++)
+        {
+            QGraphicsPixmapItem* item= new QGraphicsPixmapItem(pix);
+            item->setX(ix*(TILE_W*scaling+TILECANVAS_TILEPAD));
+            item->setY(iy*(TILE_H*scaling+TILECANVAS_TILEPAD));
+            item->setScale(scaling);
+            scene.addItem(item);
+        }
+    }
+
 }
 
 void TileCanvas::mousePressEvent(QMouseEvent* event)
@@ -160,10 +170,19 @@ void TileCanvas::leaveEvent(QEvent* event)
 
 void TileCanvas::UpdateScaling()
 {
-    setMinimumSize(image.width()*scaling+(TILECANVAS_BORDER_W*2),
-                   image.height()*scaling+(TILECANVAS_BORDER_W*2));
-    setMaximumSize(this->minimumSize());
-    scene.setSceneRect(QRect(0,0,image.width()*scaling,image.height()*scaling));
+    if (!fill_screen)
+    {
+        setMinimumSize(image.width()*scaling+(TILECANVAS_BORDER_W*2),
+                       image.height()*scaling+(TILECANVAS_BORDER_W*2));
+        setMaximumSize(this->minimumSize());
+        scene.setSceneRect(QRect(0,0,image.width()*scaling,image.height()*scaling));
+    }
+    else
+    {
+        setMinimumSize(((QScrollArea*)parent())->size());
+        setMaximumSize(this->minimumSize());
+        scene.setSceneRect(QRect(0,0,this->maximumWidth(),this->maximumHeight()));
+    }
 }
 
 void TileCanvas::UpdateTileId(int new_tile_id)
