@@ -12,6 +12,7 @@
     </qresource>
     <qresource prefix="/ui">
         <file alias="bgtile">res/clipbg.png</file>
+        <file alias="bgtile2">res/panelbg.png</file>
     </qresource>
     <qresource prefix="/tool_icons/dark">
         <file alias="toolsize_1">res/dark/toolsize-1.png</file>

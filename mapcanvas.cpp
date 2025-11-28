@@ -23,7 +23,7 @@ MapCanvas::MapCanvas(QScrollArea* parent, int width, int height)
     setScene(&scene);
     setParent(parent);
     parent->setWidget(this);
-    setStyleSheet("background-color: white;"
+    setStyleSheet("background-image: url(:/ui/bgtile2);"
                          "border: "+QString::number(CANVAS_BORDER_W)+"px solid #666;");
     setMouseTracking(true);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);

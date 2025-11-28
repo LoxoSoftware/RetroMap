@@ -21,7 +21,7 @@ TileCanvas::TileCanvas(QScrollArea* parent, int tile_id)
     setScene(&scene);
     setParent(parent);
     parent->setWidget(this);
-    setStyleSheet("background-color: white;"
+    setStyleSheet("background-image: url(:/ui/bgtile2);"
                   "border: "+QString::number(TILECANVAS_BORDER_W)+"px solid black;");
     setMouseTracking(true);
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
