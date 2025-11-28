@@ -89,6 +89,7 @@ void TileCanvas::Redraw()
 {
     scene.clear();
     UpdateScaling();
+    image.setColorTable(project.tileset.tiles[tile_id].colorTable());
     QPixmap pix;
     pix= QPixmap::fromImage(image);
     int iterx= fill_screen? scene.width()/scaling : 1;

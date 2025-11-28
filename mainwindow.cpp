@@ -260,19 +260,19 @@ void MainWindow::on_colorChanged()
     project.tileset.UpdatePalettes();
     if (ui->actionAuto_canvas_update->isChecked())
     {
-        if (!project.current_mapcanvas)
+        if (!project.current_canvas)
             return;
-        project.current_mapcanvas->Redraw();
+        project.current_canvas->Redraw();
         dckTilePicker->Update();
     }
 }
 
 void MainWindow::on_actionRedraw_canvas_triggered()
 {
-    if (!project.current_mapcanvas)
+    if (!project.current_canvas)
         return;
     project.tileset.UpdatePalettes();
-    project.current_mapcanvas->Redraw();
+    project.current_canvas->Redraw();
     dckTilePicker->Update();
 }
 
