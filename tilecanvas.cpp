@@ -87,9 +87,16 @@ void TileCanvas::ZoomOut()
 
 void TileCanvas::Redraw()
 {
-    scene.clear();
     UpdateScaling();
     image.setColorTable(project.tileset.tiles[tile_id].colorTable());
+
+    //Check if an update is necessary
+    if (image == last_image)
+        return;
+    else
+        last_image= image;
+
+    scene.clear();
     QPixmap pix;
     pix= QPixmap::fromImage(image);
     int iterx= fill_screen? scene.width()/scaling : 1;

@@ -61,6 +61,7 @@ protected:
 private:
     Ui::Canvas* ui;
     QGraphicsScene scene;
+    QImage last_image;
     QBrush brush;
     QPen pen;
     int scaling= 20;
