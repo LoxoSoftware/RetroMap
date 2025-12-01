@@ -48,6 +48,11 @@ int Project::CreateNew(int width_tiles, int height_tiles)
         palfile.close();
     }
 
+    //Add background tile
+    QImage default_bgtile= QImage(TILE_W, TILE_H, QImage::Format_Indexed8);
+    default_bgtile.fill(0);
+    tileset.tiles+= default_bgtile;
+
     return 0;
 }
 
