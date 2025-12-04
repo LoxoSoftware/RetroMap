@@ -7,8 +7,8 @@
 #include <QScrollBar>
 #include <QMessageBox>
 
-#define TILECANVASX_TO_PIXEL(x)     ((x/scaling)%TILE_W)
-#define TILECANVASY_TO_PIXEL(y)     ((y/scaling)%TILE_H)
+#define TILECANVASX_TO_PIXEL(x)     (((x-x/(TILE_W*scaling)*TILECANVAS_TILEPAD)/scaling)%TILE_W)
+#define TILECANVASY_TO_PIXEL(y)     (((y-y/(TILE_H*scaling)*TILECANVAS_TILEPAD)/scaling)%TILE_H)
 #define TILECANVAS_TILEPAD          (draw_tilegrid? 1:0)
 
 #define TILECANVAS_HISTORY_MAX      32
