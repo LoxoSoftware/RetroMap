@@ -117,7 +117,7 @@ QScrollArea* MainWindow::NewTileEditTab(int tile_id)
 
     QScrollArea* new_scrollarea = new QScrollArea();
     new_scrollarea->setFrameShape(QFrame::WinPanel);
-    new_scrollarea->setWidget(new TileCanvas(new_scrollarea, tile_id));
+    new_scrollarea->setWidget(new TileCanvas(new_scrollarea, tile_id, TILE_W, TILE_H));
 
     int new_tab_ind= project.tab_widget->addTab(new_scrollarea,
                                                 "Edit tile (&"+QString::number(project.tab_widget->count()-1)+")");

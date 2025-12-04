@@ -23,7 +23,7 @@ class TileCanvas  : public AbstractCanvas
 {
     Q_OBJECT
 public:
-    TileCanvas(QScrollArea* parent, int tile_id);
+    TileCanvas(QScrollArea* parent, int tile_id, int w, int h);
     ~TileCanvas();
 
     void Clear(int color);

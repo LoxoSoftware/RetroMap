@@ -7,17 +7,17 @@
 #include <QScrollBar>
 #include <QMessageBox>
 
-#define TILECANVASX_TO_PIXEL(x)     (((x-x/(TILE_W*scaling)*TILECANVAS_TILEPAD)/scaling)%TILE_W)
-#define TILECANVASY_TO_PIXEL(y)     (((y-y/(TILE_H*scaling)*TILECANVAS_TILEPAD)/scaling)%TILE_H)
+#define TILECANVASX_TO_PIXEL(x)     (((x-x/(image.width()*scaling)*TILECANVAS_TILEPAD)/scaling)%image.width())
+#define TILECANVASY_TO_PIXEL(y)     (((y-y/(image.height()*scaling)*TILECANVAS_TILEPAD)/scaling)%image.height())
 #define TILECANVAS_TILEPAD          (draw_tilegrid? 1:0)
 
 #define TILECANVAS_HISTORY_MAX      32
 
 extern Project project;
 
-TileCanvas::TileCanvas(QScrollArea* parent, int tile_id)
+TileCanvas::TileCanvas(QScrollArea* parent, int tile_id, int w, int h)
 {
-    image= QImage(TILE_W, TILE_H, QImage::Format_Indexed8);
+    image= QImage(w, h, QImage::Format_Indexed8);
     setScene(&scene);
     setParent(parent);
     parent->setWidget(this);
@@ -106,8 +106,8 @@ void TileCanvas::Redraw()
         for (int ix=0; ix<iterx; ix++)
         {
             QGraphicsPixmapItem* item= new QGraphicsPixmapItem(pix);
-            item->setX(ix*(TILE_W*scaling+TILECANVAS_TILEPAD));
-            item->setY(iy*(TILE_H*scaling+TILECANVAS_TILEPAD));
+            item->setX(ix*(image.width()*scaling+TILECANVAS_TILEPAD));
+            item->setY(iy*(image.height()*scaling+TILECANVAS_TILEPAD));
             item->setScale(scaling);
             scene.addItem(item);
         }
