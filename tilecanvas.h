@@ -67,6 +67,7 @@ private:
     QBrush brush;
     QPen pen;
     int scaling= 20;
+    int last_scaling= scaling;
     Qt::MouseButton mouse_down_button= Qt::NoButton;
     bool mouse_has_moved= false;
     QPointF mouse_last_pos;

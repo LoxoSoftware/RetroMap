@@ -92,10 +92,10 @@ void TileCanvas::Redraw()
     image.setColorTable(project.tileset.tiles[tile_id].colorTable());
 
     //Check if an update is necessary
-    if (image == last_image)
+    if (image == last_image && scaling == last_scaling)
         return;
     else
-        last_image= image;
+        last_image= image, last_scaling= scaling;
 
     scene.clear();
     QPixmap pix;
