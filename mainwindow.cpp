@@ -362,3 +362,8 @@ void MainWindow::on_tabWidget_tabCloseRequested(int index)
     }
 }
 
+void MainWindow::resizeEvent(QResizeEvent* event)
+{
+    if (project.current_tilecanvas)
+        project.current_tilecanvas->Redraw();
+}

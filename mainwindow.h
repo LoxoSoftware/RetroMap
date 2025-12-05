@@ -63,5 +63,7 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+    void resizeEvent(QResizeEvent* event);
 };
 #endif // MAINWINDOW_H
