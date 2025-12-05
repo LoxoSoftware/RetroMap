@@ -38,6 +38,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     on_tabWidget_currentChanged(ui->tabWidget->currentIndex());
 
+    project.main_window= this;
+
     ChangeTileFormat(Tileset::GBA_8bpp);
 }
 

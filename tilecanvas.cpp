@@ -1,4 +1,5 @@
 #include "tilecanvas.h"
+#include "mainwindow.h"
 #include "tile.h"
 #include "project.h"
 #include <QMenu>
@@ -129,8 +130,24 @@ void TileCanvas::mousePressEvent(QMouseEvent* event)
     if (mouse_down_button == Qt::MiddleButton)
         this->setCursor(Qt::ClosedHandCursor);
 
-    if (mouse_down_button != Qt::RightButton)
-        mouseMoveEvent(event);
+    if (event->modifiers()& Qt::ControlModifier)
+    {
+        int color_picked= image.pixelIndex(TILECANVASX_TO_PIXEL(event->pos().x()), TILECANVASY_TO_PIXEL(event->pos().y()));
+
+        if (mouse_down_button != Qt::RightButton)
+        {
+            //QMessageBox::information(project.main_window, "Picked tile", QString::number(picked%size.width())+", "+QString::number(picked/size.width()));
+            project.paltable_current_column = color_picked%PALETTE_W;
+            project.paltable_current_row = color_picked/PALETTE_W;
+            if (project.main_window)
+                project.main_window->dckPaletteEdit->on_tblPalette_cellClicked(project.paltable_current_row, project.paltable_current_column);
+        }
+    }
+    else
+    {
+        if (mouse_down_button != Qt::RightButton)
+            mouseMoveEvent(event);
+    }
 
     mouse_has_moved= false;
 }
@@ -166,7 +183,7 @@ void TileCanvas::enterEvent(QEvent* event)
 {
     if (!project.statusbar)
         return;
-    project.statusbar->showMessage("Click and drag to draw with the selected color");
+    project.statusbar->showMessage("Click and drag to draw with the selected color || Ctrl+click to pick the pixel color under the mouse");
 }
 
 void TileCanvas::leaveEvent(QEvent* event)
@@ -174,6 +191,18 @@ void TileCanvas::leaveEvent(QEvent* event)
     if (!project.statusbar)
         return;
     project.statusbar->clearMessage();
+}
+
+void TileCanvas::keyPressEvent(QKeyEvent* event)
+{
+    if (event->modifiers() == Qt::ControlModifier)
+        this->setCursor(Qt::PointingHandCursor);
+}
+
+void TileCanvas::keyReleaseEvent(QKeyEvent* event)
+{
+    if (event->modifiers() == Qt::NoModifier)
+        this->setCursor(Qt::ArrowCursor);
 }
 
 void TileCanvas::UpdateScaling()

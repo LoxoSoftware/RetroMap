@@ -59,6 +59,8 @@ protected:
     void enterEvent(QEvent* event);
 #endif
     void leaveEvent(QEvent* event);
+    void keyPressEvent(QKeyEvent* event);
+    void keyReleaseEvent(QKeyEvent* event);
 
 private slots:
     void onMenuClearWithBgTile_triggered();

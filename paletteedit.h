@@ -22,7 +22,7 @@ public:
 
     bool isBlockingPalUpdates() { return block_pal_updates; }
 
-private slots:
+public slots:
     void on_tblPalette_cellClicked(int row, int column);
 
 private:

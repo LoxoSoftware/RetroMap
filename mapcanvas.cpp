@@ -1,4 +1,5 @@
 #include "mapcanvas.h"
+#include "mainwindow.h"
 #include "project.h"
 #include "toolboxpanel.h"
 #include <QMenu>
@@ -208,6 +209,18 @@ void MapCanvas::OpenContextMenu(QPoint screen_pos, QPoint canvas_pos)
     context_menu->show();
 }
 
+void MapCanvas::keyPressEvent(QKeyEvent* event)
+{
+    if (event->modifiers() == Qt::ControlModifier)
+        this->setCursor(Qt::PointingHandCursor);
+}
+
+void MapCanvas::keyReleaseEvent(QKeyEvent* event)
+{
+    if (event->modifiers() == Qt::NoModifier)
+        this->setCursor(Qt::ArrowCursor);
+}
+
 void MapCanvas::mousePressEvent(QMouseEvent *event)
 {
     //event->accept();
@@ -222,8 +235,31 @@ void MapCanvas::mousePressEvent(QMouseEvent *event)
     if (mouse_down_button == Qt::MiddleButton)
         this->setCursor(Qt::ClosedHandCursor);
 
-    if (mouse_down_button != Qt::RightButton)
-        mouseMoveEvent(event);
+    if (event->modifiers()& Qt::ControlModifier)
+    {
+        int picked= CANVASX_TO_COLUMN(event->pos().x())+CANVASY_TO_ROW(event->pos().y())*size.width();
+        if (picked >= tiles.count())
+            return;
+
+        if (mouse_down_button != Qt::RightButton)
+        {
+            //QMessageBox::information(project.main_window, "Picked tile", QString::number(picked%size.width())+", "+QString::number(picked/size.width()));
+            project.tileset_selected_tile= tiles[picked].tileset_offset;
+            if (project.main_window)
+                project.main_window->dckTilePicker->Update();
+        }
+        if (mouse_down_button != Qt::LeftButton)
+        {
+            project.tileset_selected_bgtile= tiles[picked].tileset_offset;
+            if (project.main_window)
+                project.main_window->dckTilePicker->Update();
+        }
+    }
+    else
+    {
+        if (mouse_down_button != Qt::RightButton)
+            mouseMoveEvent(event);
+    }
 
     mouse_has_moved= false;
 }
@@ -232,7 +268,7 @@ void MapCanvas::mouseMoveEvent(QMouseEvent *event)
 {
     event->accept();
 
-    if (mouse_down_button == Qt::RightButton || mouse_down_button == Qt::LeftButton)
+    if ((mouse_down_button == Qt::RightButton || mouse_down_button == Qt::LeftButton) && !(event->modifiers()& Qt::ControlModifier))
     for (int iy=-floor((float)project.pen_size/2); iy<ceil((float)project.pen_size/2); iy++)
     {
         for (int ix=-floor((float)project.pen_size/2); ix<ceil((float)project.pen_size/2); ix++)
@@ -267,7 +303,7 @@ void MapCanvas::mouseReleaseEvent(QMouseEvent *event)
     if (mouse_down_button == Qt::MiddleButton)
         this->setCursor(Qt::ArrowCursor);
 
-    if (!mouse_has_moved && mouse_down_button == Qt::RightButton)
+    if (!mouse_has_moved && mouse_down_button == Qt::RightButton && !(event->modifiers()& Qt::ControlModifier))
 #if QT_VERSION_MAJOR > 5
         OpenContextMenu(event->globalPosition().toPoint(), event->pos());
 #else
@@ -434,7 +470,7 @@ void MapCanvas::enterEvent(QEvent* event)
 {
     if (!project.statusbar)
         return;
-    project.statusbar->showMessage("Click and drag to draw with the selected tile || Right mouse button for context menu");
+    project.statusbar->showMessage("Click and drag to draw with the selected tile || Right mouse button for context menu || Ctrl+click to pick the tile under the mouse");
 }
 
 void MapCanvas::leaveEvent(QEvent* event)
