@@ -111,6 +111,32 @@ void TilePicker::RedrawSelection()
     ui->tblTiles->update();
 }
 
+void TilePicker::OpenContextMenu(QPoint screen_pos, int tile_id)
+{
+    if (tile_id >= project.tileset.tiles.count() || tile_id < 0)
+    {
+        //QMessageBox::critical(this, "Error", "Cannot open menu, index out fo range.\r\tThis is a bug!");
+        return;
+    }
+
+    if (context_menu)
+        delete context_menu;
+
+    context_menu= new QMenu();
+    context_menu->addAction("Set as background selection");
+    connect(context_menu->actions().last(), &QAction::triggered, this, &TilePicker::on_changeBgSelection);
+    context_menu->addAction("Edit...");
+    connect(context_menu->actions().last(), &QAction::triggered, this, &TilePicker::on_editTileTriggered);
+    context_menu->addAction("Duplicate");
+    connect(context_menu->actions().last(), &QAction::triggered, this, &TilePicker::on_duplicateTileTriggered);
+    context_menu->addAction("Delete");
+    connect(context_menu->actions().last(), &QAction::triggered, this, &TilePicker::on_deleteTileTriggered);
+
+    context_menu->setWindowModality(Qt::ApplicationModal);
+    context_menu->setGeometry(QRect(screen_pos,context_menu->sizeHint()));
+    context_menu->show();
+}
+
 void TilePicker::resizeEvent(QResizeEvent* event)
 {
     //ui->tblTiles->setGeometry(10,10,event->size().width()-10,event->size().height()-10);
@@ -130,7 +156,7 @@ void TilePicker::enterEvent(QEvent* event)
 {
     if (!project.statusbar)
         return;
-    project.statusbar->showMessage("Left mouse click to select a tile as primary for drawing || Right mouse click to select a tile as secondary/background for drawing");
+    project.statusbar->showMessage("Left mouse click to select a tile as primary for drawing || Right mouse click for more options");
 }
 
 void TilePicker::leaveEvent(QEvent* event)
@@ -154,22 +180,15 @@ void TilePicker::on_tblTiles_customContextMenuRequested(const QPoint &pos)
     if (project.tileset.tiles.count() <= 0)
         return;
 
-    int new_selected_tile= ui->tblTiles->currentColumn()+ui->tblTiles->currentRow()*ui->tblTiles->columnCount();
+    tile_hovered= ui->tblTiles->currentColumn()+ui->tblTiles->currentRow()*ui->tblTiles->columnCount();
 
-    if (new_selected_tile >= project.tileset.tiles.count())
+    if (tile_hovered >= project.tileset.tiles.count())
         return;
 
-    project.tileset_selected_bgtile= new_selected_tile;
-    RedrawSelection();
+    // project.tileset_selected_bgtile= tile_hovered;
+    // RedrawSelection();
 
-    // QMenu* context_menu= new QMenu();
-
-    // context_menu->addAction("Select as background tile");
-
-    // context_menu->setGeometry(QRect(
-    //     pos.x()+x(), pos.y()+y()+50,
-    //     context_menu->sizeHint().width(), context_menu->sizeHint().height()));
-    // context_menu->show();
+    OpenContextMenu(QPoint(pos.x()+x(),pos.y()+y()+16), tile_hovered);
 }
 
 void TilePicker::on_tblTiles_cellDoubleClicked(int row, int column)
@@ -188,3 +207,33 @@ void TilePicker::on_tblTiles_cellDoubleClicked(int row, int column)
     main_window->NewTileEditTab(tile_id);
 }
 
+void TilePicker::on_changeBgSelection()
+{
+    project.tileset_selected_bgtile= tile_hovered;
+    RedrawSelection();
+}
+
+void TilePicker::on_editTileTriggered()
+{
+    if (tile_hovered > project.tileset.tiles.count())
+        return;
+    main_window->NewTileEditTab(tile_hovered);
+}
+
+void TilePicker::on_duplicateTileTriggered()
+{
+    if (tile_hovered > project.tileset.tiles.count())
+        return;
+    project.tileset.tiles+= project.tileset.tiles[tile_hovered];
+    Update();
+}
+
+void TilePicker::on_deleteTileTriggered()
+{
+    if (tile_hovered > project.tileset.tiles.count())
+        return;
+    if (project.tileset.tiles.count() <= 1)
+        return;
+    project.tileset.RemoveTile(tile_hovered);
+    Update();
+}

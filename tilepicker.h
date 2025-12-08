@@ -26,11 +26,18 @@ private slots:
     void on_tblTiles_cellClicked(int row, int column);
     void on_tblTiles_customContextMenuRequested(const QPoint &pos);
     void on_tblTiles_cellDoubleClicked(int row, int column);
+    void on_changeBgSelection();
+    void on_editTileTriggered();
+    void on_duplicateTileTriggered();
+    void on_deleteTileTriggered();
 
 private:
     Ui::TilePicker *ui;
     MainWindow* main_window;
+    QMenu* context_menu= nullptr;
+    int tile_hovered= 0;
 
+    void OpenContextMenu(QPoint screen_pos, int tile_id);
 #if QT_VERSION_MAJOR > 5
     void enterEvent(QEnterEvent* event);
 #else
