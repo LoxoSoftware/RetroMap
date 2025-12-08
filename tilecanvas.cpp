@@ -224,7 +224,8 @@ void TileCanvas::UpdateScaling()
 
 void TileCanvas::UpdateTileId(int new_tile_id)
 {
-
+    tile_id= new_tile_id;
+    UpdateMyTile();
 }
 
 void TileCanvas::UpdateSourceTile()
