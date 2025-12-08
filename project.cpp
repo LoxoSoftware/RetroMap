@@ -620,6 +620,28 @@ MapCanvas* Project::GetMainMapCanvas()
     return nullptr;
 }
 
+TileCanvas* Project::GetTileCanvasWidget(int tile_id)
+{
+    //Initial implementation
+
+    if (!tab_widget)
+        return nullptr;
+
+    for (int i=0; i<tab_widget->count(); i++)
+    {
+        QScrollArea* tsa= dynamic_cast<QScrollArea*>(tab_widget->widget(i));
+        if (!tsa)
+            continue;
+        TileCanvas* tcanv= dynamic_cast<TileCanvas*>(tsa->widget());
+        if (!tcanv)
+            continue;
+        if (tcanv->TileId() == tile_id)
+            return tcanv;
+    }
+
+    return nullptr;
+}
+
 int Project::GetTileCanvasIndex(int tile_id)
 {
     //Initial implementation

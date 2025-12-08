@@ -1,4 +1,5 @@
 #include "tile.h"
+#include "mainwindow.h"
 #include "project.h"
 #include <QMessageBox>
 
@@ -245,6 +246,31 @@ void Tileset::UpdatePalettes()
     {
         tiles[it].setColorTable(palette);
     }
+}
+
+void Tileset::RemoveTile(int id, QList<Tile>* tilemap)
+{
+    //TODO: Fix the tilemap if given the argument
+
+    if (id >= tiles.count() || id < 0)
+        return;
+
+    int tab_id= project.GetTileCanvasIndex(id);
+    //Close the TileEdit tab of this tile if it was open ...
+    if (tab_id >= 0)
+    {
+        project.tab_widget->removeTab(tab_id);
+    }
+    // ... and then update the other tabs
+    for (int i= id; i<tiles.count(); i++)
+    {
+        TileCanvas* next_tab= project.GetTileCanvasWidget(i);
+        if (!next_tab)
+            continue;
+        next_tab->UpdateTileId(next_tab->TileId()-1);
+    }
+
+    tiles.remove(id);
 }
 
 bool Tileset::isSubPalettedFormat()

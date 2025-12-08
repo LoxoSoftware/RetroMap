@@ -23,6 +23,7 @@ public:
     int ExportToSourceFile(QString fname, int export_flags= ExportDefault|ExportGBA8bpp);
 
     MapCanvas*      GetMainMapCanvas();
+    TileCanvas*     GetTileCanvasWidget(int tile_id);
     int             GetTileCanvasIndex(int tile_id);
 
     MainWindow*     main_window;

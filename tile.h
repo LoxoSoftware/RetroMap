@@ -52,6 +52,7 @@ public:
     void            UpdatePalettes();
     QVector<QImage> Optimized(QList<Tile>* tilemap, Tileset::optimize_flags_t optiflags);
     void            RebuildTilesetImage(int columns=16);
+    void            RemoveTile(int id, QList<Tile>* tilemap= nullptr);
 
     bool            isSubPalettedFormat();
 };
