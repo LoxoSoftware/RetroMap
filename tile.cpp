@@ -250,8 +250,6 @@ void Tileset::UpdatePalettes()
 
 void Tileset::RemoveTile(int id, QList<Tile>* tilemap)
 {
-    //TODO: Fix the tilemap if given the argument
-
     if (id >= tiles.count() || id < 0)
         return;
 
@@ -268,6 +266,15 @@ void Tileset::RemoveTile(int id, QList<Tile>* tilemap)
         if (!next_tab)
             continue;
         next_tab->UpdateTileId(next_tab->TileId()-1);
+    }
+    //Optionally update the tilemap
+    if (tilemap)
+    {
+        for(int it=0; it<tilemap->count(); it++)
+        {
+            if ((*tilemap)[it].tileset_offset >= id)
+                (*tilemap)[it].tileset_offset--;
+        }
     }
 
     tiles.remove(id);

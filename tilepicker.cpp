@@ -234,6 +234,12 @@ void TilePicker::on_deleteTileTriggered()
         return;
     if (project.tileset.tiles.count() <= 1)
         return;
-    project.tileset.RemoveTile(tile_hovered);
+    if (project.main_mapcanvas)
+    {
+        project.tileset.RemoveTile(tile_hovered, &project.main_mapcanvas->tiles);
+        project.main_mapcanvas->Redraw();
+    }
+    else
+        project.tileset.RemoveTile(tile_hovered);
     Update();
 }
