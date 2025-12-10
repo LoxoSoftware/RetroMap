@@ -243,3 +243,74 @@ void TilePicker::on_deleteTileTriggered()
         project.tileset.RemoveTile(tile_hovered);
     Update();
 }
+
+TilePickerTable::TilePickerTable(QWidget* parent)
+    : QTableWidget(parent)
+{
+    connect(this, &QTableWidget::itemPressed, this, &TilePickerTable::on_itemPressed);
+    setAcceptDrops(false);
+}
+
+void TilePickerTable::on_itemPressed(QTableWidgetItem* item)
+{
+    if (!item) return;
+
+    dnd_start_cell= item;
+}
+
+void TilePickerTable::dragMoveEvent(QDragMoveEvent* event)
+{
+    dnd_answer_rect= event->answerRect();
+}
+
+void TilePickerTable::dropEvent(QDropEvent* event)
+{
+    if (!project.main_window)
+    {
+        QMessageBox::critical(this, "Move tile in tileset", "An unexpected error occoured, cannot move tile. (1)");
+        return;
+    }
+
+    //QMessageBox::information(this, "st", QString::number(tx)+" "+QString::number(ty));
+
+    QTableWidgetItem* src_cell= dnd_start_cell;
+    QTableWidgetItem* dest_cell= itemAt(dnd_answer_rect.topLeft());
+
+    if (!src_cell || !dest_cell)
+    {
+        //QMessageBox::critical(this, "Move tile in tileset", "An unexpected error occoured, cannot move tile.");
+        return;
+    }
+
+    int src_tile_id= indexFromItem(src_cell).column()+columnCount()*indexFromItem(src_cell).row();
+    int dest_tile_id= indexFromItem(dest_cell).column()+columnCount()*indexFromItem(dest_cell).row();
+
+    //QMessageBox::information(this, "deb", "Drop direction: "+QString::number(dropIndicatorPosition()));
+
+    if (src_tile_id >= project.tileset.tiles.count() || dest_tile_id >= project.tileset.tiles.count())
+        return;
+
+    // switch (dropIndicatorPosition())
+    // {
+    // case OnItem:
+    //     break;
+    // case AboveItem:
+    //     break;
+    // case BelowItem:
+    //     break;
+    // default:
+    //     return;
+    // }
+
+    QImage ttile= project.tileset.tiles[src_tile_id];
+    project.tileset.tiles[src_tile_id]= project.tileset.tiles[dest_tile_id];
+    project.tileset.tiles[dest_tile_id]= ttile;
+
+    if (project.main_window)
+    {
+        project.main_window->dckTilePicker->Update();
+        if (project.main_mapcanvas)
+            project.main_mapcanvas->Redraw();
+    }
+}
+

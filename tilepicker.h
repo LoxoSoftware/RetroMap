@@ -7,6 +7,7 @@ class MainWindow;
 
 namespace Ui {
 class TilePicker;
+class TilePickerTable;
 }
 
 class TilePicker : public QDockWidget
@@ -44,6 +45,25 @@ private:
     void enterEvent(QEvent* event);
 #endif
     void leaveEvent(QEvent* event);
+};
+
+class TilePickerTable : public QTableWidget
+{
+    Q_OBJECT
+
+public:
+    explicit TilePickerTable(QWidget* parent);
+
+private slots:
+    void on_itemPressed(QTableWidgetItem* item);
+
+private:
+    Ui::TilePickerTable *ui;
+    QTableWidgetItem* dnd_start_cell= nullptr;
+    QRect dnd_answer_rect;
+
+    void dragMoveEvent(QDragMoveEvent* event);
+    void dropEvent(QDropEvent* event);
 };
 
 #endif // TILEPICKER_H
