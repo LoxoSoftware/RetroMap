@@ -309,8 +309,8 @@ void TilePickerTable::dropEvent(QDropEvent* event)
     if (project.main_window)
     {
         project.main_window->dckTilePicker->Update();
-        if (project.main_mapcanvas)
-            project.main_mapcanvas->Redraw();
+        if (project.current_mapcanvas)
+            project.current_mapcanvas->Redraw();
     }
 }
 
